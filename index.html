@@ -386,8 +386,8 @@ function renderNotes(){
         </div>
       </div>
       <div class="note-body">
-        <p class="note-text">${n.text}</p>
         <div class="wheel-wrap"><a href="${tastingMapUrl(name)}" target="_blank" title="Open full tasting map" style="display:block;cursor:pointer">${radarSVG(n.fl)}</a></div>
+        <p class="note-text">${n.text}</p>
       </div>
       ${cat?.notes?`<div class="note-footer">🎵 ${cat.notes}</div>`:''}
     </div>`;
