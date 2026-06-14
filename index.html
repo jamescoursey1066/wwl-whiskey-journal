@@ -336,9 +336,18 @@ function radarSVG(fl){
 }
 
 // ─── NOTES ──────────────────────────────────────────────────────────
+const WWL_EVENTS=new Set([
+  "American Whiskey Frontiers",
+  "European Expressions",
+  "Finished Bourbons",
+  "Full-Proof Bourbons",
+  "Japanese Elegance",
+  "Over A Barrel",
+  "World-Wide Whiskies",
+]);
 function getEvents(){
   const evs=new Set();
-  Object.values(NOTES).forEach(n=>evs.add(n.event));
+  Object.values(NOTES).forEach(n=>{if(WWL_EVENTS.has(n.event))evs.add(n.event);});
   return["All",...Array.from(evs).sort()];
 }
 function initEventChips(){
