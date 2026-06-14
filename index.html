@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WWL Whiskey Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fafaf7;--panel:#fff;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e5e3dd;--accent:#6b3e1f;--amber:#c8860a;
+--S:#d4af37;--A:#4a7c4a;--B:#5b8def;--C:#c9a36b;--D:#a86a4a;--F:#9b3838;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.4;}
+a{color:var(--accent);}
+
+/* ── Nav ── */
+header{background:var(--accent);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:20;}
+header h1{font-size:18px;font-weight:700;letter-spacing:.3px;white-space:nowrap;}
+nav{display:flex;gap:4px;}
+nav button{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px;transition:all .15s;}
+nav button.active{background:#fff;color:var(--accent);font-weight:600;}
+.search-bar{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.search-bar input{padding:6px 10px;border:1px solid rgba(255,255,255,.4);border-radius:4px;background:rgba(255,255,255,.15);color:#fff;font-size:13px;width:180px;}
+.search-bar input::placeholder{color:rgba(255,255,255,.6);}
+
+/* ── Sections ── */
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── Catalog ── */
+.cat-controls{background:var(--panel);border-bottom:1px solid var(--line);padding:10px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+.chip-group{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.chip-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;}
+.chip{padding:3px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:12px;background:var(--panel);user-select:none;transition:all .15s;}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.stats{padding:8px 24px;background:var(--panel);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap;}
+.stats strong{color:var(--ink);}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);}
+th{background:#f4f2ec;font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:2;user-select:none;white-space:nowrap;}
+th:hover{background:#ebe8df;}
+th.sorted{color:var(--accent);}
+th.sorted.asc::after{content:" ▲";font-size:9px;}
+th.sorted.desc::after{content:" ▼";font-size:9px;}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;}
+td.ctr,th.ctr{text-align:center;}
+tbody tr{cursor:pointer;}
+tbody tr:hover{background:#faf7ee;}
+tbody tr.has-note td:first-child{border-left:3px solid var(--amber);}
+.tier{display:inline-block;min-width:22px;padding:2px 7px;border-radius:3px;font-weight:700;font-size:11px;text-align:center;color:#fff;}
+.tS{background:var(--S);color:#3a2d00;} .tA{background:var(--A);} .tB{background:var(--B);}
+.tC{background:var(--C);} .tD{background:var(--D);} .tF{background:var(--F);}
+.bbb{font-size:11px;padding:2px 6px;border-radius:3px;background:#f0ede5;color:var(--muted);}
+.bBottle{background:#d9efd9;color:#1f5c1f;} .bBar{background:#fff2cc;color:#6b5208;} .bBust{background:#f9d4d4;color:#7c1e1e;}
+.note-badge{font-size:10px;padding:1px 5px;border-radius:3px;background:var(--amber);color:#fff;margin-left:4px;vertical-align:middle;}
+.name-cell{font-weight:500;line-height:1.3;}
+.song{color:var(--muted);font-size:11px;font-style:italic;}
+.thumb{width:32px;height:48px;object-fit:contain;border-radius:2px;cursor:zoom-in;}
+.no-img{display:inline-block;width:32px;height:48px;background:#eee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 48'%3E%3Cg fill='%23ccc'%3E%3Crect x='11' y='1' width='10' height='5' rx='1'/%3E%3Crect x='10' y='6' width='12' height='7'/%3E%3Cpath d='M10 13C3 18 3 24 3 27v16c0 3 4 4 13 4s13-1 13-4V27c0-3 0-9-6-14z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;border-radius:2px;}
+.empty{padding:40px;text-align:center;color:var(--muted);}
+
+/* ── Notes grid ── */
+.notes-toolbar{padding:12px 24px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.notes-toolbar .chip-label{font-size:11px;color:var(--muted);}
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px;padding:20px 24px;}
+.note-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;}
+.note-card-header{padding:12px 14px 8px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:10px;}
+.note-card-img{width:40px;height:60px;object-fit:contain;flex-shrink:0;border-radius:3px;}
+.note-card-img-ph{width:40px;height:60px;background:#eee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 60'%3E%3Cg fill='%23ccc'%3E%3Crect x='14' y='1' width='12' height='6' rx='1'/%3E%3Crect x='12' y='7' width='16' height='9'/%3E%3Cpath d='M12 16C3 22 3 29 3 33v20c0 5 5 6 17 6s17-1 17-6V33c0-4 0-11-8-17z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;flex-shrink:0;border-radius:3px;}
+.note-meta{flex:1;min-width:0;}
+.note-name{font-weight:600;font-size:14px;line-height:1.2;margin-bottom:4px;}
+.note-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;}
+.note-event{font-size:11px;color:var(--muted);font-style:italic;}
+.note-body{padding:12px 14px;overflow:hidden;}
+.note-text{font-size:13px;line-height:1.6;color:#2a2a2a;}
+.wheel-wrap{float:right;margin:0 0 8px 14px;}
+.note-footer{padding:6px 14px 10px;font-size:11px;color:var(--muted);font-style:italic;border-top:1px solid var(--line);}
+
+/* ── Modal ── */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;}
+#modal.open{display:flex;}
+#modal-box{background:var(--panel);border-radius:10px;max-width:680px;width:90vw;max-height:90vh;overflow-y:auto;padding:24px;position:relative;}
+#modal-close{position:absolute;top:12px;right:16px;font-size:22px;cursor:pointer;background:none;border:none;color:var(--muted);}
+#modal-img-full{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:200;}
+#modal-img-full.open{display:flex;}
+#modal-img-full img{max-width:88vw;max-height:88vh;object-fit:contain;border-radius:6px;}
+#modal-img-full-close{position:absolute;top:14px;right:20px;color:#fff;font-size:28px;cursor:pointer;background:none;border:none;}
+
+/* ── Reset btn ── */
+.reset-btn{padding:5px 12px;cursor:pointer;border:1px solid var(--line);background:var(--bg);border-radius:4px;font-size:12px;}
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🥃 WWL Whiskey Journal</h1>
+  <nav>
+    <button class="active" onclick="showTab('catalog')">Catalog</button>
+    <button onclick="showTab('notes')">Tasting Notes</button>
+  </nav>
+  <div class="search-bar">
+    <input type="text" id="global-search" placeholder="Search whiskey…" oninput="onSearch(this.value)">
+  </div>
+</header>
+
+<!-- CATALOG -->
+<div id="tab-catalog" class="section active">
+  <div class="cat-controls">
+    <span class="chip-label">Tier</span>
+    <div class="chip-group" id="tier-chips"></div>
+    <span class="chip-label" style="margin-left:8px">BBB</span>
+    <div class="chip-group" id="bbb-chips"></div>
+    <span class="chip-label" style="margin-left:8px">Notes only</span>
+    <label style="cursor:pointer;font-size:13px;display:flex;align-items:center;gap:4px;">
+      <input type="checkbox" id="notes-only" onchange="renderCatalog()"> with tasting card
+    </label>
+    <button class="reset-btn" onclick="resetFilters()" style="margin-left:auto">Reset</button>
+  </div>
+  <div class="stats" id="cat-stats"></div>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead><tr id="cat-head"></tr></thead>
+      <tbody id="cat-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div id="tab-notes" class="section">
+  <div class="notes-toolbar">
+    <span class="chip-label">Event</span>
+    <div class="chip-group" id="event-chips"></div>
+  </div>
+  <div class="notes-grid" id="notes-grid"></div>
+</div>
+
+<!-- Modals -->
+<div id="modal" onclick="closeModal()">
+  <div id="modal-box" onclick="event.stopPropagation()">
+    <button id="modal-close" onclick="closeModal()">&#x2715;</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+<div id="modal-img-full" onclick="this.classList.remove('open')">
+  <button id="modal-img-full-close" onclick="document.getElementById('modal-img-full').classList.remove('open')">&#x2715;</button>
+  <img id="modal-img-full-img" src="" alt="">
+</div>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────
+const CATALOG = {"anchors":{"wt_rating":7.3,"wt_price":49.99,"top_rating":10.0,"top_price":250.0,"k":0.596162},"rows":[{"name":"Oaklore Four Grain Bourbon","rating":9.5,"price":70.0,"fair":185.56,"rbeu":2.6509,"tier":"S","bbb":"Bottle","notes":"\"Bohemian Rhapsody\" — Queen","row":26,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FOaklore_2FBourbon_2FOaklore_20Four_20Grain_20Bourbon_20Whiskey_2Foaklore-distilling-four-grain-bourbon-whiskey.png?v=1763721151","rank":1},{"name":"Natterjack Irish Whiskey","rating":8.5,"price":40.0,"fair":102.23,"rbeu":2.5557,"tier":"S","bbb":"Bottle","notes":"\"The Parting Glass\" — The Dubliners","row":9,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FNatter_20Jack_2FIrish_20Whiskey_2FGortinore_20Distillers_20_26_20Co_20_27Natterjack_27_20Irish_20Whiskey_2FGortinore-Distillers-_26-Co-_27Natterjack_27-Ir.png?v=1764250770","rank":2},{"name":"Redbreast 12 Year Old Irish Whiskey","rating":9.0,"price":65.0,"fair":137.73,"rbeu":2.1189,"tier":"S","bbb":"Bottle","notes":"\"Blue In Green\" — Miles Davis","row":22,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2019120310_redbreast_12_shadow_original_11146e46-2ca8-492d-be9c-8616724dae91.png?v=1762790549","rank":3},{"name":"New Riff Malted Rye","rating":8.8,"price":60.0,"fair":122.25,"rbeu":2.0375,"tier":"S","bbb":"Bottle","notes":"\"Gold Dust Woman\" — Fleetwood Mac","row":19,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/New-Riff-Malted-Rye-6-Years-Old-shadow_9fc18851-865d-4a5a-9b81-2b7d05971475.png?v=1764249508","rank":4},{"name":"Frey Ranch BiB Straight Rye Whiskey","rating":8.6,"price":63.0,"fair":108.51,"rbeu":1.7224,"tier":"A","bbb":"Bottle","notes":"\"American Girl\" — Tom Petty","row":25,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Frey-Ranch-Bottled-in-Bond-Straight-Rye-Whiskey-shadow.png?v=1767780516","rank":5},{"name":"Heaven's Door Revelation Double Barrel","rating":8.5,"price":60.0,"fair":102.23,"rbeu":1.7038,"tier":"A","bbb":"Bottle","notes":"\"Third Planet\" — Modest Mouse","row":21,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2019092713_heavens_door_double_barrel_shadow_original_e075f377-58a5-4fb4-b9c7-16a3791712ac.png?v=1764260669","rank":6},{"name":"Bhakta 1928 Golden Age Blend","rating":8.6,"price":64.0,"fair":108.51,"rbeu":1.6955,"tier":"A","bbb":"Bottle","notes":"\"La Vie en Rose\" — Édith Piaf","row":27,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FBhakta_20Spirits_2FOther_20Spirits_2FBHAKTA_201928_20-Golden_20Age-_20Blend_2F1928GoldenAge_Knockout_20_281_29.png?v=1779115591","rank":7},{"name":"Fighting Cock Bourbon 103 Proof","rating":6.7,"price":21.0,"fair":34.96,"rbeu":1.6646,"tier":"A","bbb":"Bottle","notes":"\"Working Class Hero\" — John Lennon","row":5,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Fighting_Cock_Bourbon_Whiskey.png?v=1760717614","rank":8},{"name":"Lodestar American Whiskey","rating":8.5,"price":65.0,"fair":102.23,"rbeu":1.5728,"tier":"A","bbb":"Bottle","notes":"\"Red Right Ankle\" — The Decemberists","row":32,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FLodestar_20Whiskey_2FAmerican_20Whiskey_2FLodestar_2012_20Year_20Old_20American_20Whiskey_2Flodestar.png?v=1752809429","rank":9},{"name":"Walleye Run Malted Rye Whiskey","rating":8.0,"price":48.83,"fair":75.88,"rbeu":1.5539,"tier":"A","bbb":"Bottle","notes":"\"Pure Imagination\" — Gene Wilder","row":105,"img":"https://shopping.newhollandbrew.com/cdn/shop/files/NHB24_WalleyeRun_Product_Web-Res_07_31647cd2-5aba-4d47-8340-7acb37193215_1024x1024@2x.jpg?v=1730839672","rank":10},{"name":"Akashi Japanese Blended Whiskey","rating":8.0,"price":50.0,"fair":75.88,"rbeu":1.5176,"tier":"A","bbb":"Bottle","notes":"\"Cherry Blossom Girl\" — Air","row":14,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/202008268_akashi_blended_japanese_whisky_shadow_original_42f6c213-2526-43a8-b147-f06d98338029.png?v=1765807707","rank":11},{"name":"Eagle Rare 10 Year","rating":8.0,"price":50.1,"fair":75.88,"rbeu":1.5145,"tier":"A","bbb":"Bottle","notes":"\"Take Five\" — Dave Brubeck","row":92,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Eagle-Rare-10-Year-Old-Kentucky-Straight-Bourbon-Whiskey-Shadow_2cd2db20-0b7c-4f16-b7cf-879d670c3494.png?v=1769078680","rank":12},{"name":"Brenne French Single Malt","rating":8.3,"price":59.99,"fair":90.74,"rbeu":1.5126,"tier":"A","bbb":"Bottle","notes":"\"Je t'aime... moi non plus\" — Serge Gainsbourg & Jane Birkin","row":103,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Brenne-Estate-Cask-French-Single-Malt-Whisky-_EU-label_-Shadow.png?v=1761196417","rank":13},{"name":"Kujira Kyojin Okinawa Japanese Whisky","rating":8.6,"price":75.0,"fair":108.51,"rbeu":1.4468,"tier":"A","bbb":"Bottle","notes":"\"Island in the Sun\" — Weezer","row":47,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2020081917_kujira_ryukyu_whisky_shadow_original.png?v=1762945579","rank":14},{"name":"Elmer T. Lee Single Barrel","rating":8.5,"price":80.0,"fair":102.23,"rbeu":1.2779,"tier":"A","bbb":"Bottle","notes":"\"My Way\" — Frank Sinatra","row":91,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2013072916_13751157924912_original_6c365d1a-853f-4707-8ee6-817be54f5837.png?v=1769078731","rank":15},{"name":"Shenk's Homestead 2025 Release","rating":9.0,"price":120.0,"fair":137.73,"rbeu":1.1478,"tier":"A","bbb":"Bottle","notes":"\"Don't Stop Me Now\" — Queen","row":98,"img":null,"rank":16},{"name":"Westward Pinot Noir Cask","rating":8.3,"price":79.99,"fair":90.74,"rbeu":1.1344,"tier":"A","bbb":"Bottle","notes":"\"Harvest Moon\" — Neil Young","row":58,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2021040210_westward_american_single_malt_pinot_noir_cask_finish_shadow_original_5c79197d-4588-4e0d-b6e9-31dd4985f8e2.png?v=1762945432","rank":17},{"name":"Chicken Cock Small Batch Whiskey","rating":8.0,"price":68.0,"fair":75.88,"rbeu":1.1159,"tier":"A","bbb":"Bottle","notes":"\"Little Wing\" — Jimi Hendrix","row":44,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Chicken-Cock-Small-Batch-Kentucky-Straight-Bourbon-Whiskey-shadow.png?v=1751008473","rank":18},{"name":"Glendalough Pot Still Irish Whisky","rating":7.0,"price":38.0,"fair":41.8,"rbeu":1.1001,"tier":"A","bbb":"Bottle","notes":"\"Boys Are Back in Town\" — Thin Lizzy","row":11,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Glendalough-Pot-Still-Whiskey-Shadow.png?v=1762946899","rank":19},{"name":"Oregon Spirit BiB Wheat Whiskey","rating":7.6,"price":54.99,"fair":59.78,"rbeu":1.0871,"tier":"A","bbb":"Bar","notes":"\"Hunger Strike\" — Temple of the Dog","row":24,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Wheat-2-2021-copy.png?v=1761204643","rank":20},{"name":"Naked Malt","rating":6.5,"price":29.99,"fair":31.03,"rbeu":1.0346,"tier":"A","bbb":"Bar","notes":"\"Here Comes the Sun\" — The Beatles","row":8,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Naked-Malt-Blended-Malt-Scotch-Whisky-Shadow.png?v=1762945087","rank":21},{"name":"Wild Turkey Rare Breed","rating":7.3,"price":49.99,"fair":49.99,"rbeu":1.0,"tier":"A","bbb":"Bottle","notes":"\"Born to Run\" — Bruce Springsteen","row":30,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2018042311_wild_turkey_rare_breed_barrel_proof_kentucky_straight_bourbon_original_a6032fbe-5649-451b-a2f2-54ca176cfe30.png?v=1762945079","rank":22},{"name":"Stillman's Sonder 10 Year American Single Malt Whiskey","rating":7.8,"price":70.0,"fair":67.35,"rbeu":0.9621,"tier":"B","bbb":"Bottle","notes":"\"Something\" — The Beatles","row":95,"img":"https://images.squarespace-cdn.com/content/v1/685d5b6c30fd1a6b6c67504f/6a847720-6439-4ab7-b252-47fb8ef96608/DG-Stillmans-Lifestyle-COMP.png","rank":23},{"name":"The Guard Bridge Blended Malt Scotch","rating":7.0,"price":44.0,"fair":41.8,"rbeu":0.9501,"tier":"B","bbb":"Bottle","notes":"\"Waiting in Vain\" — Bob Marley","row":15,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Eden-Mill-St-Andrews-The-Guard-Bridge-Blended-Malt-Scotch-Whisky_-Scotland.png?v=1778845048","rank":24},{"name":"Milk & Honey Single Cask Single Malt","rating":8.2,"price":90.0,"fair":85.49,"rbeu":0.9499,"tier":"B","bbb":"Bottle","notes":"\"Sinnerman\" — Nina Simone","row":67,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2020112012_milk_honey_elements_sherry_cask_shadow_original_3533f56b-6cf6-4902-b79c-c6841ca65a1c.png?v=1761193169","rank":25},{"name":"Old Forester Single Barrel Barrel Strength","rating":8.0,"price":79.99,"fair":75.88,"rbeu":0.9486,"tier":"B","bbb":"Bottle","notes":"\"September\" — Earth, Wind & Fire","row":60,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Old-Forester-Single-Barrel-Barrel-Strength-Rye-Whiskey-shadow_509288f9-98ca-4f09-8366-9f49115fe0ce.png?v=1762947589","rank":26},{"name":"Finvara The King's Gambit Irish Whiskey","rating":7.5,"price":60.0,"fair":56.32,"rbeu":0.9387,"tier":"B","bbb":"Bar","notes":"\"Second Best\" — Blur","row":34,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FFinvara_2FIrish_20Whiskey_2FFinvara_20The_20King_27s_20Gambit_20Irish_20Whiskey_2F750ML_2043ABV_2Fthe-kings-gambit-irish-whiskey-finvara.png?v=1751607687","rank":27},{"name":"Old Forester 1920 Prohibition Style","rating":7.5,"price":60.0,"fair":56.32,"rbeu":0.9387,"tier":"B","bbb":"Bar","notes":"\"Sweet Home Chicago\" — Robert Johnson","row":42,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2017030716_old_forester_1920_original.png?v=1761196893","rank":28},{"name":"Knob Creek Small Batch 9 Year","rating":7.0,"price":45.0,"fair":41.8,"rbeu":0.929,"tier":"B","bbb":"Bottle","notes":"\"Simple Man\" — Lynyrd Skynyrd","row":10,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2020050112_knob_creek_9_year_old_small_batch_bourbon_whiskey_shadow_original_706eecac-ac67-4b73-8ab2-3b9456f59013.png?v=1762945808","rank":29},{"name":"Buffalo Trace Bourbon","rating":6.3,"price":29.99,"fair":27.54,"rbeu":0.9183,"tier":"B","bbb":"Bar","notes":"\"Blackbird\" — The Beatles","row":90,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/201704188_buffalo_trace_shadow_original.png?v=1769078727","rank":30},{"name":"Uncle Nearest 1884 Small Batch","rating":6.3,"price":30.0,"fair":27.54,"rbeu":0.918,"tier":"B","bbb":"Bar","notes":"\"Tennessee Whiskey\" — Chris Stapleton","row":6,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Uncle-Nearest-Straight-Rye-Whiskey-Shadow.png?v=1752665426","rank":31},{"name":"Heaven Hill 7 Year BiB Barrel Select","rating":7.3,"price":54.95,"fair":49.99,"rbeu":0.9097,"tier":"B","bbb":"Bottle","notes":"\"Old Time Rock and Roll\" — Bob Seger","row":29,"img":"https://sipwhiskey.com/cdn/shop/products/Buy_Heaven_Hill_Bottled_In_Bond_7_Year_Old_Online.jpg?v=1569331054","rank":32},{"name":"Lagavulin 16 Year Single Malt Scotch","rating":7.8,"price":75.0,"fair":67.35,"rbeu":0.898,"tier":"B","bbb":"Bar","notes":"\"Atmosphere\" — Joy Division","row":108,"img":"https://images.ctfassets.net/glsfy1cpffmh/PntURbW3rEh02DkkYkYQc/6d2b2405c17f0c7cf7c3312c98a70769/lagavulin-16yo-75cl-usa-gs1-front-grip-digital-render.png?fm=avif&q=60&fit=fill&h=1904&w=1904","rank":33},{"name":"Indri Trini Three Wood","rating":7.6,"price":69.99,"fair":59.78,"rbeu":0.8541,"tier":"B","bbb":"Bottle","notes":"\"Jai Ho\" — A.R. Rahman","row":55,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FIndri_2FIndian_20Whisky_2FIndri_20_27Trini_20-_20The_20Three_20Wood_27_20Indian_20Single_20Malt_20Whisky_2FIndri-Trini---The-Three-Wood-Indian-Single-Malt.png?v=1761190947","rank":34},{"name":"Stillmans' Sonder 10 Year Straight Bourbon Whiskey","rating":7.6,"price":70.0,"fair":59.78,"rbeu":0.854,"tier":"B","bbb":"Bottle","notes":"\"Sex & Candy\" — Marcy Playground","row":94,"img":"https://images.squarespace-cdn.com/content/v1/685d5b6c30fd1a6b6c67504f/d9b57c03-82d6-47bc-8a42-da2d9cab66a3/StillmansSonder_Bourbon_BottleandGlencairn_RickhouseTopView_April2026.jpeg","rank":35},{"name":"Jim Beam Black 7 Year Straight Bourbon","rating":6.0,"price":27.0,"fair":23.03,"rbeu":0.853,"tier":"B","bbb":"Bar","notes":"\"Long Train Runnin'\" — The Doobie Brothers","row":7,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FJim_20Beam_2FBourbon_2FJim_20Beam_20Black_207_20Year_20Old_20Bourbon_20Whiskey_2Fjim-beam-black-7-year-old-kentucky-straight-bourbon-whiskey__20851.172504.png?v=1751536466","rank":36},{"name":"Lochlea Our Barley Single Malt","rating":7.3,"price":60.0,"fair":49.99,"rbeu":0.8332,"tier":"C","bbb":"Bar","notes":"\"Such Great Heights\" — Iron & Wine","row":39,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Lochlea-Our-Barley-Single-Malt-Whisky-Shadow.png?v=1757011054","rank":37},{"name":"Barton 1792 Single Barrel","rating":6.6,"price":40.0,"fair":32.93,"rbeu":0.8234,"tier":"C","bbb":"Bar","notes":"\"Sharp Dressed Man\" — ZZ Top","row":13,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2016111519_1792_single_barrel_kentucky_straight_bourbon_original.png?v=1762944579","rank":38},{"name":"Wyoming Whiskey Small Batch Bourbon","rating":6.4,"price":38.0,"fair":29.23,"rbeu":0.7693,"tier":"C","bbb":"Bar","notes":"\"Take Me Home, Country Roads\" — John Denver","row":12,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2019022115_wyoming_whiskey_small_batch_bourbon_whiskey_shadow_original_0b6c938f-cd81-41b3-a67d-0a3373b0a390.png?v=1764857309","rank":39},{"name":"The Lakes Whiskymaker's Reserve No. 5","rating":8.0,"price":99.99,"fair":75.88,"rbeu":0.7589,"tier":"C","bbb":"Bottle","notes":"\"Nights in White Satin\" — The Moody Blues","row":70,"img":"https://lakesdistillery.com/cdn/shop/files/Lakes_Single_Malt_Whisky-Whiskymakers_Reserve_No5_01.jpg?v=1683194498","rank":40},{"name":"Ohishi 8 Year Ex-Sherry Cask","rating":7.6,"price":79.99,"fair":59.78,"rbeu":0.7473,"tier":"C","bbb":"Bottle","notes":"\"Smooth\" — Santana ft. Rob Thomas","row":64,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2018030610_ohishi_sherry_cask_whisky__original_2829d5b4-caeb-40a9-aa9f-b3d5143a1268.png?v=1761204088","rank":41},{"name":"Old Potrero 6 Year Rye","rating":7.0,"price":59.99,"fair":41.8,"rbeu":0.6968,"tier":"C","bbb":"Bar","notes":"\"Lost\" — Frank Ocean","row":45,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FOld_20Potrero_2FRye_2FOld_20Potrero_206_20Year_20Old_20Straight_20Rye_20Whiskey_2FOld-Potrero_17875_2048x2048_eaa3db6e-4f51-4a4b-8674-33e8e9f68af6.png?v=1757013340","rank":42},{"name":"Milk & Honey Classic Single Malt Whisky","rating":7.0,"price":60.0,"fair":41.8,"rbeu":0.6967,"tier":"C","bbb":"Bar","notes":"\"Jerusalem\" — Matisyahu","row":46,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/202008208_milk_honey_classic_shadow_original.png?v=1761197976","rank":43},{"name":"Michter's Small Batch American Whiskey","rating":6.3,"price":39.99,"fair":27.54,"rbeu":0.6887,"tier":"C","bbb":"Bar","notes":"\"Easy\" — Commodores","row":16,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2018022111_201506238_michters_american_whiskey_original_original_6365eb58-d3cf-456a-98a5-0515ec5d1d87.png?v=1762944373","rank":44},{"name":"Journeyman Distillery Featherbone Bourbon","rating":6.6,"price":48.0,"fair":32.93,"rbeu":0.6861,"tier":"C","bbb":"Bar","notes":"\"Fly Away\" — Lenny Kravitz","row":23,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2016120111_journeyman_featherbone_bourbon_original.png?v=1762944841","rank":45},{"name":"Limvady Single Barrel Irish Whisky","rating":7.0,"price":62.0,"fair":41.8,"rbeu":0.6742,"tier":"C","bbb":"Bar","notes":"\"Danny Boy\" — Traditional","row":50,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FLimavady_20Single_20Barrel_20Irish_20Whiskey_2FWhisk_28e_29y_2FLimavady_20Single_20Barrel_20Single_20Malt_20Whiskey_2FLimavady-Single-Barrel-Single-Malt-W.png?v=1762530824","rank":46},{"name":"Kilchoman Sanaig Single Malt","rating":7.5,"price":84.0,"fair":56.32,"rbeu":0.6705,"tier":"C","bbb":"Bar","notes":"\"When the Levee Breaks\" — Led Zeppelin","row":68,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2016021518_kilchoman_sanaig_original_a9df397d-b37f-42ba-bd24-48a5876f0c23.png?v=1761197552","rank":47},{"name":"Found North Single Barrel Cask Strength Season 4","rating":7.7,"price":95.0,"fair":63.45,"rbeu":0.6679,"tier":"C","bbb":"Bar","notes":"\"She Blinded Me with Science\" — Thomas Dolby","row":96,"img":"https://dewinespot.co/cdn/shop/files/PB_Found-North_Single-Barrel_Cask-Strength_White-BG_2983x2983_79167715-9ea7-4b6b-975c-2808602701a1.jpg?v=1733854673","rank":48},{"name":"Lock, Stock & Barrel Vatted Straight Rye","rating":7.3,"price":74.99,"fair":49.99,"rbeu":0.6666,"tier":"C","bbb":"Bar","notes":"\"Money\" — Pink Floyd","row":62,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Lock-Stock-and-Barrel-21-Year-Old-Straight-Rye-shadow.png?v=1761258033","rank":49},{"name":"Mary Dowling Tequila Barrel Finished Bourbon","rating":7.3,"price":75.0,"fair":49.99,"rbeu":0.6665,"tier":"C","bbb":"Bar","notes":"\"La Llorona\" — Chavela Vargas","row":63,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Mary-Dowling-Tequila-Barrel-Finish-Bourbon-Whiskey-shadow.png?v=1764858029","rank":50},{"name":"Kaiyo Single Cask Mizunara Oak Finish Japanese Whisky","rating":7.6,"price":89.99,"fair":59.78,"rbeu":0.6643,"tier":"C","bbb":"Bottle","notes":"\"Lotus Flower\" — Radiohead","row":102,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2019031911_kaiyo_mizunara_signature_shadow_original_cdb9778a-ae1a-4ca6-becc-805d682ff198.png?v=1762945580","rank":51},{"name":"Compass Box Peat Monster","rating":7.1,"price":75.0,"fair":44.37,"rbeu":0.5916,"tier":"D","bbb":"Bottle","notes":"\"The Chain\" — Fleetwood Mac","row":65,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2021032514_compass_box_the_peat_monster_shadow_original_6ecb019d-35aa-4889-859f-5e6d5dc8e299.png?v=1761131614","rank":52},{"name":"Glengoyne 10 Year Single Malt Scotch","rating":6.4,"price":49.99,"fair":29.23,"rbeu":0.5848,"tier":"D","bbb":"Bar","notes":"\"Caledonia\" — Dougie MacLean","row":33,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2017090411_glengoyne_21_yo_original_489ede2c-69a1-4ca7-b76e-2567afde09bd.png?v=1761131851","rank":53},{"name":"Legent Yamazaki Cask Finished Blended Whiskey","rating":8.7,"price":199.99,"fair":115.17,"rbeu":0.5759,"tier":"D","bbb":"Bottle","notes":"\"Walk This Way\" — Aerosmith & Run-DMC","row":99,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2019030111_legent_bourbon_shadow_original.png?v=1760716589","rank":54},{"name":"Minor Case Rye","rating":6.0,"price":40.0,"fair":23.03,"rbeu":0.5758,"tier":"D","bbb":"Bar","notes":"\"Good Times Bad Times\" — Led Zeppelin","row":17,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2021012015_minor_case_rye_shadow_original_1b37bfca-1289-411f-924f-ccc56bfbf039.png?v=1762944458","rank":55},{"name":"Famous Grouse Smokey Black Blended Scotch","rating":6.3,"price":48.0,"fair":27.54,"rbeu":0.5738,"tier":"D","bbb":"Bar","notes":"\"Smoke on the Water\" — Deep Purple","row":31,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/201902229_the_famous_grouse_smoky_black_shadow_original_c40aa90e-9b0b-4288-a67a-a4be30d6a723.png?v=1761190773","rank":56},{"name":"Ichiro Malt & Grain Japanese Whiskey","rating":7.5,"price":100.0,"fair":56.32,"rbeu":0.5632,"tier":"D","bbb":"Bar","notes":"\"The Joker\" — Steve Miller Band","row":72,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/202008257_ichiros_malt_grain_world_blended_whisky_shadow_original_efa38223-e95f-4566-8f94-805321fc6f1c.png?v=1761190169","rank":57},{"name":"The Presidential Dram 4 Year SB BP","rating":6.3,"price":49.99,"fair":27.54,"rbeu":0.5509,"tier":"D","bbb":"Bar","notes":"\"All Along the Watchtower\" — Jimi Hendrix","row":35,"img":"https://static.wixstatic.com/media/a16401_b37eff98c1ff4afbbfd72a4c29efa991~mv2.png/v1/crop/x_56,y_0,w_501,h_1566/fill/w_128,h_400,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Pres-Dram-Bourbon-56447%20copy.png","rank":58},{"name":"Woodford Reserve Double Oaked","rating":6.3,"price":49.99,"fair":27.54,"rbeu":0.5509,"tier":"D","bbb":"Bar","notes":"\"Rich Girl\" — Hall & Oates","row":37,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2020101111_woodford_reserve_double_oaked_shadow_original.png?v=1778495250","rank":59},{"name":"Redwood Empire Pipe Dream","rating":6.3,"price":49.99,"fair":27.54,"rbeu":0.5509,"tier":"D","bbb":"Bar","notes":"\"California Dreamin'\" — The Mamas & The Papas","row":38,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Redwood-Empire-Pipe-Dream-Bourbon-Whiskey-Shadow.png?v=1762947852","rank":60},{"name":"The Legendary Dark Silkie Irish Whiskey","rating":6.3,"price":50.0,"fair":27.54,"rbeu":0.5508,"tier":"D","bbb":"Bar","notes":"\"The Mist Covered Mountains\" — Traditional","row":36,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2021010611_silkie_dark_irish_whiskey_shadow_original.png?v=1761201930","rank":61},{"name":"Kyro Wood Smoke Rye Whiskey","rating":6.7,"price":64.99,"fair":34.96,"rbeu":0.5379,"tier":"D","bbb":"Bar","notes":"\"Ring of Fire\" — Johnny Cash","row":59,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FKyr_C3_B6_2FRye_2FKyr_C3_B6_20Wood_20Smoke_20Rye_20Whisky_2Fkyro_wood_smoke_20_283_29.png?v=1764252330","rank":62},{"name":"Sagamore Spirit 8 Year Old Rye Whiskey","rating":7.0,"price":80.0,"fair":41.8,"rbeu":0.5225,"tier":"D","bbb":"Bar","notes":"\"Take the Money and Run\" — Steve Miller Band","row":69,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/SagamoreSpirit-ReserveSeries-9-Year-Rye.png?v=1761261094","rank":63},{"name":"Uncle Nearest 1856 Premium Whiskey","rating":6.4,"price":57.0,"fair":29.23,"rbeu":0.5128,"tier":"D","bbb":"Bar","notes":"\"Respect\" — Aretha Franklin","row":51,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Uncle-Nearest-1856-Premium-Whiskey-Shadow_7f659422-1e80-47ae-8e3e-822c2b16f802.png?v=1762944981","rank":64},{"name":"Ironton Rye Malt Whiskey","rating":6.0,"price":45.0,"fair":23.03,"rbeu":0.5118,"tier":"D","bbb":"Bar","notes":"\"Between the Bars\" — Elliott Smith","row":28,"img":"https://images.squarespace-cdn.com/content/v1/62197fd638f3b16d699a03d7/9fe3c8b7-5fd9-46e2-ba7b-8c80a38a5fdc/Colorado-Rye-Whiskey.png","rank":65},{"name":"The Cardrona Growing Wings Single Malt Whiskey","rating":8.0,"price":150.0,"fair":75.88,"rbeu":0.5059,"tier":"D","bbb":"Bar","notes":"\"Wings\" — Macklemore","row":101,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/The-Cardrona-Distillery-_Growing-Wings_-5-Year-Old-Breckenridge.png?v=1757012437","rank":66},{"name":"Rabbit Hole Cavehill","rating":6.3,"price":54.99,"fair":27.54,"rbeu":0.5008,"tier":"D","bbb":"Bar","notes":"\"Transatlanticism\" — Death Cab for Cutie","row":48,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Rabbit-Hole-_Cavehill_-Kentucky-Straight-Bourbon-Whiskey.png?v=1752560313","rank":67},{"name":"Woodinville Bourbon Port Barrel Finish","rating":6.0,"price":50.0,"fair":23.03,"rbeu":0.4606,"tier":"F","bbb":"Bar","notes":"\"Purple Rain\" — Prince","row":43,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2020042015_woodinville_bourbon_port_cask_finished_750ml_90_proof_shadow_original.png?v=1764250108","rank":68},{"name":"Morris Signature Australian Single Malt","rating":6.3,"price":59.99,"fair":27.54,"rbeu":0.4591,"tier":"F","bbb":"Bar","notes":"\"Down Under\" — Men at Work","row":56,"img":"https://www.morrisofrutherglen.com/cdn/shop/files/MorrisWhiskySIGDblGold600x750.png?v=1719794599","rank":69},{"name":"Eifel German Single Malt","rating":6.3,"price":59.99,"fair":27.54,"rbeu":0.4591,"tier":"F","bbb":"Bar","notes":"\"Vienna\" — Ultravox","row":57,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2021-Eifel-8-Year-Old-Single-Malt-Whisky_-Germany.png?v=1757012973","rank":70},{"name":"Barnstormer Barrel Proof Bourbon","rating":6.5,"price":70.0,"fair":31.03,"rbeu":0.4433,"tier":"F","bbb":"Bar","notes":"\"Learning to Fly\" — Tom Petty","row":66,"img":"https://mainstreetliquor.com/cdn/shop/files/barnstormer-distillery-fairchild-hiller-fh-227-whiskey-small-batch-rum-barrel-finish-7673264.png?v=1776378302","rank":71},{"name":"Westland Garryana 9th Edition","rating":7.6,"price":139.99,"fair":59.78,"rbeu":0.427,"tier":"F","bbb":"Bar","notes":"\"Smoke Gets in Your Eyes\" — The Platters","row":82,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Garryana_Ed_9_Front_FY2425.png?v=1769078810","rank":72},{"name":"Garrison Brothers Guadalupe Texas Straight Bourbon","rating":7.6,"price":139.99,"fair":59.78,"rbeu":0.427,"tier":"F","bbb":"Bar","notes":"\"God's Gonna Cut You Down\" — Johnny Cash","row":93,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Garrison-Brothers-Guadalupe-Texas-Straight-Bourbon-Whiskey-shadow.png?v=1761260199","rank":73},{"name":"Hard Truth Kentucky Sweet Mash BW1 Bourbon","rating":6.5,"price":75.0,"fair":31.03,"rbeu":0.4137,"tier":"F","bbb":"Bar","notes":"\"Fast Car\" — Tracy Chapman","row":104,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FHard_20Truth_20Distilling_20Co_2FRye_2FHard_20Truth_20Sweet_20Mash_20Straight_20Rye_20Whiskey_2FHard-Truth-Sweet-Mash-Straight-Rye-Whiskey_2C-Indiana_2C-U.png?v=1764877352","rank":74},{"name":"Rabbit Hole Dareringer","rating":6.6,"price":79.99,"fair":32.93,"rbeu":0.4117,"tier":"F","bbb":"Bar","notes":"\"Be My Baby\" — The Ronettes","row":97,"img":"https://www.rabbitholedistillery.com/cdn/shop/products/dareringer-204807.png?v=1708376543","rank":75},{"name":"Colonel E.H. Taylor Small Batch","rating":6.0,"price":59.99,"fair":23.03,"rbeu":0.3839,"tier":"F","bbb":"Bar","notes":"\"Ripple\" — Grateful Dead","row":106,"img":"https://cms.buffalotracedistillery.com/wp-content/uploads/2025/11/E.H.TAYLOR_SMALL_BATCH_BOTTLE.png","rank":76},{"name":"J. Henry Patton Road Reserve","rating":6.0,"price":60.0,"fair":23.03,"rbeu":0.3838,"tier":"F","bbb":"Bar","notes":"\"Home\" — Edward Sharpe and the Magnetic Zeros","row":109,"img":"https://seelbachs.com/cdn/shop/files/J.Henry_SonsPattonRoadReserveWisconsinStraightBourbonWhiskey.png?v=1759833386","rank":77},{"name":"Hibiki Japanese Harmony","rating":6.7,"price":94.99,"fair":34.96,"rbeu":0.368,"tier":"F","bbb":"Bar","notes":"\"More Than This\" — Roxy Music","row":75,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/201508269_suntory_hibiki_japanese_harmony_original_3617f926-0af4-4115-841b-481dc0f048bf.png?v=1767780515","rank":78},{"name":"Wiscy City Solo Cask 10 Year","rating":6.3,"price":75.0,"fair":27.54,"rbeu":0.3672,"tier":"F","bbb":"Bar","notes":"\"This Land Is Your Land\" — Woody Guthrie","row":107,"img":null,"rank":79},{"name":"Bib & Tucker 6 Year Small Batch Bourbon","rating":5.6,"price":49.99,"fair":18.14,"rbeu":0.363,"tier":"F","bbb":"Bar","notes":"\"Mr. Jones\" — Counting Crows","row":52,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/201804038_15227436276156_original_0cc07fdb-aee6-4b7a-9a82-5be7c19d9911.png?v=1762945697","rank":80},{"name":"Slyrs Classic Single Malt Whiskey","rating":5.6,"price":50.0,"fair":18.14,"rbeu":0.3629,"tier":"F","bbb":"Bar","notes":"\"99 Luftballons\" — Nena","row":53,"img":"https://eu.flaviar.com/cdn/shop/files/2020102111_slyrs_single_malt_whisky_classic_original_642699ba-e315-4fad-a57a-36dae69aae49.png?v=1757011355","rank":81},{"name":"Templeton Rye 6 Year \"The Good Stuff\"","rating":5.0,"price":35.0,"fair":12.69,"rbeu":0.3625,"tier":"F","bbb":"Bar","notes":"\"Piano Man\" — Billy Joel","row":20,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FTempleton_20Rye_2FRye_2FTempleton_206_20Year_20Old_20Rye_20Whiskey_2F2019031911_templeton_6yo_rye_whisky_shadow_original.png?v=1760425443","rank":82},{"name":"Kyro Malt Rye Whiskey","rating":5.6,"price":51.0,"fair":18.14,"rbeu":0.3558,"tier":"F","bbb":"Bar","notes":"\"Dancing Queen\" — ABBA","row":54,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FKyr_C3_B6_2FRye_2FKyr_C3_B6_20Wood_20Smoke_20Rye_20Whisky_2Fkyro_wood_smoke_20_283_29.png?v=1764252330","rank":83},{"name":"Two Stacks \"The First Cut\" Irish Whiskey","rating":5.3,"price":44.0,"fair":15.17,"rbeu":0.3448,"tier":"F","bbb":"Bar","notes":"\"The First Cut Is the Deepest\" — Cat Stevens","row":41,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Two-Stacks-The-First-Cut-Irish-Whiskey.png?v=1767780508","rank":84},{"name":"Courage & Conviction Double Cask Reserve","rating":6.5,"price":90.0,"fair":31.03,"rbeu":0.3448,"tier":"F","bbb":"Bar","notes":"\"Better Man\" — Pearl Jam","row":74,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FCourage_20_26_20Conviction_2FAmerican_20Single_20Malt_2FCourage_20_26_20Conviction_20Double_20Cask_20Reserve_20American_20Single_20Malt_20Whisky_2FCourage.png?v=1778853506","rank":85},{"name":"Deer, Bear, & Moose Single Malt","rating":7.5,"price":171.99,"fair":56.32,"rbeu":0.3275,"tier":"F","bbb":"Bar","notes":"\"Guaranteed\" — Eddie Vedder","row":87,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/01_dbm__isle_of_jura_2011.png?v=1762947997","rank":86},{"name":"Nikka Yoichi 10 Year Single Malt","rating":7.3,"price":153.13,"fair":49.99,"rbeu":0.3265,"tier":"F","bbb":"Bar","notes":"\"Bittersweet Symphony\" — The Verve","row":84,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2017011613_yoichi_single_malt_original_64942487-3b3a-4b61-899b-29f2fc49933b.png?v=1761192149","rank":87},{"name":"Loch Lomond 12 Year","rating":5.5,"price":55.0,"fair":17.09,"rbeu":0.3108,"tier":"F","bbb":"Bar","notes":"\"Ordinary World\" — Duran Duran","row":61,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FLoch_20Lomond_2FSingle_20Malt_20Scotch_2FLoch_20Lomond_2012_20Year_20Old_20Single_20Malt_20Scotch_20Whisky_2F12-Year-Old-Perfectly-Balanced_5000_2.png?v=1757673330","rank":88},{"name":"Orphan Barrel Rhetoric 22 Year Bourbon","rating":7.0,"price":140.0,"fair":41.8,"rbeu":0.2986,"tier":"F","bbb":"Bar","notes":"\"Time After Time\" — Cyndi Lauper","row":83,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/202008257_orphan_barrel_rhetoric_20_year_shadow_original.png?v=1769078728","rank":89},{"name":"Chivas Royal Salute 21 Year Old Scotch Whisky","rating":7.5,"price":199.99,"fair":56.32,"rbeu":0.2816,"tier":"F","bbb":"Bar","notes":"\"We Are the Champions\" — Queen","row":89,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Royal-Salute-x-Harris-Reed-21-Year-Old-Fashion-Edition-Blended-Scotch-Whisky_85_height.png?v=1761189688","rank":90},{"name":"Port Askaig Islay Single Malt Scotch","rating":6.3,"price":100.0,"fair":27.54,"rbeu":0.2754,"tier":"F","bbb":"Bar","notes":"\"Sea of Heartbreak\" — Don Gibson","row":77,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Port-Askaig-Cask-Strength-Single-Malt-Scotch-Whisky.png?v=1762948896","rank":91},{"name":"Calumet Farm 16 Year Bourbon","rating":7.0,"price":159.99,"fair":41.8,"rbeu":0.2613,"tier":"F","bbb":"Bar","notes":"\"Kentucky Rain\" — Elvis Presley","row":86,"img":"https://kegnbottle.com/cdn/shop/products/calumet-farm-16-year-bourbon-whiskey-750-ml-keg-n-bottle-768879.png?v=1741211223","rank":92},{"name":"Jim Beam Winter Reserve","rating":4.0,"price":27.0,"fair":6.99,"rbeu":0.2589,"tier":"F","bbb":"Bust","notes":"\"Comfortably Numb\" — Pink Floyd","row":18,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/jim-beam-bourbon-whiskey-winter-reserve_png.png?v=1762948575","rank":93},{"name":"Jack Daniel's Bonded","rating":4.5,"price":37.0,"fair":9.42,"rbeu":0.2545,"tier":"F","bbb":"Bust","notes":"\"Pretender\" — Foo Fighters","row":40,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Jack-Daniel_s-Triple-Mash-Bottled-in-Bond-Blended-Straight-Whiskey-Shadow.png?v=1757010940","rank":94},{"name":"Windsor Supreme Canadian Whiskey (1973)","rating":4.0,"price":35.0,"fair":6.99,"rbeu":0.1997,"tier":"F","bbb":"Bust","notes":"\"Sugar, Sugar\" — The Archies","row":49,"img":"https://www.oldspiritscompany.com/cdn/shop/products/063-039-1301_O_1024x1024.JPG?v=1458822105","rank":95},{"name":"First West Small Batch Bourbon","rating":5.0,"price":67.0,"fair":12.69,"rbeu":0.1894,"tier":"F","bbb":"Bust","notes":"\"Nowhere Man\" — The Beatles","row":73,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2F15_20STARS_20Bourbon_2FBourbon_2F15_20Stars_20First_20West_20Small_20Batch_20Straight_20Bourbon_20Whiskey_2FFirstW_SmallBatchWHT_08MAY25.png?v=1778582970","rank":96},{"name":"Thomas S. Moore Chardonnay Finish","rating":5.0,"price":80.0,"fair":12.69,"rbeu":0.1586,"tier":"F","bbb":"Bust","notes":"\"Nothing Compares 2 U\" — Sinéad O'Connor","row":78,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Thomas-S.-Moore-Kentucky-Straight-Bourbon-Whiskey-Finished-in-Chardonnay-Casks-shadow.png?v=1762946866","rank":97},{"name":"Kavalan Classic Single Malt Whiskey","rating":5.0,"price":79.99,"fair":12.69,"rbeu":0.1586,"tier":"F","bbb":"Bust","notes":"\"Hot in Herre\" — Nelly","row":100,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/201602059_kavalan_whisky_single_malt_badge_original_9a4c99bd-cd49-4685-bccc-e325daa349fe.png?v=1761192629","rank":98},{"name":"Sir Davis American Whiskey","rating":5.0,"price":85.0,"fair":12.69,"rbeu":0.1493,"tier":"F","bbb":"Bust","notes":"\"Irreplaceable\" — Beyoncé","row":81,"img":"https://bottlebuzz.com/cdn/shop/files/Untitleddesign-2024-12-18T130641.320.png?v=1734556009","rank":99},{"name":"Jimmy Red Straight Bourbon","rating":5.0,"price":86.0,"fair":12.69,"rbeu":0.1475,"tier":"F","bbb":"Bar","notes":"\"Red House\" — Jimi Hendrix","row":80,"img":"https://seelbachs.com/cdn/shop/files/HighWireDistillingJimmyRedClassicBourbon.png?v=1760868130","rank":100},{"name":"Penderyn Madeira Finish Welsh Whisky","rating":4.5,"price":65.0,"fair":9.42,"rbeu":0.1449,"tier":"F","bbb":"Bust","notes":"\"Green Green Grass of Home\" — Tom Jones","row":71,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/202008208_penderyn_madeira_finish_shadow_original_c00a66f3-3bbd-4f1c-bb78-37437baa0084.png?v=1761131568","rank":101},{"name":"Westward Stout Cask","rating":5.0,"price":90.0,"fair":12.69,"rbeu":0.141,"tier":"F","bbb":"Bust","notes":"\"Walk on the Wild Side\" — Lou Reed","row":79,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2021040210_westward_whiskey_oregon_stout_cask_shadow_original_66cf5a67-6da6-4388-bdec-d4b327946e9e.png?v=1765791570","rank":102},{"name":"Hai Seas San Oaks Chinese Whiskey","rating":4.5,"price":74.99,"fair":9.42,"rbeu":0.1256,"tier":"F","bbb":"Bust","notes":"\"Tubthumping\" — Chumbawamba","row":76,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/assets_2FCatalog_2FBottles_2FHai_20Seas_20Distillery_2FWhisk_28e_29y_2FHai_20Seas_20San_20Oaks_20Chinese_20Whiskey_2FSan_Oaks_300x_5B1_5D.png?v=1756893389","rank":103},{"name":"Puni Vina Italian Single Malt","rating":4.6,"price":99.99,"fair":10.0,"rbeu":0.1,"tier":"F","bbb":"Bust","notes":"\"That's Amore\" — Dean Martin","row":85,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/2020081916_puni_vina_italian_malt_whisky_shadow_original_48faab6e-b45f-4b61-9823-a7c01a741867.png?v=1761200668","rank":104},{"name":"Pokeno Origin New Zealand Single Malt","rating":2.0,"price":49.99,"fair":2.12,"rbeu":0.0424,"tier":"F","bbb":"Bust","notes":"\"Hurt\" — Johnny Cash","row":88,"img":"https://cdn.shopify.com/s/files/1/0808/6326/5050/files/Pokeno-Origin-New-Zealand-Single-Malt-Whisky-Shadow_2bdc5fcf-d887-484f-8af4-8de126abba61.png?v=1757010942","rank":105}]};
+
+const NOTES = {
+  "Legent Yamazaki Cask Finished Blended Whiskey":{event:"Finished Bourbons",text:"There's a lot going on with this one. Suntory's Chief Blender Shinji Fukuyo wanted to explore how Kentucky bourbon could evolve through Japanese finishing and blending traditions, called tsukuriwake (\"diversity of making\"). So, he asked Jim Beam Master Distiller Fred Noe to prepare four parallel stocks: French oak wine casks (for eugenol-driven tannin), Spanish oak sherry casks (for oxidative sotolon and dried-fruit aldehydes), ex-Yamazaki single-malt sherry casks (to layer in malt aromatics), and new charred American oak (for a base of bourbon lactones, vanillin, and char-derived guaiacol). After eight years aging in Beam's Kentucky rick houses, Noe shipped these casks to the Yamazaki distillery for additional finishing. Kyoto's humidity accelerated flavor extraction and integration before Fukuyo blended the four distillates into one profile. Bourbons typically don't have this much structure, but then Japanese blends aren't usually this bold. The result is a cross-cultural collaboration standout.",fl:{grain:4,fruit:8,floral:4,sweet:7,spice:6,smoke:3,oak:9,rich:8}},
+  "Shenk's Homestead 2025 Release":{event:"Finished Bourbons",text:"We're breaking all the rules of this category right away. Shenk's Homestead isn't a bourbon; neither is it finished. Michter's Master of Maturation Andrea Wilson wanted the wood-driven complexity that a finishing cask delivers, but from the primary aging process. So, she paired a sour-mash recipe outside bourbon's grain rules and ignored the char requirement. The 2025 release rests in barrels assembled from French oak staves that were air-dried for 24 months and toasted, not charred (toasting preserves vanillin and unlocks eugenol-driven spice without the heavier guaiacol load that flame char produces). She paired these with American oak staves, air-dried for a full 60 months under custom toast-and-char profiles. Michter's keeps the age a secret so they can blend for consistency across annual releases, providing the taste of a finished bourbon without the finish.",fl:{grain:4,fruit:3,floral:2,sweet:8,spice:7,smoke:1,oak:9,rich:6}},
+  "Westward Pinot Noir Cask":{event:"American Whiskey Frontiers",text:"Westward's flagship single malt already tilts Pacific Northwest — regional two-row barley, ale yeast strains borrowed from Portland breweries (which throw a brewer's-yeast ester profile: ethyl acetate, phenethyl alcohol, and bready isoamyl notes you won't find with distilling yeasts), and a fig-and-brown-sugar core that earned the house its reputation. In 2020, Master Blender Miles Munroe decided to go all the way Oregon. Pinot Noir Cask finishes the matured spirit for at least nineteen months in French oak (Quercus petraea) wine casks from celebrated Willamette Valley producers. Q. petraea's tight grain delivers a slow leach of ellagitannins, polyphenols, and Pinot-soaked anthocyanins, gentrifying Westward's freewheeling frontier profile with smoother mouthfeel, tamped sweetness, and the architectural structure of fine wine. The frontier learns manners.",fl:{grain:6,fruit:8,floral:5,sweet:5,spice:3,smoke:2,oak:7,rich:6}},
+  "Redwood Empire Pipe Dream":{event:"American Whiskey Frontiers",text:"Master Distiller Jeff Duckhorn kicked off Redwood Empire's core lineup in 2019 with Pipe Dream as his flagship — a blender's bridge between mature sourced whiskey from MGP in Indiana, Kentucky, and Tennessee and his own young coastal distillate. The mashbill leans on malted barley because Duckhorn likes what it does — Maillard-driven melanoidins and furanones from the kilning that read on the nose as bakery and biscuit rather than corn-syrup sweet. New charred American oak does its usual work pulling vanillin, cis-whiskey-lactones, and caramelized hemicellulose, but Sonoma County's cool, foggy maritime climate slows the wood's grip — so the mid-palate stays smooth while toast and spice ramp on the finish, a Redwood Empire hallmark. Drinks like a classic Kentucky bourbon today. The fun part is what California will say next.",fl:{grain:7,fruit:4,floral:2,sweet:6,spice:6,smoke:5,oak:7,rich:5}},
+  "Westland Garryana 9th Edition":{event:"American Whiskey Frontiers",text:"Westland Master Distiller Tyler Pederson calls it \"tension\" — and the 9th Edition of Garryana is the best realized version of that idea yet. Pederson builds a chocolate-clove-nut axis off five separately kilned malts (each contributing different Maillard loads — melanoidins, furanones, and pyrazines at calibrated intensities), then refuses to let the spirit slide into dessert territory by aging in Quercus garryana rather than the standard Quercus alba. Garry oak is native to the Pacific Northwest, denser-grained than American white oak, and carries higher phenolic and ellagitannin content — so charring penetrates less deeply and the wood pushes smoky guaiacol, dark-spice, and astringent tannin instead of the usual caramel-and-vanilla bourbon vector. For 9, Pederson swapped the PX finish of earlier editions for Oloroso, trading raisined sweetness for oxidative sotolon and roasted-nut depth. More blackstrap and briquettes than caramel. The frontier, kept honest.",fl:{grain:7,fruit:5,floral:2,sweet:4,spice:7,smoke:7,oak:8,rich:8}},
+  "Old Potrero 6 Year Rye":{event:"American Whiskey Frontiers",text:"This rye marches to its own beat. Old Potrero is Hotaling & Co.'s revival of 19th-century American distilling, and longtime master distiller Bruce Joseph runs it 100% malted rye through small copper pot stills, a choice nobody else makes at scale. Malting the rye softens the spice and amps fermentation esters (ethyl hexanoate, isoamyl acetate) for fruit and creaminess; the pot stills keep heavier congeners and lactone-precursor lipids that a column would strip. Six years in new charred American oak under San Francisco's cool maritime fog slow the wood's grip — vanillin and cis-whiskey-lactones develop gently, and the spirit lands closer to a single malt than the sharp Monongahela ryes resurfacing of late. Velvet over spice. With the original SF distillery closing in 2026, every sip is now a frontier artifact.",fl:{grain:8,fruit:5,floral:3,sweet:5,spice:7,smoke:2,oak:5,rich:5}},
+  "Old Forester Single Barrel Barrel Strength":{event:"Full-Proof Bourbons",text:"This bottle is the result of Master Distiller Chris Morris's experiment with barrel character. It uses the standard Brown-Forman mashbill of 72/18/10 and rests in #3 char American white oak, extracting vanillin, guaiacol, and caramelized hemicellulose for a classic bourbon backbone. From there, barrel location drives everything. This Lovescotch.com pick is from Warehouse G, Floor 7 where Brown-Forman is said to have quietly cut the steam heat for roughly six years — an undisclosed cost experiment — eliminating the thermal cycling that normally drives extraction of oak lactones and sweet caramel compounds. Without those heat pulses, rye fermentation congeners (ferulic acid derivatives, higher fusel alcohols) stayed forward in this barrel, pushing spice over sweetness. Its seventh-floor situation added some muscle: top-floor heat accelerated evaporation, concentrating tannins and phenolic density into an assertive 130.2 proof expression.",fl:{grain:4,fruit:2,floral:1,sweet:5,spice:9,smoke:6,oak:7,rich:9}},
+  "Found North Single Barrel Cask Strength Season 4":{event:"Over A Barrel",text:"Canada is known for light blended whiskies. So, when spirits-industry veterans Nick and Zach Taylor established NDP Found North in 2020, the trail they blazed — bolder flavors, single-barrel experimentation — went seriously against tradition. Their Single Barrel series is for true whisky nerds, featuring impressive age statements and precision finishing programs. Each cask is basically its own science experiment: #5697 from Season 4 is a 21-year wheated whisky finished in light (#1) char New American Oak. While that limits the guaiacol and caramelized hemicellulose that gives most whiskies their caramel+vanilla character, this cask was also toasted by burning French Oak staves. This introduces tannic structure and phenolic complexity — think clove and baking spices from the released (iso-)eugenol — that firm up what would otherwise have been a soft, sweet whisky. Throw in a 117.5 proof punch and you'll hardly believe this is Canadian.",fl:{grain:3,fruit:3,floral:2,sweet:4,spice:8,smoke:3,oak:8,rich:9}},
+  "Walleye Run Malted Rye Whiskey":{event:"New Holland Artisan Spirits",text:"Unmalted rye delivers spice and heat; malted rye delivers something richer. Malting activates enzymes within the grain that build baked-bread character, earthy depth, and the dill and caraway notes that sharper, unmalted expressions rarely show. Brad Kamphuis, Production Distiller at New Holland, pushed that further: 51% malted rye alongside 49% malted barley makes Walleye Run a genuine double-malt — one of the rarest mashbill configurations in American whiskey. The result is pastry-like sweetness over sharp caramel, less rye-spice-bomb heat, and a rounder, doughier profile driven by the grain's own sugars and the Maillard reactions they spark during aging. Sweet mash — unacidified, no backset — lets New Holland's brewer's yeast express full ester character and a notably creamy texture. Lower char on long-seasoned staves prevents over-oaking over seven years. Think Old Potrero's sweet-savory nuance — then expect something heartier, bakery-forward, and bright with late dill pickle.",fl:{grain:9,fruit:4,floral:2,sweet:7,spice:6,smoke:2,oak:5,rich:6}},
+  "Indri Trini Three Wood":{event:"World-Wide Whiskies",text:"The village of Indri sits along the Grand Trunk Road, the 2,500-year-old artery that carried trade and culture between Asia and Europe — and Piccadily's Master Blender Surrinder Kumar designed Trini (\"three woods\") as that crossroads in a bottle. He sources six-row barley grown in Rajasthan's hot, arid plains, distills it in Indri's traditional \"onion-head\" copper pot stills, and matures the spirit in ex-bourbon casks under Haryana's punishing heat — driving aggressive vanillin and lactone extraction in a fraction of Scotch timelines. He then finishes the malt in French wine and PX sherry casks, layering polyphenols and oxidized dried-fruit aldehydes on top of the bourbon base. Most Indian whiskies chase scale; Trini chases continents. The finish lingers like a wistful memory.",fl:{grain:6,fruit:7,floral:3,sweet:7,spice:5,smoke:2,oak:8,rich:7}},
+  "The Cardrona Growing Wings Single Malt Whiskey":{event:"World-Wide Whiskies",text:"Ex-farmer Desiree Reed-Whittall took a leap of faith — and a helicopter — to drop a copper pot still into the lost Cardrona Valley, a glacier-cut bowl in New Zealand's Southern Alps with some of the most volatile weather on the South Island. With Scottish whisky scientist Dr. Jim Swan advising on production, she set out to make a single malt that tasted of the place itself. Growing Wings distills 100% New Zealand malted barley and matures it in a mix of ex-bourbon, ex-sherry, and Central Otago Pinot Noir casks through Cardrona's wild diurnal swings — temperature and humidity shifts that can hit twenty degrees in a single day, expanding and contracting the staves like a bellows to accelerate vanillin and lactone extraction and seed oxidative ester complexity. Bottled at no-kidding-around proof. Locals say you don't just taste the whisky — you taste the weather that raised it.",fl:{grain:5,fruit:7,floral:3,sweet:7,spice:4,smoke:3,oak:7,rich:7}},
+  "Kavalan Classic Single Malt Whiskey":{event:"World-Wide Whiskies",text:"Taiwan is a terrible place to make whisky — no tradition, no barley, and a hot, wet climate prone to rot. When King Car Group's Lee Tien-Tsai opened the Kavalan distillery in Yilan in 2006, the whisky world laughed. He brought in Scottish whisky scientist Dr. Jim Swan to design the production approach and Master Blender Ian Chang to run it. Classic distills imported Scottish malted barley and matures it through Yilan's subtropical heat in a mix of ex-bourbon and wine casks — that climate drives 15% annual angel's share (versus Scotland's 2%) and pulls vanillin, lactones, and caramelized hemicellulose sugars from the wood at runaway pace. Chang blends for consistency and bottles young. The joke writes itself: Kavalan's two-year-old debut Classic beat a 15-year Scotch in blind tasting. Tropical maturation isn't a handicap — it's a head start.",fl:{grain:4,fruit:7,floral:3,sweet:8,spice:3,smoke:1,oak:7,rich:6}},
+  "Morris Signature Australian Single Malt":{event:"World-Wide Whiskies",text:"Morris of Rutherglen — Australia's storied fortified-wine house (est. 1859), now also a single-malt distillery — set out to give the category an unmistakably Australian voice: something old, something new. The team distills 100% Australian malted barley and matures it through Rutherglen's brutal summers, then finishes in the estate winery's ancient Muscat and Apera (Australian sherry-style) pipes — some up to 100 years old and saturated with oxidized sugars, fortified-wine residue, fruit esters, and decayed oak lignin (yielding vanillin, syringaldehyde, and dark-fruit aldehydes you'd never pull from fresh wood). A solera-style blending regime then layers vintages into one continuous profile. Most \"world whiskies\" lean novelty; this one leans heritage — a hundred years of wood pulling double duty.",fl:{grain:4,fruit:9,floral:2,sweet:8,spice:3,smoke:2,oak:7,rich:8}},
+  "Brenne French Single Malt":{event:"European Expressions",text:"Founded by former New York City ballerina Allison Parc, Brenne is a whisky that thinks it's a Cognac — and pretty much insists on it. Partnering with an artisan distillery in the Cognac region, Parc built the spirit around a \"seed to spirit\" ethos: 100% organic heirloom barley grown on the estate, fermented with a Cognac yeast strain (which throws far more floral and fruit-forward esters — ethyl hexanoate and isoamyl acetate — than a typical malt yeast), then distilled in traditional copper alembic Charentais stills designed to slow condensation and preserve delicate volatiles. New French Limousin oak (Quercus robur, wide-grained and tannin-rich, contributing eugenol and ellagitannins) provides the base maturation, then XO Cognac casks finish the spirit — layering in rancio and oxidative aldehydes. Most European single malts trace back to Scottish form. Brenne ignores the map and follows the terroir.",fl:{grain:5,fruit:9,floral:8,sweet:5,spice:4,smoke:1,oak:7,rich:5}},
+  "Eifel German Single Malt":{event:"European Expressions",text:"Husband-and-wife team Stephan and Carolin built Eifel Single Malt as a small-batch reflection of German distilling tradition — column-and-pot technique, eight years of patience, and three hundred cases per batch. The spirit goes through two passes: first a vintage column still (which produces a cleaner, higher-proof base distillate), then a copper pot still (which adds slow reflux and extended copper contact for final esterification and sulfur scrubbing). After distillation, it spends four years in Bordeaux American oak casks — staves that picked up red-wine polyphenols and tannins layered on top of bourbon-style vanillin and lactones — and another four years in cream sherry casks, which fold in oxidative sotolon, syringaldehyde, and a sweetened raisin-and-toffee finish. The Eifel uplands' cool continental climate keeps maturation slow and patient. Every bottle is hand-labeled by Carolin. It's not Germany trying to be Scotland — it's Germany being Germany, carefully.",fl:{grain:5,fruit:6,floral:2,sweet:7,spice:4,smoke:2,oak:8,rich:6}},
+  "The Lakes Whiskymaker's Reserve No. 5":{event:"European Expressions",text:"The Lakes' Whisky Maker Dhavall Gandhi — formerly of Macallan — built his Whiskymakers' Reserve series around élevage, the French Cognac concept of slow, hands-on cask management (literally \"breeding\"). Reserve No. 5 isn't matured; it's raised. Gandhi pulls single-malt new make from the Lake District distillery — England's cool, wet, maritime climate keeps angel's share to a trickle and lengthens oxidative ester development — and runs it through a deliberate cycle of Oloroso, Pedro Ximénez, and red wine casks built from both Spanish oak (Quercus robur, tannic and tight-grained, contributing eugenol and ellagitannin) and American oak (Quercus alba, looser-grained, yielding more vanillin and cis-whiskey-lactones). Oloroso layers in oxidative sotolon and dry walnut character, PX adds raisined glycerol and dense furans, and red wine staves contribute color-stabilizing anthocyanins. Most English single malts model on Scotland. Gandhi looked sideways at France instead.",fl:{grain:4,fruit:7,floral:3,sweet:8,spice:4,smoke:2,oak:9,rich:7}},
+  "Puni Vina Italian Single Malt":{event:"European Expressions",text:"Founded by Albrecht Ebensperger in 2010, Puni is Italy's first whisky distillery — tucked into the South Tyrolean village of Glorenza, an Alpine valley where summer heat and winter cold tear at cask staves in cycles you don't find in Speyside. The Vina Series is the Ebenspergers' study in wine-cask maturation, and the Marsala Edition spends its entire five years in Marsala Vergine casks from Sicily (the driest, longest-aged style of that fortified wine, oxidatively matured for years before reaching Puni). Puni's signature triple-grain mashbill — malted barley, rye, and wheat — carries a richer ester and fusel-oil profile than barley alone, and the Marsala wood layers in oxidative sotolon, furfural, and nutty rancio while the Alpine diurnal swings drive aggressive vanillin and tannin extraction. Italy didn't have a whisky tradition. Puni built one — and gave it a Mediterranean accent.",fl:{grain:5,fruit:7,floral:2,sweet:7,spice:4,smoke:2,oak:7,rich:6}},
+  "Hibiki Japanese Harmony":{event:"Japanese Elegance",text:"\"Hibiki\" means \"resonance,\" and Suntory's Chief Blender Shinji Fukuyo built Harmony to live up to the name — a blend designed to be greater than the sum of its parts. He draws on ten different malt and grain whiskies from Yamazaki, Hakushu, and Chita, all aged across five oak types — American white oak, ex-bourbon, Spanish ex-sherry, French Bordeaux wine, and Japanese Mizunara — each contributing a distinct flavor vector: cis-whiskey lactones and vanillin from American oak, oxidative sotolon and dried-fruit aldehydes from sherry, eugenol and tannin from Bordeaux, and Mizunara's signature sandalwood-incense character. Harmony quietly absorbed the 17- and 21-year-old stocks when Suntory pulled those age statements in 2019 amid supply shortages; the older liquid lives on inside this blend. Few Japanese whiskies divide experts more — is the juice worth the squeeze? On a quiet pour, the resonance answers for itself.",fl:{grain:4,fruit:7,floral:6,sweet:7,spice:5,smoke:2,oak:9,rich:7}},
+  "Nikka Yoichi 10 Year Single Malt":{event:"Japanese Elegance",text:"Masataka Taketsuru — the father of Japanese whisky and a Glasgow-trained chemist who apprenticed at Longmorn and Hazelburn — founded Yoichi on Hokkaido in 1934 specifically because its cold, maritime, salt-bitten climate mirrored the Scottish coast he'd just left. He wanted Scotch in spirit, not imitation. Yoichi distills malted barley (some lightly peated) in traditional coal-fired pot stills — direct flame is fierce and uneven, and the resulting Maillard reactions and char-driven heating yield more guaiacol, furfural, and heavy sulfur congeners than steam can produce, giving Yoichi its smoky weight. The new make matures in ex-bourbon and ex-sherry casks through Hokkaido's slow, cool aging, which lengthens oxidative ester development. The 10 Year marks Nikka's first age-stated release in roughly a decade. It could pass for a gentle Islay. Quietly, that's the highest compliment.",fl:{grain:6,fruit:4,floral:2,sweet:4,spice:4,smoke:8,oak:6,rich:6}},
+  "Ohishi 8 Year Ex-Sherry Cask":{event:"Japanese Elegance",text:"Fourth-generation distiller Hiroyuki Ohishi runs his family's Kumamoto operation as both a sake brewer and shochu producer — so when he turned to whisky, he didn't import a Scottish playbook. He kept the Japanese one. Ohishi is koji whisky: a 100% rice mash fermented with Aspergillus luchuensis kawachii (white koji, gentler than the robust black strain), pot-distilled in the shochu tradition, then aged eight years in ex-sherry casks. White koji breaks rice starch into glucose without malt enzymes, and its fermentation throws clean, fruit-forward esters — isoamyl acetate (banana) and ethyl caproate (ripe pear) — that you'd recognize from a refined ginjo sake. The sherry casks then fold in oxidative sotolon, syringaldehyde, and polyphenols, draping the sake-like core in dark-fruit velvet. Most \"Japanese whisky\" still chases a Scotch silhouette. Ohishi chases the country's actual distilling heritage — and lands it gracefully.",fl:{grain:3,fruit:9,floral:4,sweet:7,spice:3,smoke:1,oak:6,rich:7}},
+  "Kaiyo Single Cask Mizunara Oak Finish Japanese Whisky":{event:"Japanese Elegance",text:"Master Blender Jeff Karlovich (formerly Bunnahabhain) built Kaiyo around two unfashionable obsessions: Mizunara oak and the open sea. Kaiyo means \"ocean\" in Japanese, and Karlovich sources blended Japanese malt, finishes each cask in Mizunara (Quercus crispula) hogsheads — twice as thick as standard oak and notorious for its furious angel's share — then sends those casks to sea for up to three months. The wood delivers Mizunara's signature cis-whiskey-lactone load (sandalwood, coconut, temple incense) alongside eugenol and vanillin; the salt-air voyage gently oxidizes the spirit and tightens the ester profile. Karlovich hates working with Mizunara. He says it's the only way to get this combination of delicacy and density. Most Japanese whiskies aim for restraint; Kaiyo lands restraint and depth in the same sip.",fl:{grain:4,fruit:4,floral:7,sweet:6,spice:4,smoke:2,oak:9,rich:7}},
+  "Garrison Brothers Guadalupe Texas Straight Bourbon":{event:"Finished Bourbons",text:"What if you wanted to give Garrison Brothers' sweet/spicy Small Batch a darker edge? Master Distiller Donnis Todd wanted to see what would happen when a heat-hammered Hill Country bourbon met an Old World oxidative finish, so he set his wheated whiskey to rest in tawny port pipes sourced directly from winemakers in Portugal's Douro Valley. The bourbon spent its primary years in new charred American white oak under the punishing Texas sun (extracting lactones, vanillin, and caramelized hemicellulose sugars at twice the Kentucky pace). Later, it drank from the port wood (pulling acetaldehyde, furfural, nutty lactones, and polymerized tannins that round out the mouthfeel). Most port-finished bourbons are sweet and jammy. This one leans nutty and oxidative. That's the Texas heat doing the lifting, while the Douro casks do the polishing.",fl:{grain:4,fruit:6,floral:2,sweet:6,spice:5,smoke:3,oak:7,rich:7}},
+  "Rabbit Hole Dareringer":{event:"Finished Bourbons",text:"Rabbit Hole Founder/Whiskey Maker Kaveh Zamanian named this one for his wife Heather, Dareringer being his tribute to her bold spirit. He wanted a wheated bourbon with the decadent dessert profile that Pedro Ximénez (PX) sherry casks provide, so he poured his signature mashbill into new charred American oak and aged them in Louisville's variable climate. The matured bourbon then rested in PX sherry casks from Andalucía, loading it with raisin and fig density (thanks to lots of residual sugar in the cask, as well as a solera-built reservoir of furans, syringaldehyde, and glycerol). PX is the go-to finish for dessert bourbons, but Zamanian's slug of wheat in the mashbill gives this spirit a simple-syrup experience that feels like it comes from a heart-shaped box of candy.",fl:{grain:3,fruit:9,floral:1,sweet:9,spice:3,smoke:1,oak:6,rich:7}}
+};
+
+// ─── TASTING MAP DEEP LINKS ─────────────────────────────────────────
+const MAP_FILES={
+  "Legent Yamazaki Cask Finished Blended Whiskey":"Legent Yamazaki Cask Finished.html",
+  "Shenk's Homestead 2025 Release":"Shenk's Homestead 2025 Sour Mash.html",
+  "Westward Pinot Noir Cask":"Westward Pinot Noir Cask.html",
+  "Redwood Empire Pipe Dream":"Redwood Empire Pipe Dream Bourbon.html",
+  "Westland Garryana 9th Edition":"Westland Garryana 9th Edition.html",
+  "Old Potrero 6 Year Rye":"Old Potrero 6 Year Rye Whiskey.html",
+  "Old Forester Single Barrel Barrel Strength":"Old Forester Single Barrel Barrel Strength.html",
+  "Found North Single Barrel Cask Strength Season 4":"Found North Single Barrel Cask Strength Season 4.html",
+  "Walleye Run Malted Rye Whiskey":"Walleye Run Malted Rye Whiskey.html",
+  "Indri Trini Three Wood":"Indri Trini Single Malt Whisky.html",
+  "The Cardrona Growing Wings Single Malt Whiskey":"The Cardrona Growing Wings Single Malt Whiskey.html",
+  "Kavalan Classic Single Malt Whiskey":"Kavalan Classic Single Malt Whiskey.html",
+  "Morris Signature Australian Single Malt":"Morris Rutherglen Signature Australian Single Malt.html",
+  "Brenne French Single Malt":"Brenne French Single Malt.html",
+  "Eifel German Single Malt":"Eifel German Single Malt.html",
+  "The Lakes Whiskymaker's Reserve No. 5":"The Lakes Whiskymaker's Reserve No. 5.html",
+  "Puni Vina Italian Single Malt":"Puni Vina Marsala Edition.html",
+  "Hibiki Japanese Harmony":"Hibiki Japanese Harmony.html",
+  "Nikka Yoichi 10 Year Single Malt":"Nikka Single Malt Yoichi.html",
+  "Ohishi 8 Year Ex-Sherry Cask":"Ohishi 8 Year Ex-Sherry Cask.html",
+  "Kaiyo Single Cask Mizunara Oak Finish Japanese Whisky":"Kaiyo Japanese Mizunara Oak.html",
+  "Garrison Brothers Guadalupe Texas Straight Bourbon":"Garrison Brothers Guadalupe.html",
+  "Rabbit Hole Dareringer":"Rabbit Hole Dareringer Sherry Cask.html",
+};
+function tastingMapUrl(name){
+  const f=MAP_FILES[name];
+  return f?'Tasting Maps/'+f:'Tasting Maps/index.html';
+}
+
+// ─── STATE ─────────────────────────────────────────────────────────
+const state={tiers:new Set(),bbbs:new Set(),search:"",sortKey:"rank",sortDir:"asc",notesOnly:false,eventFilter:"All"};
+const TIERS=["S","A","B","C","D","F"],BBB=["Bottle","Bar","Bust"];
+
+// ─── TABS ───────────────────────────────────────────────────────────
+function showTab(t){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>{if(b.textContent.toLowerCase().includes(t.slice(0,3)))b.classList.add('active');});
+  document.getElementById('global-search').value=state.search;
+}
+function onSearch(v){state.search=v;renderCatalog();renderNotes();}
+
+// ─── CATALOG ────────────────────────────────────────────────────────
+function initChips(){
+  const tc=document.getElementById('tier-chips');
+  tc.innerHTML=TIERS.map(t=>`<span class="chip ${state.tiers.has(t)?'on':''}" onclick="toggleTier('${t}')">${t}</span>`).join('');
+  const bc=document.getElementById('bbb-chips');
+  bc.innerHTML=BBB.map(b=>`<span class="chip ${state.bbbs.has(b)?'on':''}" onclick="toggleBBB('${b}')">${b}</span>`).join('');
+}
+function toggleTier(t){state.tiers.has(t)?state.tiers.delete(t):state.tiers.add(t);initChips();renderCatalog();}
+function toggleBBB(b){state.bbbs.has(b)?state.bbbs.delete(b):state.bbbs.add(b);initChips();renderCatalog();}
+function resetFilters(){state.tiers.clear();state.bbbs.clear();state.search="";state.notesOnly=false;state.sortKey="rank";state.sortDir="asc";document.getElementById('global-search').value="";document.getElementById('notes-only').checked=false;initChips();renderCatalog();}
+
+const COLS=[
+  {k:"rank",l:"#",cls:"ctr"},
+  {k:"img",l:"",cls:"ctr",nosort:true},
+  {k:"tier",l:"Tier",cls:"ctr"},
+  {k:"name",l:"Whiskey",cls:""},
+  {k:"rating",l:"t8ke",cls:"num"},
+  {k:"price",l:"Price",cls:"num"},
+  {k:"fair",l:"Fair $",cls:"num"},
+  {k:"rbeu",l:"xRBEU",cls:"num"},
+  {k:"bbb",l:"BBB",cls:"ctr"},
+];
+
+function filtered(){
+  const q=state.search.trim().toLowerCase();
+  return CATALOG.rows.filter(r=>{
+    if(state.tiers.size&&!state.tiers.has(r.tier))return false;
+    if(state.bbbs.size&&!state.bbbs.has(r.bbb))return false;
+    if(state.notesOnly&&!NOTES[r.name])return false;
+    if(q&&!r.name.toLowerCase().includes(q)&&!(r.notes||"").toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+function sorted(rows){
+  const k=state.sortKey,d=state.sortDir==="asc"?1:-1;
+  const tr={S:0,A:1,B:2,C:3,D:4,F:5};
+  return rows.slice().sort((a,b)=>{
+    let av=a[k],bv=b[k];
+    if(k==="tier"){av=tr[av];bv=tr[bv];}
+    if(typeof av==="string")return av.localeCompare(bv)*d;
+    return((av||0)-(bv||0))*d;
+  });
+}
+
+function renderCatalog(){
+  state.notesOnly=document.getElementById('notes-only').checked;
+  const rows=sorted(filtered());
+  // header
+  const head=document.getElementById('cat-head');
+  head.innerHTML=COLS.map(c=>{
+    const isSorted=state.sortKey===c.k;
+    const cls=[c.cls,isSorted?'sorted '+state.sortDir:'',c.nosort?'no-sort':''].filter(Boolean).join(' ');
+    return `<th class="${cls}" ${c.nosort?'':'onclick="sortBy(\''+c.k+'\')"'}>${c.l}</th>`;
+  }).join('');
+  // stats
+  const st=document.getElementById('cat-stats');
+  const avg=rows.reduce((s,r)=>s+r.rbeu,0)/rows.length;
+  st.innerHTML=`<span><strong>${rows.length}</strong> / ${CATALOG.rows.length} shown</span>`+
+    TIERS.map(t=>{const n=rows.filter(r=>r.tier===t).length;return n?`<span>${t}: <strong>${n}</strong></span>`:''}).join('')+
+    `<span>Avg xRBEU: <strong>${(avg||0).toFixed(2)}</strong></span>`;
+  // body
+  const tbody=document.getElementById('cat-body');
+  if(!rows.length){tbody.innerHTML=`<tr><td colspan="${COLS.length}" class="empty">No whiskies match your filters.</td></tr>`;return;}
+  tbody.innerHTML=rows.map(r=>{
+    const hasNote=!!NOTES[r.name];
+    const imgSrc=r.img?(r.img.includes('cdn/shop/')?r.img+'&width=80':r.img):null;
+    return `<tr class="${hasNote?'has-note':''}" onclick="${hasNote?`openNote('${r.name.replace(/'/g,"\\'")}')`:''}" title="${hasNote?'Click to view tasting note':''}">
+      <td class="ctr">${r.rank}</td>
+      <td class="ctr">${imgSrc?`<img class="thumb" src="${imgSrc}" loading="lazy" alt="" onclick="zoomImg(event,'${(r.img.includes('cdn/shop/')?r.img+'&width=600':r.img).replace(/'/g,"\\'")}')">`:`<span class="no-img"></span>`}</td>
+      <td class="ctr"><span class="tier t${r.tier}">${r.tier}</span></td>
+      <td><div class="name-cell">${r.name}${hasNote?'<span class="note-badge">Note</span>':''}</div><div class="song">${r.notes||''}</div></td>
+      <td class="num">${r.rating.toFixed(1)}</td>
+      <td class="num">$${r.price.toFixed(2)}</td>
+      <td class="num">$${r.fair.toFixed(2)}</td>
+      <td class="num"><strong>${r.rbeu.toFixed(2)}</strong></td>
+      <td class="ctr"><span class="bbb b${r.bbb}">${r.bbb}</span></td>
+    </tr>`;
+  }).join('');
+}
+function sortBy(k){
+  if(state.sortKey===k)state.sortDir=state.sortDir==="asc"?"desc":"asc";
+  else{state.sortKey=k;state.sortDir=(k==="name"||k==="tier"||k==="bbb")?"asc":"desc";}
+  renderCatalog();
+}
+
+// ─── FLAVOR WHEEL ───────────────────────────────────────────────────
+const DIMS=["Grain","Fruit","Floral","Sweet","Spice","Smoke","Oak","Rich"];
+function radarSVG(fl){
+  // Fixed coordinate space: 200×200 with data circle at r=52, labels at r=72
+  // Gives enough room for all 8 labels without clipping
+  const N=DIMS.length,cx=100,cy=100,r=52,lr=72;
+  let grid='',axes='',lbls='';
+  for(let g=1;g<=5;g++){
+    const gr=r*g/5;
+    const pts=DIMS.map((_,i)=>{const a=(i/N)*2*Math.PI-Math.PI/2;return`${(cx+gr*Math.cos(a)).toFixed(1)},${(cy+gr*Math.sin(a)).toFixed(1)}`;});
+    grid+=`<polygon points="${pts.join(' ')}" fill="none" stroke="#e5e3dd" stroke-width="${g===5?1.5:1}"/>`;
+  }
+  DIMS.forEach((_,i)=>{const a=(i/N)*2*Math.PI-Math.PI/2;axes+=`<line x1="${cx}" y1="${cy}" x2="${(cx+r*Math.cos(a)).toFixed(1)}" y2="${(cy+r*Math.sin(a)).toFixed(1)}" stroke="#e5e3dd" stroke-width="1"/>`;});
+  const scores=DIMS.map(d=>fl[d.toLowerCase()]||0);
+  const pts=scores.map((s,i)=>{const a=(i/N)*2*Math.PI-Math.PI/2;const sr=r*s/10;return`${(cx+sr*Math.cos(a)).toFixed(1)},${(cy+sr*Math.sin(a)).toFixed(1)}`;});
+  const poly=`<polygon points="${pts.join(' ')}" fill="rgba(107,62,31,0.22)" stroke="#6b3e1f" stroke-width="1.5"/>`;
+  DIMS.forEach((d,i)=>{
+    const a=(i/N)*2*Math.PI-Math.PI/2;
+    const lx=cx+lr*Math.cos(a),ly=cy+lr*Math.sin(a);
+    // Use precise anchor so diagonal labels don't drift: left half=end, right half=start, top/bottom=middle
+    const anch=Math.abs(Math.cos(a))<0.1?"middle":Math.cos(a)<0?"end":"start";
+    lbls+=`<text x="${lx.toFixed(1)}" y="${(ly+3.5).toFixed(1)}" text-anchor="${anch}" font-size="10" fill="#6b6b6b" font-family="-apple-system,sans-serif">${d}</text>`;
+  });
+  // viewBox adds 18px padding on each side for labels that extend outward
+  return`<svg viewBox="-18 -18 236 236" xmlns="http://www.w3.org/2000/svg" style="width:190px;height:190px">${grid}${axes}${poly}${lbls}</svg>`;
+}
+
+// ─── NOTES ──────────────────────────────────────────────────────────
+function getEvents(){
+  const evs=new Set();
+  Object.values(NOTES).forEach(n=>evs.add(n.event));
+  return["All",...Array.from(evs).sort()];
+}
+function initEventChips(){
+  const el=document.getElementById('event-chips');
+  el.innerHTML=getEvents().map(e=>`<span class="chip ${state.eventFilter===e?'on':''}" onclick="setEvent('${e.replace(/'/g,"\\'")}')"><b>${e}</b></span>`).join('');
+}
+function setEvent(e){state.eventFilter=e;initEventChips();renderNotes();}
+
+function renderNotes(){
+  const q=state.search.trim().toLowerCase();
+  const grid=document.getElementById('notes-grid');
+  const entries=Object.entries(NOTES).filter(([name,n])=>{
+    if(state.eventFilter!=="All"&&n.event!==state.eventFilter)return false;
+    if(q&&!name.toLowerCase().includes(q)&&!n.text.toLowerCase().includes(q))return false;
+    return true;
+  });
+  if(!entries.length){grid.innerHTML=`<div class="empty">No tasting notes match.</div>`;return;}
+  grid.innerHTML=entries.map(([name,n])=>{
+    const cat=CATALOG.rows.find(r=>r.name===name);
+    const imgSrc=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+'&width=80':cat.img):null;
+    const tier=cat?.tier||'';
+    const rating=cat?.rating?.toFixed(1)||'';
+    const imgEl=imgSrc?`<img class="note-card-img" src="${imgSrc}" loading="lazy" alt="">`:`<div class="note-card-img-ph"></div>`;
+    const rbeu=cat?.rbeu?.toFixed(2)||'';
+    const price=cat?.price?.toFixed(2)||'';
+    return`<div class="note-card">
+      <div class="note-card-header">
+        ${imgEl}
+        <div class="note-meta">
+          <div class="note-name">${name}</div>
+          <div class="note-tags">
+            ${tier?`<span class="tier t${tier}">${tier}</span>`:''}
+            <span style="font-size:12px;color:var(--muted)">${rbeu?`xRBEU ${rbeu}`:''}${rating?` · t8ke ${rating}`:''}${price?` · $${price}`:''}</span>
+          </div>
+          <div class="note-event">🗓 ${n.event}</div>
+        </div>
+      </div>
+      <div class="note-body">
+        <p class="note-text">${n.text}</p>
+        <div class="wheel-wrap"><a href="${tastingMapUrl(name)}" target="_blank" title="Open full tasting map" style="display:block;cursor:pointer">${radarSVG(n.fl)}</a></div>
+      </div>
+      ${cat?.notes?`<div class="note-footer">🎵 ${cat.notes}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ─── MODAL (catalog row → note) ─────────────────────────────────────
+function openNote(name){
+  const n=NOTES[name];if(!n)return;
+  const cat=CATALOG.rows.find(r=>r.name===name);
+  const imgSrc=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+'&width=200':cat.img):null;
+  document.getElementById('modal-content').innerHTML=`
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px">
+      ${imgSrc?`<img src="${imgSrc}" style="width:60px;height:90px;object-fit:contain;border-radius:4px;flex-shrink:0" alt="">`:``}
+      <div>
+        <h2 style="font-size:18px;margin-bottom:6px">${name}</h2>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${cat?`<span class="tier t${cat.tier}">${cat.tier}</span><span style="font-size:13px;color:var(--muted)">t8ke ${cat.rating.toFixed(1)} · $${cat.price.toFixed(2)} · xRBEU ${cat.rbeu.toFixed(2)}</span>`:''}
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">🗓 ${n.event}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:20px;align-items:flex-start">
+      <p style="font-size:14px;line-height:1.7;flex:1">${n.text}</p>
+      <div><a href="${tastingMapUrl(name)}" target="_blank" title="Open full tasting map" style="display:block">${radarSVG(n.fl)}</a></div>
+    </div>
+    ${cat?.notes?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);font-style:italic">🎵 ${cat.notes}</div>`:''}
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+function zoomImg(e,src){
+  e.stopPropagation();
+  document.getElementById('modal-img-full-img').src=src;
+  document.getElementById('modal-img-full').classList.add('open');
+}
+
+
+// ─── INIT ───────────────────────────────────────────────────────────
+initChips();
+initEventChips();
+renderCatalog();
+renderNotes();
+</script>
+</body>
+</html>
