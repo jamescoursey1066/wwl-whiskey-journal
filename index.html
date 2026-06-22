@@ -239,7 +239,7 @@ const COLS=[
   {k:"img",l:"",cls:"ctr",nosort:true},
   {k:"tier",l:"Tier",cls:"ctr"},
   {k:"name",l:"Whiskey",cls:""},
-  {k:"rating",l:"t8ke",cls:"num"},
+  {k:"rating",l:"Rating",cls:"num"},
   {k:"price",l:"Price",cls:"num"},
   {k:"fair",l:"Fair $",cls:"num"},
   {k:"rbeu",l:"xRBEU",cls:"num"},
@@ -294,7 +294,7 @@ function renderCatalog(){
       <td class="ctr">${imgSrc?`<img class="thumb" src="${imgSrc}" loading="lazy" alt="" onclick="zoomImg(event,'${(r.img.includes('cdn/shop/')?r.img+'&width=600':r.img).replace(/'/g,"\\'")}')">`:`<span class="no-img"></span>`}</td>
       <td class="ctr"><span class="tier t${r.tier}">${r.tier}</span></td>
       <td><div class="name-cell">${r.name}${hasNote?'<span class="note-badge">Note</span>':''}</div><div class="song">${r.notes||''}</div></td>
-      <td class="num">${r.rating.toFixed(1)}</td>
+      <td class="num">${r.rating % 1 === 0 ? r.rating.toFixed(0) : r.rating.toFixed(1)}</td>
       <td class="num">$${r.price.toFixed(2)}</td>
       <td class="num">$${r.fair.toFixed(2)}</td>
       <td class="num"><strong>${r.rbeu.toFixed(2)}</strong></td>
@@ -369,7 +369,7 @@ function renderNotes(){
     const cat=CATALOG.rows.find(r=>r.name===name);
     const imgSrc=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+'&width=80':cat.img):null;
     const tier=cat?.tier||'';
-    const rating=cat?.rating?.toFixed(1)||'';
+    const rating=cat?.rating!=null?(cat.rating%1===0?cat.rating.toFixed(0):cat.rating.toFixed(1)):'';
     const imgEl=imgSrc?`<img class="note-card-img" src="${imgSrc}" loading="lazy" alt="">`:`<div class="note-card-img-ph"></div>`;
     const rbeu=cat?.rbeu?.toFixed(2)||'';
     const price=cat?.price?.toFixed(2)||'';
@@ -380,7 +380,7 @@ function renderNotes(){
           <div class="note-name">${name}</div>
           <div class="note-tags">
             ${tier?`<span class="tier t${tier}">${tier}</span>`:''}
-            <span style="font-size:12px;color:var(--muted)">${rbeu?`xRBEU ${rbeu}`:''}${rating?` · t8ke ${rating}`:''}${price?` · $${price}`:''}</span>
+            <span style="font-size:12px;color:var(--muted)">${rbeu?`xRBEU ${rbeu}`:''}${rating?` · Rating ${rating}`:''}${price?` · $${price}`:''}</span>
           </div>
           <div class="note-event">🗓 ${n.event}</div>
         </div>
@@ -405,7 +405,7 @@ function openNote(name){
       <div>
         <h2 style="font-size:18px;margin-bottom:6px">${name}</h2>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          ${cat?`<span class="tier t${cat.tier}">${cat.tier}</span><span style="font-size:13px;color:var(--muted)">t8ke ${cat.rating.toFixed(1)} · $${cat.price.toFixed(2)} · xRBEU ${cat.rbeu.toFixed(2)}</span>`:''}
+          ${cat?`<span class="tier t${cat.tier}">${cat.tier}</span><span style="font-size:13px;color:var(--muted)">Rating ${cat.rating%1===0?cat.rating.toFixed(0):cat.rating.toFixed(1)} · $${cat.price.toFixed(2)} · xRBEU ${cat.rbeu.toFixed(2)}</span>`:''}
         </div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">🗓 ${n.event}</div>
       </div>
