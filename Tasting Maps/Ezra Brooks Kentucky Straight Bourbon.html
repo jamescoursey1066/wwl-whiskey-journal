@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Ezra Brooks Kentucky Straight Bourbon — Tasting Map</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper:        #F4ECDA;
+    --paper-soft:   #FAF6EC;
+    --paper-deep:   #E8DCC1;
+    --ink:          #1A1410;
+    --ink-soft:     #3D332B;
+    --ink-mute:     #6B5E52;
+    --gold:         #CC9900;
+    --gold-soft:    #E8C76A;
+    --brown:        #996633;
+    --brown-deep:   #5C3A1E;
+    --display:      "Cinzel", "Perpetua Titling MT", Georgia, serif;
+    --serif:        "Cormorant Garamond", "Perpetua", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(204,153,0,0.06), transparent 60%),
+      radial-gradient(ellipse at 50% 100%, rgba(153,102,51,0.05), transparent 60%),
+      var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+  }
+
+  /* Header lockup ------------------------------------------------ */
+  header.lockup {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .eyebrow {
+    font-family: var(--display);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.32em;
+    color: var(--brown);
+    font-size: 14px;
+    margin: 0 0 18px;
+  }
+  .eyebrow span.dot {
+    display: inline-block;
+    width: 4px; height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    vertical-align: middle;
+    margin: -3px 14px 0;
+  }
+  h1.title {
+    font-family: var(--display);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1;
+    margin: 0;
+  }
+  .rule {
+    width: 96px;
+    height: 1px;
+    background: var(--gold);
+    margin: 22px auto 18px;
+    border: 0;
+  }
+  .tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--brown);
+    margin: 0;
+  }
+  .meta {
+    margin-top: 14px;
+    font-family: var(--serif);
+    color: var(--ink-mute);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .meta b { color: var(--ink-soft); font-weight: 600; }
+
+  /* Wheel surface ----------------------------------------------- */
+  .wheel-frame {
+    margin: 32px auto 0;
+    background: var(--paper-soft);
+    border: 1.5px solid var(--gold);
+    box-shadow:
+      0 1px 2px rgba(26,20,16,0.08),
+      0 24px 64px rgba(26,20,16,0.10);
+    padding: 24px;
+    aspect-ratio: 1 / 1;
+    max-width: 1400px;
+    position: relative;
+  }
+  .wheel-frame::before,
+  .wheel-frame::after {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 0.5px solid rgba(153,102,51,0.35);
+    pointer-events: none;
+  }
+  .wheel-frame::after {
+    inset: 14px;
+    border: 0.5px solid rgba(204,153,0,0.30);
+  }
+
+  svg.wheel { display: block; width: 100%; height: auto; }
+
+  /* SVG type styles --------------------------------------------- */
+  .l1-text {
+    font-family: var(--display);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    fill: #FAF6EC;
+    font-size: 28px;
+  }
+  .l2-text {
+    font-family: var(--display);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    fill: var(--brown-deep);
+    font-size: 20px;
+  }
+  .l3-text {
+    font-family: var(--serif);
+    font-weight: 600;
+    fill: var(--ink);
+    font-size: 16px;
+  }
+  .center-line-1 {
+    font-family: var(--display);
+    font-weight: 500;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    fill: var(--brown);
+    font-size: 14px;
+  }
+  .center-line-2 {
+    font-family: var(--display);
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    fill: var(--ink);
+    font-size: 30px;
+  }
+  .center-line-3 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    fill: var(--brown);
+    font-size: 18px;
+  }
+
+  /* Footer / legend --------------------------------------------- */
+  .legend {
+    margin: 32px auto 0;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px 24px;
+  }
+  .legend-row {
+    display: flex; align-items: center;
+    gap: 10px;
+    font-family: var(--serif);
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+  .legend-row b {
+    font-family: var(--display);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-size: 13px;
+  }
+  .swatch {
+    width: 14px; height: 14px; flex: 0 0 14px;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+  .legend-row span.count { color: var(--ink-mute); font-size: 13px; }
+
+  footer.colophon {
+    margin-top: 56px;
+    text-align: center;
+    color: var(--ink-mute);
+    font-family: var(--serif);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+  }
+  footer.colophon b { color: var(--ink-soft); font-weight: 600; }
+
+  /* Highlight states for tasting map -------------------------- */
+  .wedge { transition: filter 180ms cubic-bezier(.4,0,.2,1), opacity 180ms; cursor: default; }
+  /* Dim everything by default; tagged elements get amplified */
+  svg.wheel .wedge:not(.is-tagged) { opacity: 0.18; filter: saturate(0.35); }
+  svg.wheel .l1-text:not(.is-tagged),
+  svg.wheel .l2-text:not(.is-tagged),
+  svg.wheel .l3-text:not(.is-tagged) { opacity: 0.32; }
+  svg.wheel .wedge.is-tagged.l3 { filter: saturate(1.25) brightness(0.95); }
+  svg.wheel .wedge.is-tagged.l1 { filter: saturate(1.05) brightness(1.0); }
+  svg.wheel .l3-text.is-tagged { fill: var(--ink); font-weight: 700; }
+  svg.wheel .l2-text.is-tagged { fill: var(--brown-deep); }
+  svg.wheel .l1-text.is-tagged { fill: #FAF6EC; }
+
+  /* Tasting notes panel --------------------------------------- */
+  .notes {
+    margin: 36px auto 0;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .note-card {
+    background: var(--paper-soft);
+    border: 1px solid var(--gold);
+    padding: 24px 26px 26px;
+    position: relative;
+  }
+  .note-card::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 0.5px solid rgba(153,102,51,0.25);
+    pointer-events: none;
+  }
+  .note-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0 0 10px;
+  }
+  .note-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--paper-soft);
+    letter-spacing: 0;
+    flex: 0 0 28px;
+  }
+  .note-marker.nose   { background: #5C3A1E; }
+  .note-marker.palate { background: #B85A2B; }
+  .note-marker.finish { background: #1A1410; }
+  .note-title {
+    font-family: var(--display);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+    font-size: 18px;
+    margin: 0;
+  }
+  .note-rule { width: 36px; height: 1px; background: var(--gold); border: 0; margin: 4px 0 14px; }
+  .note-body {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.45;
+    margin: 0 0 14px;
+  }
+  .note-tags {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: 6px 6px;
+  }
+  .note-tags li {
+    font-family: var(--display);
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    font-size: 11px;
+    padding: 4px 9px;
+    color: var(--ink-soft);
+    background: var(--paper-deep);
+    border: 0.5px solid var(--brown);
+  }
+  @media (max-width: 900px) {
+    .notes { grid-template-columns: 1fr; }
+  }
+
+  /* Phase legend pinned in header ----------------------------- */
+  .phase-key {
+    display: inline-flex;
+    gap: 22px;
+    margin-top: 18px;
+    align-items: center;
+  }
+  .phase-key span {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--display);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .phase-key i {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Bottle / spec line --------------------------------------- */
+  .spec-line {
+    margin-top: 18px;
+    color: var(--ink-mute);
+    font-family: var(--serif);
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .spec-line b { color: var(--ink-soft); font-weight: 600; }
+
+  @media print {
+    body { background: var(--paper); }
+    .wheel-frame { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <header class="lockup">
+      <p class="eyebrow">Buhloh.buzz <span class="dot"></span> Tasting Map No. 042</p>
+      <h1 class="title">Ezra Brooks Kentucky Straight Bourbon</h1>
+      <hr class="rule" />
+      <p class="tagline">"The Pretender" &mdash; Jackson Browne</p>
+      <p class="spec-line"><b>The Hambletonian</b> &middot; 90 Proof &middot; 12.5 Years &middot; <b>Heritage China Series</b></p>
+      <div class="phase-key">
+        <span><i style="background:#5C3A1E"></i>Nose</span>
+        <span><i style="background:#B85A2B"></i>Palate</span>
+        <span><i style="background:#1A1410"></i>Finish</span>
+      </div>
+    </header>
+
+    <div class="wheel-frame">
+      <svg class="wheel" id="wheel" viewBox="0 0 1600 1600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Whiskey flavor wheel">
+        <!-- generated by JS -->
+      </svg>
+    </div>
+
+    <section class="notes" id="notes">
+      <article class="note-card">
+        <div class="note-head">
+          <span class="note-marker nose">N</span>
+          <h2 class="note-title">Nose</h2>
+        </div>
+        <hr class="note-rule" />
+        <p class="note-body">Roasted corn on the cob with butter, followed by black walnut, varnished antique oak, marzipan, and then vanilla cream. Ends with just a whisper of ethanol.</p>
+        <ul class="note-tags">
+          <li>Corn</li><li>Oily</li><li>Walnut</li><li>Oak</li><li>Almond</li><li>Vanilla</li><li>Creamy</li><li>Overproof</li>
+        </ul>
+      </article>
+      <article class="note-card">
+        <div class="note-head">
+          <span class="note-marker palate">P</span>
+          <h2 class="note-title">Palate</h2>
+        </div>
+        <hr class="note-rule" />
+        <p class="note-body">A long, slow pull of caramel, vanilla, nutmeg, and clove. Structured oak and the start of some lightly drying tannins. Baking spices return on the back palate.</p>
+        <ul class="note-tags">
+          <li>Caramel</li><li>Vanilla</li><li>Nutmeg</li><li>Clove</li><li>Oak</li><li>Astringent</li><li>Cinnamon</li>
+        </ul>
+      </article>
+      <article class="note-card">
+        <div class="note-head">
+          <span class="note-marker finish">F</span>
+          <h2 class="note-title">Finish</h2>
+        </div>
+        <hr class="note-rule" />
+        <p class="note-body">Cinnamon and clove dissolve into caramel, clotted cream, and then a gently Kentucky hug. Low-proof entry into the barrel melds these flavors together in rolling waves.</p>
+        <ul class="note-tags">
+          <li>Cinnamon</li><li>Clove</li><li>Caramel</li><li>Creamy</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer class="colophon">
+      <b>Buhloh.buzz Tasting Map</b> &nbsp;&middot;&nbsp;
+      Notes plotted on the World Whiskey League Flavor Wheel &nbsp;&middot;&nbsp;
+      Tasted 07&middot;02&middot;2026
+    </footer>
+  </main>
+
+<script>
+//============================================================
+// DATA
+//============================================================
+const RAW = [
+  {l1:"Floral",l2:"Blossom",l3:"Rose"},{l1:"Floral",l2:"Blossom",l3:"Lilac"},{l1:"Floral",l2:"Blossom",l3:"Violet"},{l1:"Floral",l2:"Blossom",l3:"Lavender"},{l1:"Floral",l2:"Blossom",l3:"Carnation"},{l1:"Floral",l2:"Blossom",l3:"Geranium"},{l1:"Floral",l2:"Blossom",l3:"Clover"},
+  {l1:"Floral",l2:"Aromatic",l3:"Hop"},{l1:"Floral",l2:"Aromatic",l3:"Perfume"},{l1:"Floral",l2:"Aromatic",l3:"Honeysuckle"},{l1:"Floral",l2:"Aromatic",l3:"Bubble Gum"},
+  {l1:"Fruity",l2:"Stone",l3:"Apricot"},{l1:"Fruity",l2:"Stone",l3:"Plum"},{l1:"Fruity",l2:"Stone",l3:"Peach"},
+  {l1:"Fruity",l2:"Seed",l3:"Apple"},{l1:"Fruity",l2:"Seed",l3:"Pear"},{l1:"Fruity",l2:"Seed",l3:"Quince"},{l1:"Fruity",l2:"Seed",l3:"Berry"},{l1:"Fruity",l2:"Seed",l3:"Black Currant"},{l1:"Fruity",l2:"Seed",l3:"Fig"},{l1:"Fruity",l2:"Seed",l3:"Date"},
+  {l1:"Fruity",l2:"Citrus",l3:"Lemon"},{l1:"Fruity",l2:"Citrus",l3:"Orange"},{l1:"Fruity",l2:"Citrus",l3:"Grapefruit"},
+  {l1:"Fruity",l2:"Tropical",l3:"Kiwi"},{l1:"Fruity",l2:"Tropical",l3:"Pineapple"},{l1:"Fruity",l2:"Tropical",l3:"Coconut"},
+  {l1:"Fruity",l2:"Dried",l3:"Raisin"},{l1:"Fruity",l2:"Dried",l3:"Prune"},
+  {l1:"Cereal",l2:"Grain",l3:"Oat"},{l1:"Cereal",l2:"Grain",l3:"Wheat"},{l1:"Cereal",l2:"Grain",l3:"Barley"},{l1:"Cereal",l2:"Grain",l3:"Rye"},
+  {l1:"Cereal",l2:"Sweet",l3:"Corn"},{l1:"Cereal",l2:"Sweet",l3:"Malt"},{l1:"Cereal",l2:"Sweet",l3:"Bready"},{l1:"Cereal",l2:"Sweet",l3:"Biscuity"},{l1:"Cereal",l2:"Sweet",l3:"Pastry"},
+  {l1:"Veggie",l2:"Green",l3:"Hay"},{l1:"Veggie",l2:"Green",l3:"Grass"},{l1:"Veggie",l2:"Green",l3:"Herbal"},
+  {l1:"Veggie",l2:"Starchy",l3:"Pea"},{l1:"Veggie",l2:"Starchy",l3:"Potato"},
+  {l1:"Veggie",l2:"Earthy",l3:"Soil"},{l1:"Veggie",l2:"Earthy",l3:"Peat"},{l1:"Veggie",l2:"Earthy",l3:"Mushroom"},{l1:"Veggie",l2:"Earthy",l3:"Yeast"},
+  {l1:"Wood",l2:"Hardwood",l3:"Oak"},{l1:"Wood",l2:"Hardwood",l3:"Chestnut"},{l1:"Wood",l2:"Hardwood",l3:"Sandalwood"},{l1:"Wood",l2:"Hardwood",l3:"Sawdust"},
+  {l1:"Wood",l2:"Conifer",l3:"Pine"},{l1:"Wood",l2:"Conifer",l3:"Cedar"},
+  {l1:"Wood",l2:"Burnt",l3:"Smokey"},{l1:"Wood",l2:"Burnt",l3:"Camp Fire"},{l1:"Wood",l2:"Burnt",l3:"Charcoal"},{l1:"Wood",l2:"Burnt",l3:"Match Sticks"},
+  {l1:"Spice",l2:"Rich",l3:"Leather"},{l1:"Spice",l2:"Rich",l3:"Coffee"},{l1:"Spice",l2:"Rich",l3:"Tea"},{l1:"Spice",l2:"Rich",l3:"Tobacco"},
+  {l1:"Spice",l2:"Bright",l3:"Licorice"},{l1:"Spice",l2:"Bright",l3:"Mint"},{l1:"Spice",l2:"Bright",l3:"Clove"},{l1:"Spice",l2:"Bright",l3:"Black Pepper"},{l1:"Spice",l2:"Bright",l3:"Hot Pepper"},{l1:"Spice",l2:"Bright",l3:"Cinnamon"},{l1:"Spice",l2:"Bright",l3:"Nutmeg"},{l1:"Spice",l2:"Bright",l3:"Coriander"},{l1:"Spice",l2:"Bright",l3:"Ginger"},
+  {l1:"Sweet",l2:"Alcohol",l3:"Wine"},{l1:"Sweet",l2:"Alcohol",l3:"Sherry"},{l1:"Sweet",l2:"Alcohol",l3:"Port"},{l1:"Sweet",l2:"Alcohol",l3:"Brandy"},{l1:"Sweet",l2:"Alcohol",l3:"Rum"},
+  {l1:"Sweet",l2:"Soda",l3:"Cream Soda"},{l1:"Sweet",l2:"Soda",l3:"Cola"},
+  {l1:"Sweet",l2:"Syrupy",l3:"Maple Syrup"},{l1:"Sweet",l2:"Syrupy",l3:"Vanilla"},{l1:"Sweet",l2:"Syrupy",l3:"Caramel"},{l1:"Sweet",l2:"Syrupy",l3:"Molasses"},{l1:"Sweet",l2:"Syrupy",l3:"Brown Sugar"},
+  {l1:"Sweet",l2:"Candy",l3:"Chocolate"},{l1:"Sweet",l2:"Candy",l3:"Butterscotch"},{l1:"Sweet",l2:"Candy",l3:"Honey"},{l1:"Sweet",l2:"Candy",l3:"Marshmallow"},{l1:"Sweet",l2:"Candy",l3:"Toffee"},
+  {l1:"Savory",l2:"Meaty",l3:"Fishy"},{l1:"Savory",l2:"Meaty",l3:"Fatty"},{l1:"Savory",l2:"Meaty",l3:"Roast Meat"},{l1:"Savory",l2:"Meaty",l3:"Bacon"},
+  {l1:"Savory",l2:"Nuts",l3:"Almond"},{l1:"Savory",l2:"Nuts",l3:"Peanut"},{l1:"Savory",l2:"Nuts",l3:"Hazelnut"},{l1:"Savory",l2:"Nuts",l3:"Pecan"},{l1:"Savory",l2:"Nuts",l3:"Walnut"},
+  {l1:"Mouthfeel",l2:"Soft",l3:"Waxy"},{l1:"Mouthfeel",l2:"Soft",l3:"Creamy"},{l1:"Mouthfeel",l2:"Soft",l3:"Oily"},{l1:"Mouthfeel",l2:"Soft",l3:"Soapy"},{l1:"Mouthfeel",l2:"Soft",l3:"Musty"},
+  {l1:"Mouthfeel",l2:"Hard",l3:"Clean"},{l1:"Mouthfeel",l2:"Hard",l3:"Medicinal"},{l1:"Mouthfeel",l2:"Hard",l3:"Astringent"},{l1:"Mouthfeel",l2:"Hard",l3:"Overproof"},
+  {l1:"Off",l2:"Organic",l3:"Pickle"},{l1:"Off",l2:"Organic",l3:"Vinegar"},{l1:"Off",l2:"Organic",l3:"Onion"},{l1:"Off",l2:"Organic",l3:"Garlic"},{l1:"Off",l2:"Organic",l3:"Cauliflower"},{l1:"Off",l2:"Organic",l3:"Rotten Egg"},{l1:"Off",l2:"Organic",l3:"Sulfur"},{l1:"Off",l2:"Organic",l3:"Rubber"},
+  {l1:"Off",l2:"Inorganic",l3:"Solvent"},{l1:"Off",l2:"Inorganic",l3:"Fuel"},{l1:"Off",l2:"Inorganic",l3:"Iodine"},{l1:"Off",l2:"Inorganic",l3:"Burnt"},{l1:"Off",l2:"Inorganic",l3:"Metallic"}
+];
+
+// Order = the order families appear, going clockwise from 1 o'clock
+const FAMILY_ORDER = ["Floral","Fruity","Cereal","Veggie","Wood","Spice","Sweet","Savory","Mouthfeel","Off"];
+
+// Graduated palette per family — base hue, with L1=base, L2=mid, L3=light.
+// Hand-tuned earthy whiskey-friendly tones, kept distinct neighbour-to-neighbour.
+const PALETTE = {
+  Floral:    { l1: "#A8456E", l2: "#C77897", l3: "#E8C2D1" },
+  Fruity:    { l1: "#B85A2B", l2: "#D9874E", l3: "#F1C9A6" },
+  Cereal:    { l1: "#C29632", l2: "#D9B45E", l3: "#EFD9A0" },
+  Veggie:    { l1: "#7A8A3A", l2: "#A1AC68", l3: "#D2D6A8" },
+  Wood:      { l1: "#5C3A1E", l2: "#8A684A", l3: "#C2A98E" },
+  Spice:     { l1: "#9C3A2C", l2: "#BD6B5C", l3: "#E2B4A8" },
+  Sweet:     { l1: "#B8722A", l2: "#D29D5A", l3: "#EED2A7" },
+  Savory:    { l1: "#7A2E25", l2: "#9F5C53", l3: "#D2A89F" },
+  Mouthfeel: { l1: "#506876", l2: "#7E94A0", l3: "#BFCCD3" },
+  Off:       { l1: "#5F4B66", l2: "#897790", l3: "#C4B7CB" }
+};
+
+//============================================================
+// GROUP DATA
+//============================================================
+function buildTree() {
+  const fam = new Map();
+  for (const r of RAW) {
+    if (!fam.has(r.l1)) fam.set(r.l1, { name: r.l1, subs: new Map() });
+    const f = fam.get(r.l1);
+    if (!f.subs.has(r.l2)) f.subs.set(r.l2, { name: r.l2, leaves: [] });
+    f.subs.get(r.l2).leaves.push(r.l3);
+  }
+  return FAMILY_ORDER.map(name => {
+    const f = fam.get(name);
+    return { name, subs: [...f.subs.values()] };
+  });
+}
+const TREE = buildTree();
+
+//============================================================
+// GEOMETRY
+//============================================================
+const CX = 800, CY = 800;
+const R_INNER_HOLE = 140;   // center disc edge (smaller now)
+const R_L1_OUT     = 360;   // L1 ring outer
+const R_L2_OUT     = 540;   // L2 ring outer
+const R_L3_OUT     = 780;   // L3 ring outer
+
+// Floral starts at clock-angle 0° (12 o'clock); families fan clockwise from there
+const START_CLOCK = 0;
+
+// clock-angle (0 = 12, increasing CW) → math-angle for SVG rotate(deg) about center
+function clockToRotateDeg(clockAngle) { return clockAngle - 90; }
+function polar(r, clockAngle) {
+  const a = (clockAngle - 90) * Math.PI / 180;
+  return [CX + r * Math.cos(a), CY + r * Math.sin(a)];
+}
+
+// Annular sector path between two clock-angles (a1 < a2)
+function annularSector(rIn, rOut, a1, a2) {
+  const [x1, y1] = polar(rOut, a1);
+  const [x2, y2] = polar(rOut, a2);
+  const [x3, y3] = polar(rIn,  a2);
+  const [x4, y4] = polar(rIn,  a1);
+  const large = (a2 - a1) > 180 ? 1 : 0;
+  return `M ${x1.toFixed(2)} ${y1.toFixed(2)} `
+       + `A ${rOut} ${rOut} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} `
+       + `L ${x3.toFixed(2)} ${y3.toFixed(2)} `
+       + `A ${rIn} ${rIn} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
+}
+
+// Arc path (for textPath). dir=1 left-to-right, dir=-1 right-to-left.
+// Stays at single radius. Used for tangential text.
+function arcPath(r, a1, a2, dir = 1) {
+  if (dir === -1) [a1, a2] = [a2, a1];
+  const [x1, y1] = polar(r, a1);
+  const [x2, y2] = polar(r, a2);
+  const sweep = dir === 1 ? 1 : 0;
+  const large = Math.abs(a2 - a1) > 180 ? 1 : 0;
+  return `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${large} ${sweep} ${x2.toFixed(2)} ${y2.toFixed(2)}`;
+}
+
+//============================================================
+// LAYOUT — assign clockwise arc spans
+//============================================================
+const TOTAL_LEAVES = RAW.length; // 118
+let cursor = START_CLOCK;
+const layout = []; // array of family layouts
+for (const fam of TREE) {
+  const leafCount = fam.subs.reduce((s, sub) => s + sub.leaves.length, 0);
+  const famArc = (leafCount / TOTAL_LEAVES) * 360;
+  const famStart = cursor;
+  const famEnd   = cursor + famArc;
+  const subs = [];
+  let subCursor = famStart;
+  for (const sub of fam.subs) {
+    const subArc = (sub.leaves.length / leafCount) * famArc;
+    const subStart = subCursor;
+    const subEnd   = subCursor + subArc;
+    const leafArc  = subArc / sub.leaves.length;
+    const leaves = sub.leaves.map((name, i) => ({
+      name,
+      start: subStart + i * leafArc,
+      end:   subStart + (i + 1) * leafArc
+    }));
+    subs.push({ name: sub.name, start: subStart, end: subEnd, leaves });
+    subCursor = subEnd;
+  }
+  layout.push({ name: fam.name, start: famStart, end: famEnd, subs, leafCount });
+  cursor = famEnd;
+}
+
+//============================================================
+// RENDER
+//============================================================
+const SVG = document.getElementById('wheel');
+const NS = "http://www.w3.org/2000/svg";
+
+function el(tag, attrs = {}, parent = SVG) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  parent.appendChild(e);
+  return e;
+}
+
+// Shared <defs> for arc paths
+const defs = el('defs');
+let pathCounter = 0;
+function defArc(r, a1, a2, dir = 1) {
+  const id = `arc-${pathCounter++}`;
+  el('path', { id, d: arcPath(r, a1, a2, dir), fill: 'none' }, defs);
+  return id;
+}
+
+// Background: cream disc with subtle outer ring
+el('circle', { cx: CX, cy: CY, r: R_L3_OUT + 8, fill: '#FAF6EC' });
+el('circle', { cx: CX, cy: CY, r: R_L3_OUT + 6, fill: 'none', stroke: '#CC9900', 'stroke-width': 1.2 });
+el('circle', { cx: CX, cy: CY, r: R_L3_OUT + 14, fill: 'none', stroke: '#CC9900', 'stroke-width': 0.6, opacity: 0.5 });
+
+// Build wedges, ring by ring, outer first so labels overlay correctly.
+// Actually paint inner→outer so concentric look is consistent.
+
+const familyGroups = [];
+for (const fam of layout) {
+  const pal = PALETTE[fam.name];
+  const fGroup = el('g', { 'data-family': fam.name });
+  familyGroups.push(fGroup);
+
+  // L1 wedge — full family arc, innermost ring
+  el('path', {
+    class: 'wedge l1',
+    'data-family': fam.name,
+    d: annularSector(R_INNER_HOLE, R_L1_OUT, fam.start, fam.end),
+    fill: pal.l1,
+    stroke: '#FAF6EC',
+    'stroke-width': 1.5,
+    'stroke-linejoin': 'round'
+  }, fGroup);
+
+  // L2 wedges
+  for (const sub of fam.subs) {
+    el('path', {
+      class: 'wedge l2',
+      'data-family': fam.name,
+      d: annularSector(R_L1_OUT, R_L2_OUT, sub.start, sub.end),
+      fill: pal.l2,
+      stroke: '#FAF6EC',
+      'stroke-width': 1.2,
+      'stroke-linejoin': 'round'
+    }, fGroup);
+
+    // L3 wedges
+    for (const leaf of sub.leaves) {
+      el('path', {
+        class: 'wedge l3',
+        'data-family': fam.name,
+        d: annularSector(R_L2_OUT, R_L3_OUT, leaf.start, leaf.end),
+        fill: pal.l3,
+        stroke: '#FAF6EC',
+        'stroke-width': 0.8,
+        'stroke-linejoin': 'round'
+      }, fGroup);
+    }
+  }
+}
+
+// Hairline gold rings between rings
+el('circle', { cx: CX, cy: CY, r: R_L1_OUT, fill: 'none', stroke: '#CC9900', 'stroke-width': 0.7, opacity: 0.55 });
+el('circle', { cx: CX, cy: CY, r: R_L2_OUT, fill: 'none', stroke: '#CC9900', 'stroke-width': 0.7, opacity: 0.55 });
+el('circle', { cx: CX, cy: CY, r: R_L3_OUT, fill: 'none', stroke: '#CC9900', 'stroke-width': 0.9 });
+
+//============================================================
+// LABELS
+//============================================================
+
+// L1 labels — tangential, curved, centered in family arc.
+const R_L1_TEXT = (R_INNER_HOLE + R_L1_OUT) / 2;
+function arcLenAt(r, a1, a2) { return Math.abs(a2 - a1) * Math.PI / 180 * r; }
+for (const fam of layout) {
+  const mid = (fam.start + fam.end) / 2;
+  const lower = mid > 90 && mid < 270;
+  const dir = lower ? -1 : 1;
+  const id = defArc(R_L1_TEXT, fam.start, fam.end, dir);
+  const t = el('text', { class: 'l1-text', 'data-family': fam.name });
+  const tp = document.createElementNS(NS, 'textPath');
+  tp.setAttribute('href', `#${id}`);
+  tp.setAttribute('startOffset', '50%');
+  tp.setAttribute('text-anchor', 'middle');
+  tp.setAttribute('dominant-baseline', 'middle');
+  const maxArc = arcLenAt(R_L1_TEXT, fam.start, fam.end) * 0.82;
+  // Mouthfeel gets hyphenated onto two stacked arcs so it fits.
+  if (fam.name === 'Mouthfeel') {
+    t.remove();
+    const lineGap = 18;
+    const idTop = defArc(R_L1_TEXT + lineGap, fam.start, fam.end, dir);
+    const idBot = defArc(R_L1_TEXT - lineGap, fam.start, fam.end, dir);
+    const top = el('text', { class: 'l1-text', 'data-family': fam.name });
+    const tt = document.createElementNS(NS, 'textPath');
+    tt.setAttribute('href', `#${idTop}`);
+    tt.setAttribute('startOffset', '50%');
+    tt.setAttribute('text-anchor', 'middle');
+    tt.setAttribute('dominant-baseline', 'middle');
+    tt.textContent = 'MOUTH-';
+    top.appendChild(tt);
+    const bot = el('text', { class: 'l1-text', 'data-family': fam.name });
+    const bb = document.createElementNS(NS, 'textPath');
+    bb.setAttribute('href', `#${idBot}`);
+    bb.setAttribute('startOffset', '50%');
+    bb.setAttribute('text-anchor', 'middle');
+    bb.setAttribute('dominant-baseline', 'middle');
+    bb.textContent = 'FEEL';
+    bot.appendChild(bb);
+    continue;
+  }
+  const txt = fam.name.toUpperCase();
+  const naturalEst = txt.length * 22; // rough estimate at 28px display caps
+  if (naturalEst > maxArc) {
+    tp.setAttribute('textLength', maxArc.toFixed(1));
+    tp.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+  }
+  tp.textContent = txt;
+  t.appendChild(tp);
+}
+
+// L2 labels — radial, anchored at midradius, like L3.
+const R_L2_INNER_PAD = R_L1_OUT + 14;
+for (const fam of layout) {
+  for (const sub of fam.subs) {
+    const mid = (sub.start + sub.end) / 2;
+    const flip = mid > 180 && mid < 360; // left half — flip
+    const rotDeg = flip ? clockToRotateDeg(mid) + 180 : clockToRotateDeg(mid);
+    const t = el('text', {
+      class: 'l2-text',
+      'data-family': fam.name,
+      transform: `rotate(${rotDeg.toFixed(2)} ${CX} ${CY})`,
+      'text-anchor': flip ? 'end' : 'start',
+      'dominant-baseline': 'middle',
+      x: flip ? (CX - R_L2_INNER_PAD) : (CX + R_L2_INNER_PAD),
+      y: CY
+    });
+    t.textContent = sub.name.toUpperCase();
+  }
+}
+
+// L3 labels — radial, anchored at midradius. Flip in left half so they don't read upside-down.
+const R_L3_INNER_PAD = R_L2_OUT + 14;
+for (const fam of layout) {
+  for (const sub of fam.subs) {
+    for (const leaf of sub.leaves) {
+      const mid = (leaf.start + leaf.end) / 2;
+      const flip = mid > 180 && mid < 360; // left half (9–12 o'clock) — flip
+      const rotDeg = flip ? clockToRotateDeg(mid) + 180 : clockToRotateDeg(mid);
+      const t = el('text', {
+        class: 'l3-text',
+        'data-family': fam.name,
+        transform: `rotate(${rotDeg.toFixed(2)} ${CX} ${CY})`,
+        'text-anchor': flip ? 'end' : 'start',
+        'dominant-baseline': 'middle',
+        x: flip ? (CX - R_L3_INNER_PAD) : (CX + R_L3_INNER_PAD),
+        y: CY
+      });
+      t.textContent = leaf.name;
+    }
+  }
+}
+
+//============================================================
+// CENTER MEDALLION
+//============================================================
+// Inner disc — small, decorative only (no lettering)
+el('circle', { cx: CX, cy: CY, r: R_INNER_HOLE, fill: '#F4ECDA' });
+el('circle', { cx: CX, cy: CY, r: R_INNER_HOLE - 4, fill: 'none', stroke: '#CC9900', 'stroke-width': 1.2 });
+el('circle', { cx: CX, cy: CY, r: R_INNER_HOLE - 14, fill: 'none', stroke: '#996633', 'stroke-width': 0.5, opacity: 0.5 });
+el('circle', { cx: CX, cy: CY, r: 4, fill: '#CC9900' });
+
+// (legend removed for tasting map view)
+
+//============================================================
+// TASTING-NOTE HIGHLIGHTS — Ezra Brooks Kentucky Straight Bourbon
+//============================================================
+// Map L3 leaf name -> array of phase codes ('N' nose, 'P' palate, 'F' finish)
+const TASTING = {
+  // Nose
+  'Corn':         ['N'],
+  'Oily':         ['N'],
+  'Walnut':       ['N'],
+  'Almond':       ['N'],
+  'Creamy':       ['N','F'],
+  'Overproof':    ['N'],
+  // Nose + Palate
+  'Oak':          ['N','P'],
+  'Vanilla':      ['N','P'],
+  // Palate
+  'Nutmeg':       ['P'],
+  'Astringent':   ['P'],
+  // Palate + Finish
+  'Caramel':      ['P','F'],
+  'Clove':        ['P','F'],
+  'Cinnamon':     ['P','F']
+};
+const PHASE_COLOR = { N: '#5C3A1E', P: '#B85A2B', F: '#1A1410' };
+
+// Find each leaf's geometry and tag wedges + labels
+const wedgesByLeaf = new Map();
+SVG.querySelectorAll('.wedge.l3').forEach(w => {
+  // We need the leaf name; the previous renderer didn't stamp it. Re-walk the layout.
+});
+
+// Re-walk layout to tag everything by leaf/sub/family.
+// We have to re-find DOM nodes; index them by family/iteration order matching render.
+const l3Wedges = [...SVG.querySelectorAll('.wedge.l3')];
+const l3Texts  = [...SVG.querySelectorAll('.l3-text')];
+const l2Wedges = [...SVG.querySelectorAll('.wedge.l2')];
+const l2Texts  = [...SVG.querySelectorAll('.l2-text')];
+const l1Wedges = [...SVG.querySelectorAll('.wedge.l1')];
+const l1Texts  = [...SVG.querySelectorAll('.l1-text')];
+// Note: Mouthfeel split into 2 l1 text nodes; account for that.
+
+let l3i = 0, l2i = 0, l1ti = 0;
+for (const fam of layout) {
+  const famHasTag = fam.subs.some(sub => sub.leaves.some(leaf => TASTING[leaf.name]));
+  if (famHasTag) {
+    l1Wedges[layout.indexOf(fam)].classList.add('is-tagged');
+    if (fam.name === 'Mouthfeel') {
+      // two text nodes for Mouthfeel
+      l1Texts[l1ti++].classList.add('is-tagged');
+      l1Texts[l1ti++].classList.add('is-tagged');
+    } else {
+      l1Texts[l1ti++].classList.add('is-tagged');
+    }
+  } else {
+    if (fam.name === 'Mouthfeel') { l1ti += 2; } else { l1ti += 1; }
+  }
+  for (const sub of fam.subs) {
+    const subHasTag = sub.leaves.some(leaf => TASTING[leaf.name]);
+    if (subHasTag) {
+      l2Wedges[l2i].classList.add('is-tagged');
+      l2Texts[l2i].classList.add('is-tagged');
+    }
+    l2i++;
+    for (const leaf of sub.leaves) {
+      const phases = TASTING[leaf.name];
+      const w = l3Wedges[l3i];
+      const t = l3Texts[l3i];
+      if (phases) {
+        w.classList.add('is-tagged');
+        t.classList.add('is-tagged');
+        // Outline
+        w.setAttribute('stroke', '#1A1410');
+        w.setAttribute('stroke-width', '1.6');
+        // Phase pip(s) at outer edge
+        const mid = (leaf.start + leaf.end) / 2;
+        const baseR = R_L3_OUT + 16;
+        const pipR = 8;
+        const spread = 18;
+        const offsets = phases.length === 1 ? [0]
+                        : phases.length === 2 ? [-spread/2, spread/2]
+                        : [-spread, 0, spread];
+        // Convert offset (px along arc) to angle
+        phases.forEach((p, idx) => {
+          // Use angular offset computed from arc-length offset/baseR
+          const angOff = (offsets[idx] / baseR) * 180 / Math.PI;
+          const ang = mid + angOff;
+          const [px, py] = polar(baseR, ang);
+          el('circle', {
+            cx: px.toFixed(2), cy: py.toFixed(2), r: pipR,
+            fill: PHASE_COLOR[p],
+            stroke: '#FAF6EC',
+            'stroke-width': 1.5,
+            class: 'phase-pip is-tagged'
+          });
+          el('text', {
+            x: px.toFixed(2), y: py.toFixed(2),
+            'text-anchor': 'middle',
+            'dominant-baseline': 'central',
+            'font-family': 'Cinzel, serif',
+            'font-weight': 700,
+            'font-size': 11,
+            fill: '#FAF6EC',
+            class: 'phase-pip-label is-tagged',
+            'pointer-events': 'none'
+          }).textContent = p;
+        });
+      }
+      l3i++;
+    }
+  }
+}
+</script>
+</body>
+</html>
