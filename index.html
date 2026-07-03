@@ -246,8 +246,10 @@ const COLS=[
   {k:"name",l:"Whiskey",cls:""},
   {k:"rating",l:"Rating",cls:"num"},
   {k:"price",l:"Price",cls:"num"},
-  {k:"fair",l:"Fair $",cls:"num"},
   {k:"rbeu",l:"xRBEU",cls:"num"},
+  {k:"fair",l:"Fair $",cls:"num"},
+  {k:"proof",l:"Proof",cls:"num"},
+  {k:"ppp",l:"$/Proof",cls:"num"},
   {k:"bbb",l:"BBB",cls:"ctr"},
 ];
 
@@ -301,8 +303,10 @@ function renderCatalog(){
       <td><div class="name-cell">${r.name}${hasNote?'<span class="note-badge">Note</span>':''}</div><div class="song">${r.notes||''}</div></td>
       <td class="num">${r.rating % 1 === 0 ? r.rating.toFixed(0) : r.rating.toFixed(1)}</td>
       <td class="num">$${r.price.toFixed(2)}</td>
-      <td class="num">$${r.fair.toFixed(2)}</td>
       <td class="num"><strong>${r.rbeu.toFixed(2)}</strong></td>
+      <td class="num">$${r.fair.toFixed(2)}</td>
+      <td class="num">${r.proof==null?'&mdash;':Math.round(r.proof*10)/10}</td>
+      <td class="num">${r.ppp==null?'&mdash;':'$'+r.ppp.toFixed(2)}</td>
       <td class="ctr"><span class="bbb b${r.bbb}">${r.bbb}</span></td>
     </tr>`;
   }).join('');
