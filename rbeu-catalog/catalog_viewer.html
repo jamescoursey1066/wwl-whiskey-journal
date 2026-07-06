@@ -58,6 +58,9 @@
   .bbb-Bust { background: #f9d4d4; color: #7c1e1e; }
   .name { font-weight: 500; }
   .name .notes { color: var(--muted); font-size: 11px; font-style: italic; margin-top: 2px; }
+  @keyframes rowflash { 0% { background: #fff3cf; } 100% { background: transparent; } }
+  tr.row-highlight { animation: rowflash 2.6s ease-out; }
+  tr.row-highlight td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
   .empty { padding: 32px; text-align: center; color: var(--muted); }
   footer { padding: 16px 24px; color: var(--muted); font-size: 11px; text-align: center;
     border-top: 1px solid var(--line); }
@@ -72,9 +75,20 @@
     border-radius: 6px; box-shadow: 0 8px 40px rgba(0,0,0,0.5); cursor: default; }
   #modal-close { position: absolute; top: 14px; right: 22px; color: white; font-size: 30px;
     cursor: pointer; line-height: 1; background: none; border: none; padding: 0; }
+  .apptabs { display: flex; gap: 4px; padding: 8px 24px 0; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .apptab { font-size: 13px; font-weight: 600; padding: 8px 16px; border: 1px solid var(--line); border-bottom: none; border-radius: 8px 8px 0 0; background: var(--bg); color: var(--muted); cursor: pointer; }
+  .apptab.on { background: var(--panel); color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
+  .tabview { display: none; }
+  .tabview.on { display: block; }
+  #fp-frame { width: 100%; height: calc(100vh - 46px); min-height: 640px; border: none; background: var(--bg); display: block; }
 </style>
 </head>
 <body>
+<div class="apptabs">
+  <div class="apptab on" data-tab="catalog">Catalog</div>
+  <div class="apptab" data-tab="fingerprint">Fingerprint</div>
+</div>
+<div class="tabview on" id="view-catalog">
 <header>
   <h1>xRBEU Catalog</h1>
   <div class="subtitle" id="anchor-info">Loading…</div>
@@ -94,6 +108,8 @@
   <tbody id="tbody"></tbody>
 </table>
 <footer>Generated from xRBEU Catalog.xlsx — re-run <code>generate_catalog_viewer.py</code> after editing.</footer>
+</div>
+<div class="tabview" id="view-fingerprint"><iframe id="fp-frame" title="Whiskey Affinity Fingerprint"></iframe></div>
 <div id="modal">
   <button id="modal-close" onclick="document.getElementById('modal').style.display='none'">&#x2715;</button>
   <img id="modal-img" src="" alt="" onclick="event.stopPropagation()">
@@ -192,9 +208,17 @@ function renderTable(visible) {
   if (visible.length === 0) {
     tbody.innerHTML = '<tr><td colspan="' + (COLUMNS.length+1) + '" class="empty">No whiskeys match your filters.</td></tr>'; return; }
   tbody.innerHTML = visible.map(function(r) {
-    return '<tr><td class="img-td">' + imgCell(r) + '</td>' +
+    return '<tr id="exp-' + slug(r.name) + '"><td class="img-td">' + imgCell(r) + '</td>' +
       COLUMNS.map(function(c) {
         return '<td class="' + (c.cls||"") + '">' + c.fmt(r[c.key],r) + '</td>'; }).join("") + '</tr>'; }).join(""); }
+function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+function focusHash() {
+  var h = decodeURIComponent(location.hash || ''); if (h.indexOf('#exp-') !== 0) return;
+  var el = document.getElementById(h.slice(1));
+  if (!el) { state.search=''; state.tiers.clear(); state.bbbs.clear(); persist(); render();
+    el = document.getElementById(h.slice(1)); }
+  if (el) { el.scrollIntoView({behavior:'smooth', block:'center'});
+    el.classList.remove('row-highlight'); void el.offsetWidth; el.classList.add('row-highlight'); } }
 function render() { renderHeader(); renderChips(); const visible=sortedRows(filtered()); renderStats(visible); renderTable(visible); }
 document.getElementById("tbody").addEventListener("click", function(e) {
   const img = e.target.closest(".thumb"); if (!img) return;
@@ -213,6 +237,19 @@ document.getElementById("anchor-info").textContent =
   "Top R" + DATA.anchors.top_rating + " = $" + DATA.anchors.top_price.toFixed(2) + " · " +
   "k = " + DATA.anchors.k;
 render();
+window.addEventListener('hashchange', focusHash);
+focusHash();
+(function(){
+  var frameLoaded=false;
+  function activate(tab){
+    document.querySelectorAll('.apptab').forEach(function(t){ t.classList.toggle('on', t.dataset.tab===tab); });
+    document.getElementById('view-catalog').classList.toggle('on', tab==='catalog');
+    document.getElementById('view-fingerprint').classList.toggle('on', tab==='fingerprint');
+    if(tab==='fingerprint' && !frameLoaded){ document.getElementById('fp-frame').src='affinity_fingerprint.html'; frameLoaded=true; }
+  }
+  document.querySelectorAll('.apptab').forEach(function(t){ t.addEventListener('click', function(){ var tb=t.dataset.tab; activate(tb); history.replaceState(null,'', tb==='fingerprint' ? '#fingerprint' : location.pathname); }); });
+  activate((location.hash||'')==='#fingerprint' ? 'fingerprint' : 'catalog');
+})();
 </script>
 </body>
 </html>
