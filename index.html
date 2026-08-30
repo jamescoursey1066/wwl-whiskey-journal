@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -72,6 +72,8 @@ tbody tr.has-note td:first-child{border-left:3px solid var(--amber);}
 .note-name{font-weight:600;font-size:14px;line-height:1.2;margin-bottom:4px;}
 .note-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;}
 .note-event{font-size:11px;color:var(--muted);font-style:italic;}
+.note-producer{font-size:11px;color:var(--muted);}
+.notes-select{padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:inherit;font-size:13px;cursor:pointer;max-width:260px;}
 .note-body{padding:12px 14px;overflow:hidden;}
 .note-text{font-size:13px;line-height:1.6;color:#2a2a2a;}
 .wheel-wrap{float:right;margin:0 0 8px 14px;}
@@ -131,8 +133,11 @@ tbody tr.has-note td:first-child{border-left:3px solid var(--amber);}
 <!-- NOTES -->
 <div id="tab-notes" class="section">
   <div class="notes-toolbar">
-    <span class="chip-label">Event</span>
-    <div class="chip-group" id="event-chips"></div>
+    <span class="chip-label">WWL Sanctioned Events</span>
+    <select id="event-select" class="notes-select" onchange="setEvent(this.value)"></select>
+    <span class="chip-label" style="margin-left:8px">Producers</span>
+    <select id="producer-select" class="notes-select" onchange="setProducer(this.value)"></select>
+    <button class="reset-btn" onclick="resetNoteFilters()" style="margin-left:auto">Reset</button>
   </div>
   <div class="notes-grid" id="notes-grid"></div>
 </div>
@@ -329,7 +334,7 @@ function tastingMapUrl(name){
 }
 
 // ─── STATE ─────────────────────────────────────────────────────────
-const state={tiers:new Set(),bbbs:new Set(),search:"",sortKey:"rank",sortDir:"asc",notesOnly:false,eventFilter:"All"};
+const state={tiers:new Set(),bbbs:new Set(),search:"",sortKey:"rank",sortDir:"asc",notesOnly:false,eventFilter:"All",producerFilter:"All"};
 const TIERS=["S","A","B","C","D","E","F"],BBB=["Bottle","Bar","Bust"];
 
 // ─── TABS ───────────────────────────────────────────────────────────
@@ -460,50 +465,121 @@ function radarSVG(fl){
 }
 
 // ─── NOTES ──────────────────────────────────────────────────────────
-const WWL_EVENTS=new Set([
-  "American Whiskey Frontiers",
-  "European Expressions",
-  "Finished Bourbons",
-  "Full-Proof Bourbons",
-  "Japanese Elegance",
-  "Over A Barrel",
-  "Whiskey Cryptids",
-  "World-Wide Whiskies",
-  "Frank August",
-  "Jackson Purchase Distillery",
-  "Michter\u0027s Distillery",
-  "Willett Distillery",
-  "Preservation Distillery",
-  "Castle \u0026 Key",
-  "Wild Turkey",
-  "New Riff Distilling",
-  "Old Forester",
-  "Woodford Reserve",
-  "Rabbit Hole Distillery",
-  "Heaven\u0027s Door",
-  "Pursuit Spirits",
-  "Kentucky Peerless Distilling Co.",
-  "Heaven Hill",
-  "Buffalo Trace Distillery",
-  "Central Waters",
-  "Still Austin Whiskey Co.",
-]);
+const SANCTIONED_EVENTS=new Set(["American Whiskey Frontiers","European Expressions","Finished Bourbons","Full-Proof Bourbons","Japanese Elegance","Over A Barrel","Whiskey Cryptids","World-Wide Whiskies"]);
+const PRODUCER_MAP={
+    "Legent Yamazaki Cask Finished Blended Whiskey":  "Legent",
+    "Shenk\u0027s Homestead 2025 Release":  "Michter\u0027s Distillery",
+    "Westward Pinot Noir Cask":  "Westward Whiskey",
+    "Redwood Empire Pipe Dream":  "Redwood Empire",
+    "Westland Garryana 9th Edition":  "Westland Distillery",
+    "Old Potrero 6 Year Rye":  "Hotaling & Co./Anchor",
+    "Old Forester Single Barrel Barrel Strength":  "Old Forester",
+    "Found North Single Barrel Cask Strength Season 4":  "Found North",
+    "Walleye Run Malted Rye Whiskey":  "New Holland Artisan Spirits",
+    "Indri Trini Three Wood":  "Indri",
+    "The Cardrona Growing Wings Single Malt Whiskey":  "Cardrona Distillery",
+    "Kavalan Classic Single Malt Whiskey":  "Kavalan",
+    "Morris Signature Australian Single Malt":  "Morris Whisky",
+    "Brenne French Single Malt":  "Brenne",
+    "Eifel German Single Malt":  "Eifel Whisky",
+    "The Lakes Whiskymaker’s Reserve No. 5":  "The Lakes Distillery",
+    "Puni Vina Italian Single Malt":  "Puni",
+    "Hibiki Japanese Harmony":  "Suntory",
+    "Nikka Yoichi 10 Year Single Malt":  "Nikka",
+    "Ohishi 8 Year Ex‑Sherry Cask":  "Ohishi Distillery",
+    "Kaiyo Single Cask Mizunara Oak Finish Japanese Whisky":  "Kaiyo",
+    "Garrison Brothers Guadalupe Straight Texas Bourbon":  "Garrison Brothers",
+    "J. Henry \u0026 Sons Patton Road Reserve":  "J. Henry \u0026 Sons",
+    "Gran Maizal Corn Whisky":  "Destilería La Víbora",
+    "Rabbit Hole Dareringer":  "Rabbit Hole Distillery",
+    "Ezra Brooks Kentucky Straight Bourbon":  "Lux Row Distillers",
+    "Tamworth Eau de Musc":  "Tamworth Distilling",
+    "Frank August Small Batch Bourbon":  "Frank August",
+    "Jackson Purchase Batch No. 1 - Full Proof":  "Jackson Purchase Distillery",
+    "Michter\u0027s Sour Mash Whiskey":  "Michter\u0027s Distillery",
+    "Old Bardstown Bottled in Bond Bourbon":  "Willett Distillery",
+    "Rare Perfection 15 Year Cask Strength":  "Preservation Distillery",
+    "Michter\u0027s Single Barrel Rye":  "Michter\u0027s Distillery",
+    "Pinhook Cask Strength Bourbon":  "Castle \u0026 Key",
+    "Russell\u0027s Reserve 10 Year Old Bourbon":  "Wild Turkey",
+    "New Riff Six-Year-Old Single Barrel Bourbon":  "New Riff Distilling",
+    "Michter\u0027s Single Barrel Bourbon":  "Michter\u0027s Distillery",
+    "Russell\u0027s Reserve Single Barrel Bourbon":  "Wild Turkey",
+    "Pure Kentucky Bourbon":  "Willett Distillery",
+    "Old Forester 1924 10-Year-Old Whiskey":  "Old Forester",
+    "Russell\u0027s Reserve Single Barrel Rye":  "Wild Turkey",
+    "Woodford Reserve Distillery Series, Cabernet Finish":  "Woodford Reserve",
+    "Russell\u0027s Reserve 13 Year Old Bourbon":  "Wild Turkey",
+    "Pinhook Flagship Rye":  "Castle \u0026 Key",
+    "Willett Family Estate 4 Year Small Batch Rye":  "Willett Distillery",
+    "Pinhook Straight Rye Whiskey":  "Castle \u0026 Key",
+    "Michter\u0027s Straight Rye Whiskey":  "Michter\u0027s Distillery",
+    "Johnny Drum Private Stock":  "Willett Distillery",
+    "Rabbit Hole Boxergrail":  "Rabbit Hole Distillery",
+    "Heaven\u0027s Door Revival Tennessee Straight Bourbon Whiskey":  "Heaven\u0027s Door",
+    "Pursuit Triple Mash 108 Rye":  "Pursuit Spirits",
+    "Pursuit Triple Mash 108 Bourbon":  "Pursuit Spirits",
+    "Willett Family Estate 4 Year Small Batch Bourbon":  "Willett Distillery",
+    "Peerless Small Batch Straight Rye Whiskey":  "Kentucky Peerless Distilling Co.",
+    "Heaven\u0027s Door Refuge Straight Rye Whiskey":  "Heaven\u0027s Door",
+    "Pursuit Sherry 108":  "Pursuit Spirits",
+    "Woodford Reserve Bourbon":  "Woodford Reserve",
+    "Noah\u0027s Mill":  "Willett Distillery",
+    "Michter\u0027s Toasted Barrel Finish Kentucky Sour Mash Whiskey":  "Michter\u0027s Distillery",
+    "Heaven\u0027s Door Ascension Kentucky Straight Bourbon":  "Heaven\u0027s Door",
+    "Woodford Reserve 12-Year American Single Malt":  "Woodford Reserve",
+    "Very Old St. Nick Harvest Rye Cask Strength":  "Preservation Distillery",
+    "Mellow Corn":  "Heaven Hill",
+    "Willett Pot Still Reserve Kentucky Bourbon":  "Willett Distillery",
+    "Weller 107":  "Buffalo Trace Distillery",
+    "Pursuit Double Oaked Rye":  "Pursuit Spirits",
+    "Wattie Boone 250th Anniversary":  "Preservation Distillery",
+    "Weller Full Proof":  "Buffalo Trace Distillery",
+    "Very Old St. Nick Immaculata Bourbon 2022":  "Preservation Distillery",
+    "Pursuit Barrel Proof Bourbon":  "Pursuit Spirits",
+    "Pursuit Double Oaked":  "Pursuit Spirits",
+    "Woodford Reserve Batch Proof":  "Woodford Reserve",
+    "Very Old St. Nick Immaculata Bourbon 2026":  "Preservation Distillery",
+    "Old Man Winter Cask Strength":  "Preservation Distillery",
+    "Pursuit Barrel Proof Rye":  "Pursuit Spirits",
+    "Pursuit Honey Hog":  "Pursuit Spirits",
+    "Woodford Reserve Baccarat Edition":  "Woodford Reserve",
+    "Michter\u0027s 10-Year Single Barrel Rye":  "Michter\u0027s Distillery",
+    "Central Waters 8-Year Bourbon":  "Central Waters",
+    "Still Austin The Musician Straight Bourbon Whiskey":  "Still Austin Whiskey Co."
+};
+// Sanctioned event for a note (only thematic events count; producer tags don't).
+function noteEvent(n){return SANCTIONED_EVENTS.has(n.event)?n.event:null;}
+// Producer for a note: derived map first, else fall back to its original (non-event) tag.
+function noteProducer(name,n){return PRODUCER_MAP[name]||(SANCTIONED_EVENTS.has(n.event)?null:n.event)||null;}
+
 function getEvents(){
   const evs=new Set();
-  Object.values(NOTES).forEach(n=>{if(WWL_EVENTS.has(n.event))evs.add(n.event);});
+  Object.values(NOTES).forEach(n=>{const e=noteEvent(n);if(e)evs.add(e);});
   return["All",...Array.from(evs).sort()];
 }
-function initEventChips(){
-  const el=document.getElementById('event-chips');
-  el.innerHTML=getEvents().map(e=>`<span class="chip ${state.eventFilter===e?'on':''}" onclick="setEvent('${e.replace(/'/g,"\\'")}')"><b>${e}</b></span>`).join('');
+function getProducers(){
+  const ps=new Set();
+  Object.entries(NOTES).forEach(([name,n])=>{const p=noteProducer(name,n);if(p)ps.add(p);});
+  return["All",...Array.from(ps).sort((a,b)=>a.localeCompare(b))];
 }
-function setEvent(e){state.eventFilter=e;initEventChips();renderNotes();}
+function fillSelect(el,options,current){
+  el.innerHTML=options.map(o=>`<option value="${o.replace(/"/g,'&quot;')}"${o===current?' selected':''}>${o}</option>`).join('');
+}
+function initEventChips(){
+  fillSelect(document.getElementById('event-select'),getEvents(),state.eventFilter);
+  fillSelect(document.getElementById('producer-select'),getProducers(),state.producerFilter);
+}
+function setEvent(e){state.eventFilter=e;renderNotes();}
+function setProducer(p){state.producerFilter=p;renderNotes();}
+function resetNoteFilters(){state.eventFilter="All";state.producerFilter="All";initEventChips();renderNotes();}
 
 function renderNotes(){
   const q=state.search.trim().toLowerCase();
   const grid=document.getElementById('notes-grid');
   const entries=Object.entries(NOTES).filter(([name,n])=>{
-    if(state.eventFilter!=="All"&&n.event!==state.eventFilter)return false;
+    if(state.eventFilter!=="All"&&noteEvent(n)!==state.eventFilter)return false;
+    if(state.producerFilter!=="All"&&noteProducer(name,n)!==state.producerFilter)return false;
     if(q&&!name.toLowerCase().includes(q)&&!n.text.toLowerCase().includes(q))return false;
     return true;
   });
@@ -525,7 +601,8 @@ function renderNotes(){
             ${tier?`<span class="tier t${tier}">${tier}</span>`:''}
             <span style="font-size:12px;color:var(--muted)">${rbeu?`xRBEU ${rbeu}`:''}${rating?` · Rating ${rating}`:''}${price?` · $${price}`:''}</span>
           </div>
-          <div class="note-event">🗓 ${n.event}</div>
+          ${noteProducer(name,n)?`<div class="note-producer">🏛 ${noteProducer(name,n)}</div>`:''}
+          ${noteEvent(n)?`<div class="note-event">🗓 ${noteEvent(n)}</div>`:''}
         </div>
       </div>
       <div class="note-body">
@@ -550,7 +627,7 @@ function openNote(name){
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           ${cat?`<span class="tier t${cat.tier}">${cat.tier}</span><span style="font-size:13px;color:var(--muted)">Rating ${cat.rating%1===0?cat.rating.toFixed(0):cat.rating.toFixed(1)} · $${cat.price.toFixed(2)} · xRBEU ${cat.rbeu.toFixed(2)}</span>`:''}
         </div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">🗓 ${n.event}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">${noteProducer(name,n)?`🏛 ${noteProducer(name,n)}`:''}${noteProducer(name,n)&&noteEvent(n)?' · ':''}${noteEvent(n)?`<span style="font-style:italic">🗓 ${noteEvent(n)}</span>`:''}</div>
       </div>
     </div>
     <div style="display:flex;gap:20px;align-items:flex-start">
