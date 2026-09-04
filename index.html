@@ -29,16 +29,17 @@ nav button.active{background:#fff;color:var(--accent);font-weight:600;}
 .section.active{display:block;}
 
 /* ── Catalog ── */
-.cat-controls{background:var(--panel);border-bottom:1px solid var(--line);padding:10px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+.cat-controls{background:var(--panel);border-bottom:1px solid var(--line);padding:10px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;position:sticky;top:0;z-index:18;}
 .chip-group{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
 .chip-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;}
 .chip{padding:3px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:12px;background:var(--panel);user-select:none;transition:all .15s;}
 .chip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
-.stats{padding:8px 24px;background:var(--panel);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap;}
+.stats{padding:8px 24px;background:var(--panel);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap;position:sticky;top:0;z-index:17;}
 .stats strong{color:var(--ink);}
+.cat-table-wrap{overflow:visible;} /* must NOT be a scroll container, or the sticky thead can't pin to the viewport */
 table{width:100%;border-collapse:collapse;}
 th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);}
-th{background:#f4f2ec;font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:2;user-select:none;white-space:nowrap;}
+th{background:#f4f2ec;font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;cursor:pointer;position:sticky;top:0;z-index:16;user-select:none;white-space:nowrap;}
 th:hover{background:#ebe8df;}
 th.sorted{color:var(--accent);}
 th.sorted.asc::after{content:" ▲";font-size:9px;}
@@ -122,7 +123,7 @@ tbody tr.has-note td:first-child{border-left:3px solid var(--amber);}
     <button class="reset-btn" onclick="resetFilters()" style="margin-left:auto">Reset</button>
   </div>
   <div class="stats" id="cat-stats"></div>
-  <div style="overflow-x:auto;">
+  <div class="cat-table-wrap">
     <table>
       <thead><tr id="cat-head"></tr></thead>
       <tbody id="cat-body"></tbody>
@@ -353,7 +354,26 @@ function showTab(t){
   document.querySelectorAll('nav button').forEach(b=>{if(b.textContent.toLowerCase().includes(t.slice(0,3)))b.classList.add('active');});
   document.getElementById('global-search').value=state.search;
   if(t==='fingerprint'){const f=document.getElementById('fp-frame');if(!f.src)f.src='rbeu-catalog/affinity_fingerprint.html';}
+  if(t==='catalog')requestAnimationFrame(syncSticky);
 }
+// Freeze the filter row, the totals/tier-count row, and the column-header row while the
+// list scrolls: stack them as sticky layers below the nav, with tops measured live so
+// they stay correct when the bars wrap at narrow widths.
+function syncSticky(){
+  const nav=document.querySelector('header');
+  const ctrls=document.querySelector('.cat-controls');
+  const stats=document.getElementById('cat-stats');
+  if(!nav||!ctrls||!stats)return;
+  const ctrlsH=ctrls.offsetHeight;
+  if(!ctrlsH)return; // catalog tab hidden; nothing to measure
+  const navH=nav.offsetHeight, statsH=stats.offsetHeight;
+  ctrls.style.top=navH+'px';
+  stats.style.top=(navH+ctrlsH)+'px';
+  const thTop=(navH+ctrlsH+statsH)+'px';
+  document.querySelectorAll('#cat-head th').forEach(th=>{th.style.top=thTop;});
+}
+window.addEventListener('resize',syncSticky);
+window.addEventListener('load',syncSticky);
 function onSearch(v){state.search=v;renderCatalog();renderNotes();}
 
 // ─── CATALOG ────────────────────────────────────────────────────────
@@ -418,6 +438,7 @@ function renderCatalog(){
   st.innerHTML=`<span><strong>${rows.length}</strong> / ${CATALOG.rows.length} shown</span>`+
     TIERS.map(t=>{const n=rows.filter(r=>r.tier===t).length;return n?`<span>${t}: <strong>${n}</strong></span>`:''}).join('')+
     `<span>Avg xRBEU: <strong>${(avg||0).toFixed(2)}</strong></span>`;
+  syncSticky();
   // body
   const tbody=document.getElementById('cat-body');
   if(!rows.length){tbody.innerHTML=`<tr><td colspan="${COLS.length}" class="empty">No whiskies match your filters.</td></tr>`;return;}
