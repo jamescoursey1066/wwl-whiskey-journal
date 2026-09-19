@@ -21,10 +21,8 @@ nav{display:flex;gap:4px;}
 nav button{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px;transition:all .15s;}
 nav button.active{background:#fff;color:var(--accent);font-weight:600;}
 /* Back-to-homepage link. An <a> (not a <button>) so showTab's `nav button` active
-   logic never touches it; styled distinctly from the tab pills so it doesn't read
-   as a fourth tab. */
-.home-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px;text-decoration:none;transition:all .15s;margin-right:12px;}
-.home-btn:hover{background:#fff;color:var(--accent);}
+   logic never touches it; styled to match the inactive tab pills. */
+.home-btn{display:inline-flex;align-items:center;background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px;text-decoration:none;transition:all .15s;}
 .search-bar{margin-left:auto;display:flex;gap:8px;align-items:center;}
 .search-bar input{padding:6px 10px;border:1px solid rgba(255,255,255,.4);border-radius:4px;background:rgba(255,255,255,.15);color:#fff;font-size:13px;width:180px;}
 .search-bar input::placeholder{color:rgba(255,255,255,.6);}
