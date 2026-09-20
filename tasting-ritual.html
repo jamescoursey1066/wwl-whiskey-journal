@@ -262,19 +262,24 @@
   document.addEventListener('click', function(e){
     var el = e.target;
     while (el && el !== document){
+      // A tile, or an internal cross-reference, that opens a dialog.
       if (el.getAttribute && el.getAttribute('data-open') != null){
         e.preventDefault();
         lastFocus = el;
         openModal(el.getAttribute('data-open'));
         return;
       }
-      if (el.id === 'modal-close' || el.id === 'overlay'){
+      // The close button.
+      if (el.id === 'modal-close'){
         e.preventDefault();
         closeModal();
         return;
       }
       el = el.parentNode;
     }
+    // Clicking the backdrop itself (not a child) closes the dialog.
+    if (e.target === overlay) closeModal();
+    // Anything else (e.g. a real link inside the dialog) navigates normally.
   }, false);
 
   document.addEventListener('keydown', function(e){
