@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Become a Premium Taster &middot; WWL Whiskey Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0A06; --panel:#141019; --card:#1C1612; --line:rgba(204,153,0,.25);
+    --gold:#CC9900; --gold-lt:#E8C76A; --cream:#FAF6EC; --body:#E8DCC1; --muted:#9a8f7d;
+    --err:#D9534F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--body);font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+  header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:16px 40px;background:rgba(14,10,6,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(4px);}
+  .wordmark{font-family:'Cinzel',Georgia,serif;font-size:15px;letter-spacing:.16em;color:var(--cream);text-decoration:none;line-height:1.3;}
+  .wordmark small{display:block;font-size:10.5px;letter-spacing:.22em;color:var(--gold);}
+  .home-btn{font-family:'Cinzel',Georgia,serif;font-size:11px;letter-spacing:.16em;color:var(--cream);text-decoration:none;
+    border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:7px 16px;white-space:nowrap;transition:all .15s;}
+  .home-btn:hover{background:var(--cream);color:var(--bg);}
+
+  .hero{max-width:760px;margin:0 auto;padding:60px 40px 10px;text-align:center;}
+  .eyebrow{font-family:'Cinzel',Georgia,serif;font-size:12px;letter-spacing:.28em;color:var(--gold);margin-bottom:18px;}
+  h1.title{font-family:'Cinzel',Georgia,serif;font-weight:500;font-size:clamp(34px,6vw,58px);letter-spacing:.04em;color:var(--cream);line-height:1.06;}
+  .divider{width:56px;height:1px;background:var(--gold);margin:28px auto 0;}
+
+  main{max-width:640px;margin:0 auto;padding:26px 40px 90px;}
+  .intro{font-size:19px;color:var(--body);text-align:center;margin-bottom:30px;}
+
+  form{background:var(--card);border:1px solid var(--line);padding:32px 34px 30px;}
+  .field{margin-bottom:20px;}
+  .field:last-of-type{margin-bottom:0;}
+  label{display:block;font-family:'Cinzel',Georgia,serif;font-size:11px;letter-spacing:.16em;color:var(--gold-lt);
+    text-transform:uppercase;margin-bottom:8px;}
+  label .req{color:var(--gold);}
+  input,textarea{width:100%;background:#120D08;color:var(--cream);border:1px solid rgba(204,153,0,.35);
+    padding:11px 13px;font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;line-height:1.4;transition:border-color .15s,box-shadow .15s;}
+  input:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(204,153,0,.18);}
+  textarea{resize:vertical;min-height:84px;}
+  .field.invalid input,.field.invalid textarea{border-color:var(--err);box-shadow:0 0 0 2px rgba(217,83,79,.25);}
+  .field .field-err{display:none;margin-top:6px;font-size:15px;font-style:italic;color:var(--err);}
+  .field.invalid .field-err{display:block;}
+
+  .actions{margin-top:28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  button.send{font-family:'Cinzel',Georgia,serif;font-size:12px;letter-spacing:.18em;color:var(--bg);background:var(--gold);
+    border:1px solid var(--gold);border-radius:22px;padding:11px 30px;cursor:pointer;transition:all .15s;}
+  button.send:hover{background:var(--gold-lt);border-color:var(--gold-lt);}
+
+  .form-msg{margin-top:20px;padding:14px 16px;font-size:17px;line-height:1.45;border:1px solid;display:none;}
+  .form-msg.show{display:block;}
+  .form-msg.error{color:#F3C6C4;border-color:var(--err);background:rgba(217,83,79,.12);}
+  .form-msg.ok{color:var(--gold-lt);border-color:var(--gold);background:rgba(204,153,0,.10);}
+
+  footer{max-width:640px;margin:0 auto;padding:0 40px 80px;text-align:center;}
+  footer a{color:var(--gold-lt);text-decoration:none;font-family:'Cinzel',Georgia,serif;font-size:12px;letter-spacing:.16em;border-bottom:1px solid var(--gold);padding-bottom:5px;}
+
+  @media(max-width:640px){
+    header.top{padding:14px 18px;}
+    .hero{padding:44px 18px 8px;}
+    main{padding:20px 18px 70px;}
+    form{padding:24px 20px 22px;}
+    body{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="wordmark" href="index.html">WORLD WHISKEY LEAGUE<small>WHISKEY JOURNAL</small></a>
+  <a class="home-btn" href="index.html" title="Back to The Whiskey Journal homepage">Home</a>
+</header>
+
+<section class="hero">
+  <p class="eyebrow">World Whiskey League</p>
+  <h1 class="title">Become a Premium Taster</h1>
+  <div class="divider"></div>
+</section>
+
+<main>
+  <p class="intro">Please complete the form below and click submit. You will be contacted shortly by WWL Chief Financial Officer Alina, who will work out the details of your application to join the League. Cheers!</p>
+
+  <form id="ptForm" novalidate>
+    <div class="field" data-field>
+      <label for="firstName">First Name <span class="req">*</span></label>
+      <input type="text" id="firstName" name="firstName" autocomplete="given-name">
+      <span class="field-err">Please enter your first name.</span>
+    </div>
+    <div class="field" data-field>
+      <label for="lastName">Last Name <span class="req">*</span></label>
+      <input type="text" id="lastName" name="lastName" autocomplete="family-name">
+      <span class="field-err">Please enter your last name.</span>
+    </div>
+    <div class="field" data-field>
+      <label for="email">Email Address <span class="req">*</span></label>
+      <input type="email" id="email" name="email" autocomplete="email">
+      <span class="field-err">Please enter a valid email address.</span>
+    </div>
+    <div class="field" data-field>
+      <label for="phone">Phone Number <span class="req">*</span></label>
+      <input type="tel" id="phone" name="phone" autocomplete="tel">
+      <span class="field-err">Please enter your phone number.</span>
+    </div>
+    <div class="field" data-field>
+      <label for="address">Mailing Address <span class="req">*</span></label>
+      <textarea id="address" name="address" autocomplete="street-address" placeholder="Street, City, State, ZIP"></textarea>
+      <span class="field-err">Please enter your mailing address.</span>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="send">Send</button>
+    </div>
+
+    <div class="form-msg" id="formMsg" role="alert" aria-live="polite"></div>
+  </form>
+</main>
+
+<footer>
+  <a href="index.html">Return to The Whiskey Journal &rarr;</a>
+</footer>
+
+<script>
+(function(){
+  var form = document.getElementById('ptForm');
+  var msg = document.getElementById('formMsg');
+  var RECIPIENT = 'alinawitt@gmail.com';
+
+  var FIELDS = [
+    {id:'firstName', label:'First Name'},
+    {id:'lastName',  label:'Last Name'},
+    {id:'email',     label:'Email Address'},
+    {id:'phone',     label:'Phone Number'},
+    {id:'address',   label:'Mailing Address'}
+  ];
+
+  function val(id){ return (document.getElementById(id).value || '').trim(); }
+  function wrap(id){ return document.getElementById(id).closest('[data-field]'); }
+
+  function isEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
+
+  function checkField(f){
+    var v = val(f.id);
+    var ok = v.length > 0;
+    if (ok && f.id === 'email') ok = isEmail(v);
+    return ok;
+  }
+
+  function setMsg(text, kind){
+    msg.textContent = text;
+    msg.className = 'form-msg show ' + kind;
+  }
+  function clearMsg(){ msg.textContent=''; msg.className='form-msg'; }
+
+  // Clear a field's red outline as soon as the user starts fixing it.
+  FIELDS.forEach(function(f){
+    document.getElementById(f.id).addEventListener('input', function(){
+      if (checkField(f)) wrap(f.id).classList.remove('invalid');
+    });
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var firstBad = null;
+    FIELDS.forEach(function(f){
+      var ok = checkField(f);
+      var w = wrap(f.id);
+      if (ok){ w.classList.remove('invalid'); }
+      else { w.classList.add('invalid'); if (!firstBad) firstBad = f; }
+    });
+
+    if (firstBad){
+      setMsg('Please complete all fields before sending — the ones highlighted in red still need your attention. We can’t process your application without them!', 'error');
+      document.getElementById(firstBad.id).focus();
+      return;
+    }
+
+    // All valid: build the email and hand off to the visitor's mail client.
+    var body =
+      'Become a Premium Taster — application\n\n' +
+      'First Name: ' + val('firstName') + '\n' +
+      'Last Name: ' + val('lastName') + '\n' +
+      'Email Address: ' + val('email') + '\n' +
+      'Phone Number: ' + val('phone') + '\n' +
+      'Mailing Address:\n' + val('address') + '\n';
+
+    var href = 'mailto:' + RECIPIENT +
+      '?subject=' + encodeURIComponent('Become a Premium Taster') +
+      '&body=' + encodeURIComponent(body);
+
+    setMsg('Thanks! Your email application is ready — your email program should open with the details filled in. Just press send there to deliver it to Alina. Cheers!', 'ok');
+    window.location.href = href;
+  });
+})();
+</script>
+</body>
+</html>
