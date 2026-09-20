@@ -50,6 +50,7 @@
   button.send{font-family:'Cinzel',Georgia,serif;font-size:12px;letter-spacing:.18em;color:var(--bg);background:var(--gold);
     border:1px solid var(--gold);border-radius:22px;padding:11px 30px;cursor:pointer;transition:all .15s;}
   button.send:hover{background:var(--gold-lt);border-color:var(--gold-lt);}
+  button.send:disabled{opacity:.6;cursor:default;}
 
   .form-msg{margin-top:20px;padding:14px 16px;font-size:17px;line-height:1.45;border:1px solid;display:none;}
   .form-msg.show{display:block;}
@@ -126,7 +127,8 @@
 (function(){
   var form = document.getElementById('ptForm');
   var msg = document.getElementById('formMsg');
-  var RECIPIENT = 'alinawitt@gmail.com';
+  var ENDPOINT = 'https://formspree.io/f/xnpnppwz';
+  var CONTACT = 'alinawitt@gmail.com';
 
   var FIELDS = [
     {id:'firstName', label:'First Name'},
@@ -161,6 +163,8 @@
     });
   });
 
+  var sendBtn = form.querySelector('button.send');
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var firstBad = null;
@@ -177,21 +181,45 @@
       return;
     }
 
-    // All valid: build the email and hand off to the visitor's mail client.
-    var body =
-      'Become a Premium Taster — application\n\n' +
-      'First Name: ' + val('firstName') + '\n' +
-      'Last Name: ' + val('lastName') + '\n' +
-      'Email Address: ' + val('email') + '\n' +
-      'Phone Number: ' + val('phone') + '\n' +
-      'Mailing Address:\n' + val('address') + '\n';
+    // All valid: submit silently to Formspree, which emails the details to Alina.
+    var payload = {
+      'First Name': val('firstName'),
+      'Last Name': val('lastName'),
+      'Email Address': val('email'),
+      'Phone Number': val('phone'),
+      'Mailing Address': val('address'),
+      _replyto: val('email'),
+      _subject: 'Become a Premium Taster'
+    };
 
-    var href = 'mailto:' + RECIPIENT +
-      '?subject=' + encodeURIComponent('Become a Premium Taster') +
-      '&body=' + encodeURIComponent(body);
+    var label = sendBtn.textContent;
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending…';
+    setMsg('Sending your application…', 'ok');
 
-    setMsg('Thanks! Your email application is ready — your email program should open with the details filled in. Just press send there to deliver it to Alina. Cheers!', 'ok');
-    window.location.href = href;
+    fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function(r){
+      if (r.ok){
+        form.reset();
+        FIELDS.forEach(function(f){ wrap(f.id).classList.remove('invalid'); });
+        setMsg('Thanks! Your application has been sent to Alina, who will be in touch shortly to work out the details. Cheers!', 'ok');
+        return;
+      }
+      return r.json().then(function(d){
+        var m = (d && d.errors && d.errors.length) ? ' (' + d.errors.map(function(x){return x.message;}).join(' ') + ')' : '';
+        setMsg('Sorry — something went wrong sending your application' + m + '. Please try again in a moment, or email us directly at ' + CONTACT + '.', 'error');
+      }).catch(function(){
+        setMsg('Sorry — something went wrong sending your application. Please try again in a moment, or email us directly at ' + CONTACT + '.', 'error');
+      });
+    }).catch(function(){
+      setMsg('We couldn’t reach the server — please check your connection and try again, or email us directly at ' + CONTACT + '.', 'error');
+    }).then(function(){
+      sendBtn.disabled = false;
+      sendBtn.textContent = label;
+    });
   });
 })();
 </script>
