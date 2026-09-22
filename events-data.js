@@ -1,9 +1,10 @@
-// Shared WWL Sanctioned Tasting Event data (2026-27 season).
-// This is the same event/expression data shown by the homepage "Event Details"
-// dialog. The premium portal reads it so tasters can build a personal catalog
-// entry for each sanctioned expression.
-// NOTE: the landing page's shim (landing-src/shim.txt) currently keeps its own
-// inline copy of this list. Keep the two in sync until they are unified.
+// Shared WWL Sanctioned Tasting Event data (2026-27 season) — SINGLE SOURCE.
+// This is the one place event/expression data lives. It is consumed by BOTH:
+//   - the landing page's "Event Details" dialog + season list (the shim in
+//     landing-src/shim.txt loads this file at runtime and adapts it), and
+//   - the premium portal (portal.html), where tasters build a personal catalog.
+// Edit event names/dates/specs here only; no rebuild is needed for the portal,
+// and `build-landing.ps1` is only needed if you change the shim itself.
 window.WWL_EVENTS = [
   {
     name: "Wheated Whispers", date: "2026-10-18",
