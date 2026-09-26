@@ -485,10 +485,10 @@ function renderCatalog(){
   if(!rows.length){tbody.innerHTML=`<tr><td colspan="${COLS.length}" class="empty">No whiskies match your filters.</td></tr>`;return;}
   tbody.innerHTML=rows.map(r=>{
     const hasNote=!!NOTES[r.name];
-    const imgSrc=r.img?(r.img.includes('cdn/shop/')?r.img+'&width=80':r.img):null;
+    const imgSrc=r.img?(r.img.includes('cdn/shop/')?r.img+(r.img.indexOf('?')<0?'?width=80':'&width=80'):r.img):null;
     return `<tr class="${hasNote?'has-note':''}" onclick="${hasNote?`openNote('${r.name.replace(/'/g,"\\'")}')`:''}" title="${hasNote?'Click to view tasting note':''}">
       <td class="ctr">${r.rank}</td>
-      <td class="ctr">${imgSrc?`<img class="thumb" src="${imgSrc}" loading="lazy" alt="" onclick="zoomImg(event,'${(r.img.includes('cdn/shop/')?r.img+'&width=600':r.img).replace(/'/g,"\\'")}')">`:`<span class="no-img"></span>`}</td>
+      <td class="ctr">${imgSrc?`<img class="thumb" src="${imgSrc}" loading="lazy" alt="" onclick="zoomImg(event,'${(r.img.includes('cdn/shop/')?r.img+(r.img.indexOf('?')<0?'?width=600':'&width=600'):r.img).replace(/'/g,"\\'")}')">`:`<span class="no-img"></span>`}</td>
       <td class="ctr"><span class="tier t${r.tier}">${r.tier}</span></td>
       <td><div class="name-cell">${r.name}${hasNote?'<span class="note-badge">Note</span>':''}</div><div class="song">${r.notes||''}</div></td>
       <td class="num">${r.rating % 1 === 0 ? r.rating.toFixed(0) : r.rating.toFixed(1)}</td>
@@ -656,7 +656,7 @@ function renderNotes(){
   if(!entries.length){grid.innerHTML=`<div class="empty">No tasting notes match.</div>`;return;}
   grid.innerHTML=entries.map(([name,n])=>{
     const cat=CATALOG.rows.find(r=>r.name===name);
-    const imgSrc=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+'&width=80':cat.img):null;
+    const imgSrc=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+(cat.img.indexOf('?')<0?'?width=80':'&width=80'):cat.img):null;
     const tier=cat?.tier||'';
     const rating=cat?.rating!=null?(cat.rating%1===0?cat.rating.toFixed(0):cat.rating.toFixed(1)):'';
     const imgEl=imgSrc?`<img class="note-card-img" src="${imgSrc}" loading="lazy" alt="">`:`<div class="note-card-img-ph"></div>`;
@@ -688,7 +688,7 @@ function renderNotes(){
 function openNote(name){
   const n=NOTES[name];if(!n)return;
   const cat=CATALOG.rows.find(r=>r.name===name);
-  const imgSrc=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+'&width=200':cat.img):null;
+  const imgSrc=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+(cat.img.indexOf('?')<0?'?width=200':'&width=200'):cat.img):null;
   document.getElementById('modal-content').innerHTML=`
     <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px">
       ${imgSrc?`<img src="${imgSrc}" style="width:60px;height:90px;object-fit:contain;border-radius:4px;flex-shrink:0" alt="">`:``}
