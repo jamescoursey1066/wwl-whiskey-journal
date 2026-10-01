@@ -191,8 +191,9 @@ function escapeHtml(s) {
 function imgCell(r) {
   if (r.img) {
     var isShopify = r.img.indexOf('cdn/shop/') !== -1;
-    var src = isShopify ? r.img + '&width=80' : r.img;
-    var full = isShopify ? r.img + '&width=600' : r.img;
+    var sep = r.img.indexOf('?') < 0 ? '?' : '&';
+    var src = isShopify ? r.img + sep + 'width=80' : r.img;
+    var full = isShopify ? r.img + sep + 'width=600' : r.img;
     return '<img src="' + src + '" loading="lazy" decoding="async" class="thumb" data-full="' + full + '" alt="">'; }
   return '<span class="no-img"></span>'; }
 function renderHeader() {
