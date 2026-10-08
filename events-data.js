@@ -14,7 +14,8 @@ window.WWL_EVENTS = [
       { name: "Ben Holladay 6 Year Soft Red Wheat Rickhouse Proof Straight Bourbon Whiskey", category: "Missouri Straight Bourbon (wheated)", mashbill: "73% corn / 15% wheat / 12% malted barley", age: "6 years", proof: "123.3" },
       { name: "Weller Special Reserve", category: "Kentucky Straight Bourbon (wheated)", mashbill: "Wheated; Buffalo Trace recipe, exact percentages undisclosed", age: "No age statement", proof: "90" },
       { name: "Green River Full Proof Wheated Bourbon", category: "Kentucky Straight Bourbon (wheated)", mashbill: "70% corn / 21% wheat / 9% malted barley", age: "No age statement (aged 5-7 years)", proof: "109.3" }
-    ]
+    ],
+    pairing: "guides/wheated-whispers-food-pairing-guide.pdf"
   },
   {
     name: "Over A Barrel", date: "2026-12-06",
