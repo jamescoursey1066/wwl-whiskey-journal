@@ -718,14 +718,23 @@
 
         var chips=document.createElement('div'); chips.className='chips';
         function chip(label,val,cls){ if(val==null||val==='')return null; var c=document.createElement('span'); c.className='chip'+(cls?' '+cls:''); c.innerHTML='<b>'+esc(label)+'</b> '+esc(val); chips.appendChild(c); return c; }
-        if(EU && r.rating!=null && r.price!=null && Number(r.price)>0){
-          var v=scoreOf(EU, Number(r.rating), Number(r.price)), t=tierOf(v);
-          var c=chip(EU.abbrev, v.toFixed(2), 'eu');
-          c.insertAdjacentHTML('beforeend',' <span class="tier-badge tier-'+t+'">'+t+'</span>');
-          c.title='Fair price at your rating of '+r.rating+': '+money(fairOf(EU,Number(r.rating)));
-        }
+        // Tastings saved before the price field existed fall back to the catalog MSRP.
+        var price=r.price!=null && Number(r.price)>0 ? Number(r.price) : null, priceFromCat=false;
+        if(price==null){ var m=bestCatalogMatch(r.expression); if(m && Number(m.price)>0){ price=Number(m.price); priceFromCat=true; } }
         chip('Rating', r.rating!=null?r.rating:'');
-        chip('Price', r.price!=null?money(r.price):'');
+        var pc=chip('Price', price!=null?money(price):'');
+        if(pc && priceFromCat) pc.title='MSRP from the xRBEU Catalog. Edit this tasting to enter what you paid.';
+        if(EU){
+          if(r.rating!=null && price!=null){
+            var v=scoreOf(EU, Number(r.rating), price), t=tierOf(v);
+            var c=chip(EU.abbrev, v.toFixed(2), 'eu');
+            c.insertAdjacentHTML('beforeend',' <span class="tier-badge tier-'+t+'">'+t+'</span>');
+            c.title='Fair price at your rating of '+r.rating+': '+money(fairOf(EU,Number(r.rating)));
+          } else {
+            var c2=chip(EU.abbrev, '—', 'eu');
+            c2.title='Add a '+(r.rating==null?'rating':'')+(r.rating==null&&price==null?' and ':'')+(price==null?'bottle price':'')+' to score this tasting in your EU.';
+          }
+        }
         chip('First', r.first_round_rank!=null?r.first_round_rank:'');
         chip('Final', r.final_round_rank!=null?r.final_round_rank:'');
         chip('BBB', r.bbb||'');
