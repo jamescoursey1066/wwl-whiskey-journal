@@ -54,7 +54,7 @@ window.WWL_EVENTS = [
     name: "Full-Proof", date: "2027-06-06",
     tag: "Exploring how ABV affects our experience of the spirit.",
     expressions: [
-      { name: "Basil Hayden Kentucky Straight Bourbon", msrp: 50.00, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Basil Hayden Kentucky Straight Bourbon", msrp: 41.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Heaven Hill Bottled in Bond", msrp: 49.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "New Riff Single Barrel 6 Year Old Kentucky Straight Bourbon", msrp: 53.00, category: "", mashbill: "", age: "", proof: "" },
       { name: "Rare Character Single Barrel Series 21 Old American Light Whiskey Barrel No. 20L-564", msrp: 139.99, category: "", mashbill: "", age: "", proof: "" }
