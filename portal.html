@@ -213,7 +213,7 @@
           <div class="field full">
             <label for="eAbbr">Your EU&rsquo;s Abbreviation</label>
             <div class="abbr-row"><span class="fix">x</span><input type="text" id="eAbbr" maxlength="6" aria-describedby="eAbbrSub"><span class="fix">EU</span></div>
-            <div class="sub" id="eAbbrSub">Made from your whiskey&rsquo;s name (Buffalo Trace &rarr; xBTEU). Change the letters if you like.</div>
+            <div class="sub" id="eAbbrSub">Abbreviate your whiskey&rsquo;s name (ex., Buffalo Trace &rarr; xBTEU).</div>
           </div>
         </div>
         <div class="form-actions">
@@ -575,8 +575,8 @@
       '<div class="eu-ref">Built on '+refBits.join(' &middot; ')+'</div>'+
       (EU.song_pairing ? '<div class="eu-song">'+esc(EU.song_pairing)+'</div>' : '')+
       '<div class="eu-stats">'+
-        '<div class="stat"><div class="k">Reference</div><div class="v">'+R+' at '+money(EU.msrp)+'</div><div class="d">your good-value whiskey</div></div>'+
-        '<div class="stat"><div class="k">Ceiling</div><div class="v">100 at '+money(EU.max_price)+'</div><div class="d">your maximum price</div></div>'+
+        '<div class="stat"><div class="k">Reference</div><div class="v">'+R+' at '+money(EU.msrp)+'</div><div class="d">Your benchmark bottle</div></div>'+
+        '<div class="stat"><div class="k">Ceiling</div><div class="v">100 at '+money(EU.max_price)+'</div><div class="d">The most you&rsquo;d pay for any bottle</div></div>'+
         '<div class="stat"><div class="k">Curve (k)</div><div class="v">'+k.toFixed(6)+'</div><div class="d">each rating point is worth '+pct.toFixed(1)+'% more</div></div>'+
       '</div>'+
       '<div class="formula">Fair $ (rating r) &nbsp;=&nbsp; '+money(EU.msrp)+' &times; e<sup>k &times; (r &minus; '+R+')</sup><br>'+
