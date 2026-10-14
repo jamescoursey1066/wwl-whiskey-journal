@@ -44,10 +44,10 @@ window.WWL_EVENTS = [
     name: "Whiskey Tarot", date: "2027-04-11",
     tag: "Semi-blind tasting event: drawing four cards from the Deck of Drams.",
     expressions: [
-      { name: "Jypsi Legacy Batch 001 Blended Whiskey", msrp: 199.99, category: "", mashbill: "", age: "", proof: "" },
-      { name: "Widow Jane Lucky 13 Small Batch Bourbon", msrp: 99.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Jypsi Legacy Batch 001 Blended Whiskey", msrp: 181.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Widow Jane Lucky 13 Small Batch Bourbon", msrp: 119.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Bowman Brothers Small Batch", msrp: 34.99, category: "", mashbill: "", age: "", proof: "" },
-      { name: "Still Austin Straight Bourbon Whiskey", msrp: 43.00, category: "", mashbill: "", age: "", proof: "" }
+      { name: "Still Austin Straight Bourbon Whiskey", msrp: 42.99, category: "", mashbill: "", age: "", proof: "" }
     ]
   },
   {
@@ -56,7 +56,7 @@ window.WWL_EVENTS = [
     expressions: [
       { name: "Basil Hayden Kentucky Straight Bourbon", msrp: 41.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Heaven Hill Bottled in Bond", msrp: 49.99, category: "", mashbill: "", age: "", proof: "" },
-      { name: "New Riff Single Barrel 6 Year Old Kentucky Straight Bourbon", msrp: 53.00, category: "", mashbill: "", age: "", proof: "" },
+      { name: "New Riff Single Barrel 6 Year Old Kentucky Straight Bourbon", msrp: 59.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Rare Character Single Barrel Series 21 Old American Light Whiskey Barrel No. 20L-564", msrp: 139.99, category: "", mashbill: "", age: "", proof: "" }
     ]
   },
