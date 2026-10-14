@@ -695,9 +695,10 @@ function openNote(name){
   const n=NOTES[name];if(!n)return;
   const cat=CATALOG.rows.find(r=>r.name===name);
   const imgSrc=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+(cat.img.indexOf('?')<0?'?width=200':'&width=200'):cat.img):null;
+  const imgFull=cat?.img?(cat.img.includes('cdn/shop/')?cat.img+(cat.img.indexOf('?')<0?'?width=600':'&width=600'):cat.img):null;
   document.getElementById('modal-content').innerHTML=`
     <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px">
-      ${imgSrc?`<img src="${imgSrc}" style="width:60px;height:90px;object-fit:contain;border-radius:4px;flex-shrink:0" alt="">`:``}
+      ${imgSrc?`<img src="${imgSrc}" data-full="${imgFull}" onclick="zoomImg(event,this.dataset.full)" style="width:60px;height:90px;object-fit:contain;border-radius:4px;flex-shrink:0;cursor:zoom-in" alt="">`:``}
       <div>
         <h2 style="font-size:18px;margin-bottom:6px">${name}</h2>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
