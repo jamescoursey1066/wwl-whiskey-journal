@@ -407,9 +407,9 @@
   }
 
   // ------------------------------------------------------------- EU math
-  var TIERS=[['S',1.75,'Exceptional value — roughly twice the whiskey the price implies.'],['A',1.00,'Better than fair. Buy it.'],
-    ['B',0.85,'Near fair value; a small premium over the curve.'],['C',0.65,'Priced above what the quality supports.'],
-    ['D',0.50,'Overpriced — a pour, not a bottle.'],['E',0.30,'Heavily overpriced.'],['F',0,'You are paying for the label.']];
+  var TIERS=[['S',1.75,'On your shelf at all times; perfect for your palate'],['A',1.00,'Buy on sight and show off your whiskey savvy'],
+    ['B',0.85,'Seek it out if you\'re building a bigger collection'],['C',0.65,'Raw rating matters most here; watch your wallet'],
+    ['D',0.50,'Overpriced for what you get; look for alternatives'],['E',0.30,'Vastly overpriced and/or undistinguished; avoid'],['F',0,'Here be dragons; stay out of this value wasteland']];
   function tierOf(v){ for(var i=0;i<TIERS.length;i++){ if(v>=TIERS[i][1]) return TIERS[i][0]; } return 'F'; }
   function kOf(eu){ return Math.log(Number(eu.max_price)/Number(eu.msrp))/(100-Number(eu.rating)); }
   function fairOf(eu, r){ return Number(eu.msrp)*Math.exp(kOf(eu)*(r-Number(eu.rating))); }
