@@ -626,7 +626,7 @@
     fPriceSub.textContent=PRICE_NOTE;
     if(fExpr.value && !fPrice.value){
       var m=msrpFor(fEvent.value, fExpr.value);
-      if(m){ fPrice.value=m.price.toFixed(2); fPriceSub.textContent=(m.src==='catalog' ? 'MSRP from the xRBEU Catalog ('+m.name+').' : 'Suggested retail price.')+' Change it if you paid something different.'; }
+      if(m){ fPrice.value=m.price.toFixed(2); fPriceSub.textContent=(m.src==='catalog' ? 'MSRP from the xRBEU Catalog ('+m.name+').' : 'Typical retail price.')+' Change it if you paid something different.'; }
     }
   });
 
@@ -730,7 +730,7 @@
         if(price==null){ msrp=msrpFor(r.event_name, r.expression); if(msrp) price=msrp.price; }
         chip('Rating', r.rating!=null?r.rating:'');
         var pc=chip('Price', price!=null?money(price):'');
-        if(pc && msrp) pc.title=(msrp.src==='catalog'?'MSRP from the xRBEU Catalog.':'Suggested retail price.')+' Edit this tasting to enter what you paid.';
+        if(pc && msrp) pc.title=(msrp.src==='catalog'?'MSRP from the xRBEU Catalog.':'Typical retail price.')+' Edit this tasting to enter what you paid.';
         if(EU){
           if(r.rating!=null && price!=null){
             var v=scoreOf(EU, Number(r.rating), price), t=tierOf(v);
