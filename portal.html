@@ -157,7 +157,7 @@
   <p class="eyebrow">Premium Taster Portal</p>
   <div class="tabs" role="tablist" aria-label="Portal screens">
     <button class="tab" role="tab" id="tab-eu" aria-controls="view-eu" data-view="eu">My Equivalency Units (EUs)</button>
-    <button class="tab" role="tab" id="tab-catalog" aria-controls="view-catalog" data-view="catalog">Your Personal Catalog</button>
+    <button class="tab" role="tab" id="tab-catalog" aria-controls="view-catalog" data-view="catalog">My Catalog</button>
   </div>
 
   <!-- ===================== MY EQUIVALENCY UNITS ===================== -->
@@ -224,9 +224,9 @@
     </section>
   </div>
 
-  <!-- ===================== YOUR PERSONAL CATALOG ===================== -->
+  <!-- ===================== MY CATALOG ===================== -->
   <div class="view" id="view-catalog" role="tabpanel" aria-labelledby="tab-catalog" hidden>
-    <h1>Your Personal Catalog</h1>
+    <h1>My Catalog</h1>
     <p class="lede">Log your own take on every sanctioned expression &mdash; your notes, your scores, your rankings.</p>
     <div class="divider"></div>
 
@@ -544,7 +544,7 @@
       euSaveBtn.disabled=false; euSaveBtn.textContent=lbl;
       if(res.error){ setEuMsg(friendlyDbError(res.error, 'Could not save your EU.'),'error'); return; }
       EU=res.data; renderEu(); loadEuIntoForm(EU); renderCatalog(ROWS);
-      setEuMsg('Your '+EU.abbrev+' is ready. Every tasting in Your Personal Catalog with a rating and price is now scored in it.','ok');
+      setEuMsg('Your '+EU.abbrev+' is ready. Every tasting in My Catalog with a rating and price is now scored in it.','ok');
       el('euResult').scrollIntoView({behavior:'smooth', block:'start'});
     }).catch(function(){ euSaveBtn.disabled=false; euSaveBtn.textContent=lbl; setEuMsg('Something went wrong saving your EU. Please try again.','error'); });
   });
