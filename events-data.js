@@ -5,6 +5,9 @@
 //   - the premium portal (portal.html), where tasters build a personal catalog.
 // Edit event names/dates/specs here only; no rebuild is needed for the portal,
 // and `build-landing.ps1` is only needed if you change the shim itself.
+// `msrp` (optional) is the bottle price the portal uses to score a tasting in a
+// taster's EU when they didn't enter one; without it the portal falls back to
+// the matching xRBEU Catalog row.
 window.WWL_EVENTS = [
   {
     name: "Wheated Whispers", date: "2026-10-18",
@@ -21,7 +24,7 @@ window.WWL_EVENTS = [
     name: "Over A Barrel", date: "2026-12-06",
     tag: "How different oak species transform the taste of whiskey.",
     expressions: [
-      { name: "Old Charter Oak Finest Oak Kentucky Straight Bourbon Whiskey", category: "", mashbill: "", age: "", proof: "" },
+      { name: "Old Charter Oak Finest Oak Kentucky Straight Bourbon Whiskey", msrp: 79.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Stillman’s Sonder 10 Year Straight Bourbon Whiskey", category: "", mashbill: "", age: "", proof: "" },
       { name: "Found North Cask Strength Single Barrel, Season 4 French Oak", category: "", mashbill: "", age: "", proof: "" },
       { name: "Heaven Hill Grain to Glass Chinquapin LE Wheated Bourbon Whiskey", category: "", mashbill: "", age: "", proof: "" }
@@ -31,9 +34,9 @@ window.WWL_EVENTS = [
     name: "Go With The Grain", date: "2027-02-07",
     tag: "A deep dive into non-traditional mashbills.",
     expressions: [
-      { name: "Koval Millet Whiskey", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Dettling Single Barrel Cask Strength", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Middle West Dark Pumpernickel Cask Strength Straight Rye Whiskey", category: "", mashbill: "", age: "", proof: "" },
+      { name: "Koval Millet Whiskey", msrp: 48.00, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Dettling Single Barrel Cask Strength", msrp: 69.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Middle West Dark Pumpernickel Cask Strength Straight Rye Whiskey", msrp: 69.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Wiscy City Solo Cask 10 Year", category: "", mashbill: "", age: "", proof: "" }
     ]
   },
@@ -41,20 +44,20 @@ window.WWL_EVENTS = [
     name: "Whiskey Tarot", date: "2027-04-11",
     tag: "Semi-blind tasting event: drawing four cards from the Deck of Drams.",
     expressions: [
-      { name: "Jypsi Legacy Batch 001 Blended Whiskey", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Widow Jane Lucky 13 Small Batch Bourbon", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Bowman Brothers Small Batch", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Still Austin Straight Bourbon Whiskey", category: "", mashbill: "", age: "", proof: "" }
+      { name: "Jypsi Legacy Batch 001 Blended Whiskey", msrp: 199.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Widow Jane Lucky 13 Small Batch Bourbon", msrp: 99.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Bowman Brothers Small Batch", msrp: 27.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Still Austin Straight Bourbon Whiskey", msrp: 43.00, category: "", mashbill: "", age: "", proof: "" }
     ]
   },
   {
     name: "Full-Proof", date: "2027-06-06",
     tag: "Exploring how ABV affects our experience of the spirit.",
     expressions: [
-      { name: "Basil Hayden Kentucky Straight Bourbon", category: "", mashbill: "", age: "", proof: "" },
+      { name: "Basil Hayden Kentucky Straight Bourbon", msrp: 50.00, category: "", mashbill: "", age: "", proof: "" },
       { name: "Heaven Hill Bottled in Bond", category: "", mashbill: "", age: "", proof: "" },
-      { name: "New Riff Single Barrel 6 Year Old Kentucky Straight Bourbon", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Rare Character Single Barrel Series 21 Old American Light Whiskey Barrel No. 20L-564", category: "", mashbill: "", age: "", proof: "" }
+      { name: "New Riff Single Barrel 6 Year Old Kentucky Straight Bourbon", msrp: 53.00, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Rare Character Single Barrel Series 21 Old American Light Whiskey Barrel No. 20L-564", msrp: 139.99, category: "", mashbill: "", age: "", proof: "" }
     ]
   },
   {
@@ -64,7 +67,7 @@ window.WWL_EVENTS = [
       { name: "Eagle Rare 10 Year Bourbon (2025, Japanese Export)", category: "", mashbill: "", age: "", proof: "" },
       { name: "Buffalo Trace", category: "", mashbill: "", age: "", proof: "" },
       { name: "Colonel E.H. Taylor Small Batch Bourbon (2025)", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Benchmark Bonded Bourbon", category: "", mashbill: "", age: "", proof: "" }
+      { name: "Benchmark Bonded Bourbon", msrp: 19.99, category: "", mashbill: "", age: "", proof: "" }
     ]
   }
 ];

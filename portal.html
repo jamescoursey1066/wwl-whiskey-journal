@@ -600,6 +600,13 @@
   function clearMsg(){ formMsg.textContent=''; formMsg.className='form-msg'; }
   function findEvent(name){ for(var i=0;i<EVENTS.length;i++){ if(EVENTS[i].name===name) return EVENTS[i]; } return null; }
   function findExpr(ev,name){ if(!ev) return null; for(var i=0;i<ev.expressions.length;i++){ if(ev.expressions[i].name===name) return ev.expressions[i]; } return null; }
+  // MSRP for an event expression: the msrp in events-data.js first, then the xRBEU Catalog match.
+  function msrpFor(evName, exprName){
+    var x=findExpr(findEvent(evName), exprName);
+    if(x && Number(x.msrp)>0) return { price:Number(x.msrp), src:'event' };
+    var m=bestCatalogMatch(exprName);
+    return m && Number(m.price)>0 ? { price:Number(m.price), src:'catalog', name:m.name } : null;
+  }
 
   EVENTS.forEach(function(ev){ var o=document.createElement('option'); o.value=ev.name; o.textContent=ev.name; fEvent.appendChild(o); });
 
@@ -618,8 +625,8 @@
     // Suggest the catalog MSRP as the bottle price when the field is empty.
     fPriceSub.textContent=PRICE_NOTE;
     if(fExpr.value && !fPrice.value){
-      var m=bestCatalogMatch(fExpr.value);
-      if(m && m.price){ fPrice.value=Number(m.price).toFixed(2); fPriceSub.textContent='MSRP from the xRBEU Catalog ('+m.name+'). Change it if you paid something different.'; }
+      var m=msrpFor(fEvent.value, fExpr.value);
+      if(m){ fPrice.value=m.price.toFixed(2); fPriceSub.textContent=(m.src==='catalog' ? 'MSRP from the xRBEU Catalog ('+m.name+').' : 'Suggested retail price.')+' Change it if you paid something different.'; }
     }
   });
 
@@ -718,12 +725,12 @@
 
         var chips=document.createElement('div'); chips.className='chips';
         function chip(label,val,cls){ if(val==null||val==='')return null; var c=document.createElement('span'); c.className='chip'+(cls?' '+cls:''); c.innerHTML='<b>'+esc(label)+'</b> '+esc(val); chips.appendChild(c); return c; }
-        // Tastings saved before the price field existed fall back to the catalog MSRP.
-        var price=r.price!=null && Number(r.price)>0 ? Number(r.price) : null, priceFromCat=false;
-        if(price==null){ var m=bestCatalogMatch(r.expression); if(m && Number(m.price)>0){ price=Number(m.price); priceFromCat=true; } }
+        // Tastings saved without a price fall back to the expression's MSRP.
+        var price=r.price!=null && Number(r.price)>0 ? Number(r.price) : null, msrp=null;
+        if(price==null){ msrp=msrpFor(r.event_name, r.expression); if(msrp) price=msrp.price; }
         chip('Rating', r.rating!=null?r.rating:'');
         var pc=chip('Price', price!=null?money(price):'');
-        if(pc && priceFromCat) pc.title='MSRP from the xRBEU Catalog. Edit this tasting to enter what you paid.';
+        if(pc && msrp) pc.title=(msrp.src==='catalog'?'MSRP from the xRBEU Catalog.':'Suggested retail price.')+' Edit this tasting to enter what you paid.';
         if(EU){
           if(r.rating!=null && price!=null){
             var v=scoreOf(EU, Number(r.rating), price), t=tierOf(v);
