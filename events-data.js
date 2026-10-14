@@ -34,8 +34,8 @@ window.WWL_EVENTS = [
     name: "Go With The Grain", date: "2027-02-07",
     tag: "A deep dive into non-traditional mashbills.",
     expressions: [
-      { name: "Koval Millet Whiskey", msrp: 48.00, category: "", mashbill: "", age: "", proof: "" },
-      { name: "Dettling Single Barrel Cask Strength", msrp: 69.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Koval Millet Whiskey", msrp: 52.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Dettling Single Barrel Cask Strength", msrp: 99.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Middle West Dark Pumpernickel Cask Strength Straight Rye Whiskey", msrp: 69.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Wiscy City Solo Cask 10 Year", category: "", mashbill: "", age: "", proof: "" }
     ]
