@@ -204,7 +204,7 @@
           <div class="field">
             <label for="eMax">Maximum Price for a Bottle ($)</label>
             <input type="number" id="eMax" min="1" step="1" inputmode="decimal">
-            <div class="sub" id="eMaxSub">The most you&rsquo;d reasonably pay for a single bottle. We encourage you to stay at or under $500.</div>
+            <div class="sub" id="eMaxSub">The most you&rsquo;d reasonably pay for a single bottle.</div>
           </div>
           <div class="field">
             <label for="eSong">Song Pairing (optional)</label>
@@ -420,7 +420,7 @@
   var eProof=el('eProof'), eMsrp=el('eMsrp'), eRating=el('eRating'), eMax=el('eMax'), eMaxSub=el('eMaxSub');
   var eSong=el('eSong'), eAbbr=el('eAbbr'), euMsg=el('euMsg'), euSaveBtn=el('euSaveBtn');
   var picked=null, abbrTouched=false, active=-1, options=[];
-  var MAX_NOTE='The most you’d reasonably pay for a single bottle. We encourage you to stay at or under $500.';
+  var MAX_NOTE='The most you’d reasonably pay for a single bottle.';
 
   function setEuMsg(t,kind){ euMsg.textContent=t; euMsg.className='form-msg show '+kind; }
   function clearEuMsg(){ euMsg.textContent=''; euMsg.className='form-msg'; }
