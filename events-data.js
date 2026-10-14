@@ -24,7 +24,7 @@ window.WWL_EVENTS = [
     name: "Over A Barrel", date: "2026-12-06",
     tag: "How different oak species transform the taste of whiskey.",
     expressions: [
-      { name: "Old Charter Oak Finest Oak Kentucky Straight Bourbon Whiskey", msrp: 79.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Old Charter Oak Finest Oak Kentucky Straight Bourbon Whiskey", msrp: 149.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Stillman’s Sonder 10 Year Straight Bourbon Whiskey", category: "", mashbill: "", age: "", proof: "" },
       { name: "Found North Cask Strength Single Barrel, Season 4 French Oak", category: "", mashbill: "", age: "", proof: "" },
       { name: "Heaven Hill Grain to Glass Chinquapin LE Wheated Bourbon Whiskey", category: "", mashbill: "", age: "", proof: "" }
@@ -46,7 +46,7 @@ window.WWL_EVENTS = [
     expressions: [
       { name: "Jypsi Legacy Batch 001 Blended Whiskey", msrp: 199.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Widow Jane Lucky 13 Small Batch Bourbon", msrp: 99.99, category: "", mashbill: "", age: "", proof: "" },
-      { name: "Bowman Brothers Small Batch", msrp: 27.99, category: "", mashbill: "", age: "", proof: "" },
+      { name: "Bowman Brothers Small Batch", msrp: 34.99, category: "", mashbill: "", age: "", proof: "" },
       { name: "Still Austin Straight Bourbon Whiskey", msrp: 43.00, category: "", mashbill: "", age: "", proof: "" }
     ]
   },
