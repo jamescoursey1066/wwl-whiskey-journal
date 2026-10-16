@@ -8,9 +8,11 @@
 // `msrp` (optional) is the bottle price the portal uses to score a tasting in a
 // taster's EU when they didn't enter one; without it the portal falls back to
 // the matching xRBEU Catalog row.
+// `time` (optional, e.g. "1pm CT") is appended to the date as " @ <time>" on the
+// landing page's next-event box and Event Details dialog.
 window.WWL_EVENTS = [
   {
-    name: "Wheated Whispers", date: "2026-10-18",
+    name: "Wheated Whispers", date: "2026-10-18", time: "1pm CT",
     tag: "The subtler side of sipping, featuring distilling’s softer grain.",
     expressions: [
       { name: "Old Fitzgerald Bottled-in-Bond 7 Year Old Bourbon", category: "Kentucky Straight Bourbon (wheated)", mashbill: "68% corn / 20% wheat / 12% malted barley", age: "7 years", proof: "100" },
