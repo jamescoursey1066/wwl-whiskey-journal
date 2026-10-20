@@ -26,10 +26,10 @@ window.WWL_EVENTS = [
     name: "Over A Barrel", date: "2026-12-06",
     tag: "How different oak species transform the taste of whiskey.",
     expressions: [
-      { name: "Old Charter Oak Finest Oak Kentucky Straight Bourbon Whiskey", msrp: 149.99, category: "", mashbill: "", age: "", proof: "" },
-      { name: "Stillman’s Sonder 10 Year Straight Bourbon Whiskey", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Found North Cask Strength Single Barrel, Season 4 French Oak", category: "", mashbill: "", age: "", proof: "" },
-      { name: "Heaven Hill Grain to Glass Chinquapin LE Wheated Bourbon Whiskey", category: "", mashbill: "", age: "", proof: "" }
+      { name: "Old Charter Oak Finest Oak Kentucky Straight Bourbon Whiskey", msrp: 149.99, category: "Kentucky Straight Bourbon", mashbill: "Buffalo Trace Mash Bill #1 (low-rye); exact percentages undisclosed", age: "No age statement", proof: "92" },
+      { name: "Stillman’s Sonder 10 Year Straight Bourbon Whiskey", category: "Straight Bourbon (MGP-distilled; finished and bottled in Wisconsin)", mashbill: "Blend of MGP bourbon mashbills; exact percentages undisclosed", age: "10 years", proof: "94" },
+      { name: "Found North Cask Strength Single Barrel, Season 4 French Oak", category: "Canadian Whisky (single barrel, cask strength)", mashbill: "71% corn / 29% wheat", age: "8 years (blend of 8- to 21-year components)", proof: "117.5" },
+      { name: "Heaven Hill Grain to Glass Chinquapin LE Wheated Bourbon Whiskey", category: "Kentucky Straight Bourbon (wheated)", mashbill: "52% corn / 35% wheat / 13% malted barley", age: "7 years", proof: "105" }
     ]
   },
   {
