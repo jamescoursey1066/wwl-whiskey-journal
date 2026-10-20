@@ -10,15 +10,17 @@
 // the matching xRBEU Catalog row.
 // `time` (optional, e.g. "1pm CT") is appended to the date as " @ <time>" on the
 // landing page's next-event box and Event Details dialog.
+// `firstRound` / `finalRound` (optional, 1-4) are an expression's group ranking
+// in each round; once set they show as "First Round: 2nd" etc. in the dialog.
 window.WWL_EVENTS = [
   {
     name: "Wheated Whispers", date: "2026-10-18", time: "1pm CT",
     tag: "The subtler side of sipping, featuring distilling’s softer grain.",
     expressions: [
-      { name: "Old Fitzgerald Bottled-in-Bond 7 Year Old Bourbon", category: "Kentucky Straight Bourbon (wheated)", mashbill: "68% corn / 20% wheat / 12% malted barley", age: "7 years", proof: "100" },
-      { name: "Ben Holladay 6 Year Soft Red Wheat Rickhouse Proof Straight Bourbon Whiskey", category: "Missouri Straight Bourbon (wheated)", mashbill: "73% corn / 15% wheat / 12% malted barley", age: "6 years", proof: "123.3" },
-      { name: "Weller Special Reserve", category: "Kentucky Straight Bourbon (wheated)", mashbill: "Wheated; Buffalo Trace recipe, exact percentages undisclosed", age: "No age statement", proof: "90" },
-      { name: "Green River Full Proof Wheated Bourbon", category: "Kentucky Straight Bourbon (wheated)", mashbill: "70% corn / 21% wheat / 9% malted barley", age: "No age statement (aged 5-7 years)", proof: "109.3" }
+      { name: "Old Fitzgerald Bottled-in-Bond 7 Year Old Bourbon", category: "Kentucky Straight Bourbon (wheated)", mashbill: "68% corn / 20% wheat / 12% malted barley", age: "7 years", proof: "100", firstRound: 3, finalRound: 3 },
+      { name: "Ben Holladay 6 Year Soft Red Wheat Rickhouse Proof Straight Bourbon Whiskey", category: "Missouri Straight Bourbon (wheated)", mashbill: "73% corn / 15% wheat / 12% malted barley", age: "6 years", proof: "123.3", firstRound: 1, finalRound: 2 },
+      { name: "Weller Special Reserve", category: "Kentucky Straight Bourbon (wheated)", mashbill: "Wheated; Buffalo Trace recipe, exact percentages undisclosed", age: "No age statement", proof: "90", firstRound: 4, finalRound: 4 },
+      { name: "Green River Full Proof Wheated Bourbon", category: "Kentucky Straight Bourbon (wheated)", mashbill: "70% corn / 21% wheat / 9% malted barley", age: "No age statement (aged 5-7 years)", proof: "109.3", firstRound: 2, finalRound: 1 }
     ],
     pairing: "guides/wheated-whispers-food-pairing-guide.pdf"
   },
