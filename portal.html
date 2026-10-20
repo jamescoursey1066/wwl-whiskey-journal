@@ -232,7 +232,7 @@
 
     <section class="panel">
       <h2 id="formTitle">Add a Tasting</h2>
-      <p class="hint">Pick a sanctioned event and expression, then record your evaluation. Saving again for the same expression updates your entry.</p>
+      <p class="hint">Pick a sanctioned event and expression (or choose &ldquo;Other expression&rdquo; for a whiskey from outside the events), then record your evaluation. Saving again for the same expression updates your entry.</p>
       <form id="entryForm" novalidate>
         <div class="grid2">
           <div class="field">
@@ -242,6 +242,12 @@
           <div class="field">
             <label for="fExpr">Expression</label>
             <select id="fExpr"><option value="">Select an expression&hellip;</option></select>
+          </div>
+          <div class="field full" id="fCustomWrap" hidden>
+            <label for="fCustom">Expression Name</label>
+            <input type="text" id="fCustom" list="fCustomList" autocomplete="off" maxlength="120" placeholder="e.g. Rare Breed Barrel Proof">
+            <datalist id="fCustomList"></datalist>
+            <div class="sub">Not part of a Sanctioned Tasting Event, so it&rsquo;s filed under Independent Tastings. Type to pick from the xRBEU Catalog, or enter any name.</div>
           </div>
           <div class="specs" id="fSpecs"></div>
           <div class="field full"><label for="fNose">Nose</label><textarea id="fNose"></textarea></div>
@@ -552,6 +558,7 @@
   function friendlyDbError(err, lead){
     var m=(err && err.message)||'';
     if(/equivalency_units|column .*price|schema cache/i.test(m)) return lead+' The portal’s EU storage isn’t switched on yet. Please let the WWL team know.';
+    if(err && err.code==='23505') return lead+' You already have a tasting for that expression. Edit that one instead.';
     return lead+' '+m;
   }
 
@@ -608,31 +615,55 @@
     return m && Number(m.price)>0 ? { price:Number(m.price), src:'catalog', name:m.name } : null;
   }
 
+  // Expressions from outside the Sanctioned Tasting Events are filed under one fixed event name.
+  var OTHER='__other__', OTHER_EVENT='Independent Tastings';
+  var fCustomWrap=el('fCustomWrap'), fCustom=el('fCustom'), fCustomList=el('fCustomList');
+  function isOther(){ return fExpr.value===OTHER; }
+
   EVENTS.forEach(function(ev){ var o=document.createElement('option'); o.value=ev.name; o.textContent=ev.name; fEvent.appendChild(o); });
 
-  fEvent.addEventListener('change', function(){
+  function fillExprList(){
+    var keep=isOther();
     fExpr.innerHTML='<option value="">Select an expression…</option>';
     fSpecs.textContent='';
     var ev=findEvent(fEvent.value);
     if(ev){ ev.expressions.forEach(function(x){ var o=document.createElement('option'); o.value=x.name; o.textContent=x.name; fExpr.appendChild(o); }); }
+    var oo=document.createElement('option'); oo.value=OTHER; oo.textContent='Other expression (not in a Sanctioned Tasting Event)…'; fExpr.appendChild(oo);
+    if(keep) fExpr.value=OTHER;
+  }
+  fillExprList();
+  fEvent.addEventListener('change', fillExprList);
+
+  // Suggest official catalog names as the taster types; fill the MSRP once a name is settled.
+  fCustom.addEventListener('input', function(){
+    fCustomList.innerHTML='';
+    searchCatalog(fCustom.value).forEach(function(r){ var o=document.createElement('option'); o.value=r.name; fCustomList.appendChild(o); });
   });
+  fCustom.addEventListener('change', function(){ suggestPrice(OTHER_EVENT, fCustom.value.trim()); });
+
+  function suggestPrice(evName, exprName){
+    fPriceSub.textContent=PRICE_NOTE;
+    if(exprName && !fPrice.value){
+      var m=msrpFor(evName, exprName);
+      if(m){ fPrice.value=m.price.toFixed(2); fPriceSub.textContent=(m.src==='catalog' ? 'MSRP from the xRBEU Catalog ('+m.name+').' : 'Typical retail price.')+' Change it if you paid something different.'; }
+    }
+  }
+
   fExpr.addEventListener('change', function(){
+    fCustomWrap.hidden=!isOther();
+    if(isOther()){ fSpecs.textContent=''; suggestPrice(OTHER_EVENT, fCustom.value.trim()); if(!fCustom.value) fCustom.focus(); return; }
     var ev=findEvent(fEvent.value), x=findExpr(ev,fExpr.value);
     if(x){
       var bits=[]; if(x.category)bits.push(x.category); if(x.mashbill)bits.push(x.mashbill); if(x.age)bits.push(x.age); if(x.proof)bits.push(x.proof+' proof');
       fSpecs.textContent = bits.length? bits.join('  ·  ') : 'Tasting details announced closer to the event.';
     } else { fSpecs.textContent=''; }
     // Suggest the catalog MSRP as the bottle price when the field is empty.
-    fPriceSub.textContent=PRICE_NOTE;
-    if(fExpr.value && !fPrice.value){
-      var m=msrpFor(fEvent.value, fExpr.value);
-      if(m){ fPrice.value=m.price.toFixed(2); fPriceSub.textContent=(m.src==='catalog' ? 'MSRP from the xRBEU Catalog ('+m.name+').' : 'Typical retail price.')+' Change it if you paid something different.'; }
-    }
+    suggestPrice(fEvent.value, fExpr.value);
   });
 
   function resetForm(){
     editingId=null; formTitle.textContent='Add a Tasting'; cancelBtn.style.display='none';
-    fEvent.value=''; fExpr.innerHTML='<option value="">Select an expression…</option>'; fSpecs.textContent='';
+    fEvent.value=''; fExpr.value=''; fillExprList(); fCustom.value=''; fCustomWrap.hidden=true;
     fNose.value=''; fPalate.value=''; fFinish.value=''; fRating.value=''; fPrice.value=''; fPriceSub.textContent=PRICE_NOTE;
     fBBB.value=''; fFirst.value=''; fFinal.value=''; fNote.value='';
     fEvent.disabled=false; fExpr.disabled=false;
@@ -642,11 +673,16 @@
   function loadIntoForm(row){
     editingId=row.id; formTitle.textContent='Edit Tasting'; cancelBtn.style.display='inline-block';
     fPrice.value=row.price!=null?Number(row.price).toFixed(2):'';
+    if(row.event_name===OTHER_EVENT){
+      fEvent.value=''; fExpr.value=''; fillExprList();
+      fCustom.value=row.expression; fExpr.value=OTHER; fExpr.dispatchEvent(new Event('change'));
+    } else {
     // event + expression may not be in EVENTS anymore, but they are stored on the row.
     if(!findEvent(row.event_name)){ var o=document.createElement('option'); o.value=row.event_name; o.textContent=row.event_name; fEvent.appendChild(o); }
     fEvent.value=row.event_name; fEvent.dispatchEvent(new Event('change'));
     if(!findExpr(findEvent(row.event_name), row.expression)){ var o2=document.createElement('option'); o2.value=row.expression; o2.textContent=row.expression; fExpr.appendChild(o2); }
     fExpr.value=row.expression; fExpr.dispatchEvent(new Event('change'));
+    }
     fNose.value=row.nose||''; fPalate.value=row.palate||''; fFinish.value=row.finish||'';
     fRating.value=row.rating!=null?row.rating:''; fBBB.value=row.bbb||'';
     fFirst.value=row.first_round_rank!=null?String(row.first_round_rank):''; fFinal.value=row.final_round_rank!=null?String(row.final_round_rank):'';
@@ -660,7 +696,10 @@
   el('entryForm').addEventListener('submit', function(e){
     e.preventDefault(); clearMsg();
     var evName=fEvent.value, exprName=fExpr.value;
-    if(!evName || !exprName){ setMsg('Please choose an event and an expression.','error'); return; }
+    if(isOther()){
+      evName=OTHER_EVENT; exprName=fCustom.value.trim();
+      if(!exprName){ setMsg('Please enter the expression name.','error'); fCustom.focus(); return; }
+    } else if(!evName || !exprName){ setMsg('Please choose an event and an expression, or pick “Other expression”.','error'); return; }
     var ev=findEvent(evName), x=findExpr(ev,exprName);
     var rating=numOrNull(fRating.value);
     if(rating!=null && (rating<1||rating>100)){ setMsg('Rating must be between 1 and 100.','error'); return; }
@@ -678,10 +717,11 @@
       first_round_rank: numOrNull(fFirst.value), final_round_rank: numOrNull(fFinal.value),
       personal_note: strOrNull(fNote.value)
     };
-    if(editingId) row.id=editingId;
-
     saveBtn.disabled=true; var lbl=saveBtn.textContent; saveBtn.textContent='Saving…';
-    sb.from('tasting_history').upsert(row,{onConflict:'user_id,event_name,expression'}).select().then(function(res){
+    // Edits update by id, so a renamed Other expression replaces its row instead of colliding.
+    var q = editingId ? sb.from('tasting_history').update(row).eq('id',editingId)
+                      : sb.from('tasting_history').upsert(row,{onConflict:'user_id,event_name,expression'});
+    q.select().then(function(res){
       saveBtn.disabled=false; saveBtn.textContent=lbl;
       if(res.error){ setMsg(friendlyDbError(res.error,'Could not save your tasting.'),'error'); return; }
       resetForm(); setMsg('Saved. Your catalog is updated below. Cheers!','ok');
