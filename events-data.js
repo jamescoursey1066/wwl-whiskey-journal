@@ -23,7 +23,7 @@ window.WWL_EVENTS = [
     pairing: "guides/wheated-whispers-food-pairing-guide.pdf"
   },
   {
-    name: "Over A Barrel", date: "2026-12-06",
+    name: "Over A Barrel", date: "2026-12-06", time: "1pm CT",
     tag: "How different oak species transform the taste of whiskey.",
     expressions: [
       { name: "Old Charter Oak Finest Oak Kentucky Straight Bourbon Whiskey", msrp: 149.99, category: "Kentucky Straight Bourbon", mashbill: "Buffalo Trace Mash Bill #1 (low-rye); exact percentages undisclosed", age: "No age statement", proof: "92" },
