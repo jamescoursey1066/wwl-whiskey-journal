@@ -135,41 +135,89 @@
   .callout{font-size:16px;font-style:italic;color:var(--gold-lt);border:1px dashed var(--line);padding:10px 14px;margin-bottom:16px;}
   .callout a{color:var(--gold);}
 
-  /* My Catalog: the journal's Catalog table (tier/BBB chips, stats row, sortable columns) in portal colors */
+  /* My Catalog: the journal's Catalog page (light scheme, tier/BBB chips, stats row, sortable
+     columns, Note badge + pop-up). body.light swaps the page chrome while this screen is open. */
   main.wide{max-width:1320px;}
-  section.panel.mc{padding:0;}
-  .cat-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);}
-  .chip-label{font-family:'Cinzel',Georgia,serif;font-size:10.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;}
-  .chip-group{display:flex;gap:5px;flex-wrap:wrap;margin-right:8px;}
-  .chip.tog{cursor:pointer;user-select:none;}
-  .chip.tog.on{background:var(--gold);border-color:var(--gold);color:var(--bg);}
-  .cat-controls input[type=search]{width:220px;margin-left:auto;padding:6px 10px;font-size:16px;}
-  .cat-stats{display:flex;gap:20px;flex-wrap:wrap;padding:9px 18px;border-bottom:1px solid var(--line);font-size:15px;color:var(--muted);font-style:italic;}
-  .cat-stats strong{color:var(--cream);font-style:normal;}
-  .cat-table-wrap{overflow-x:auto;}
-  table.cat-t{width:100%;min-width:1060px;border-collapse:collapse;font-size:16px;}
-  table.cat-t td:nth-child(4){min-width:240px;}
-  table.cat-t th,table.cat-t td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(204,153,0,.14);vertical-align:middle;}
-  table.cat-t th{font-family:'Cinzel',Georgia,serif;font-weight:500;font-size:10.5px;letter-spacing:.12em;color:var(--gold-lt);text-transform:uppercase;
-    background:var(--card2);cursor:pointer;white-space:nowrap;user-select:none;}
-  table.cat-t th.no-sort{cursor:default;}
-  table.cat-t th:not(.no-sort):hover{color:var(--cream);}
-  table.cat-t th.sorted{color:var(--gold);}
-  table.cat-t th.sorted.asc::after{content:" \25B2";font-size:9px;}
-  table.cat-t th.sorted.desc::after{content:" \25BC";font-size:9px;}
-  table.cat-t td.num,table.cat-t th.num{text-align:right;font-variant-numeric:tabular-nums;}
-  table.cat-t td.ctr,table.cat-t th.ctr{text-align:center;}
-  table.cat-t tbody tr:hover{background:rgba(204,153,0,.06);}
-  table.cat-t td.empty{text-align:center;color:var(--muted);font-style:italic;padding:30px;}
-  .name-cell{color:var(--cream);line-height:1.25;}
-  .sub-line{color:var(--muted);font-size:14px;font-style:italic;}
-  .thumb{width:32px;height:48px;object-fit:contain;border-radius:2px;cursor:zoom-in;background:#f4efe3;}
-  .no-img{display:inline-block;width:32px;height:48px;background:#2a221a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 48'%3E%3Cg fill='%235c4a35'%3E%3Crect x='11' y='1' width='10' height='5' rx='1'/%3E%3Crect x='10' y='6' width='12' height='7'/%3E%3Cpath d='M10 13C3 18 3 24 3 27v16c0 3 4 4 13 4s13-1 13-4V27c0-3 0-9-6-14z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;border-radius:2px;}
-  .bbb{font-family:'Cinzel',Georgia,serif;font-size:10.5px;letter-spacing:.06em;padding:2px 7px;border-radius:3px;background:#2a221a;color:var(--muted);}
-  .bBottle{background:#1f3d1f;color:#bfe3bf;} .bBar{background:#4a3c10;color:#f3dd95;} .bBust{background:#4a1d1d;color:#f3c6c4;}
-  .info-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-left:5px;padding:0;border:1px solid var(--gold);
-    border-radius:50%;background:none;color:var(--gold);font:700 9px/1 Georgia,serif;cursor:pointer;vertical-align:middle;}
-  a.mini{text-decoration:none;display:inline-block;}
+  body.light{background:#fafaf7;color:#1a1a1a;}
+  body.light header.top{background:#6b3e1f;border-bottom-color:#6b3e1f;}
+  body.light .wordmark small{color:#f0d79a;}
+  body.light .who{color:rgba(255,255,255,.75);}
+  body.light .eyebrow{color:#6b3e1f;}
+  body.light .tab{color:#6b3e1f;border-color:#e5e3dd;background:#fff;}
+  body.light .tab:hover{border-color:#6b3e1f;}
+  body.light .tab[aria-selected="true"]{background:#6b3e1f;border-color:#6b3e1f;color:#fff;}
+  .lc{--panel:#fff;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e5e3dd;--accent:#6b3e1f;--amber:#c8860a;
+    --S:#d4af37;--A:#4a7c4a;--B:#5b8def;--C:#c9a36b;--D:#a86a4a;--E:#8a4a3a;--F:#9b3838;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.4;color:var(--ink);}
+  .lc h1{color:var(--ink);}
+  .lc .lede{color:var(--accent);font-family:'Cormorant Garamond',Georgia,serif;}
+  .lc .divider{background:var(--amber);}
+  .lc .callout{color:var(--accent);border-color:var(--line);background:var(--panel);font-family:'Cormorant Garamond',Georgia,serif;}
+  .lc .callout a{color:var(--accent);}
+  .lc a{color:var(--accent);}
+  .lc .cat-box{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .lc .cat-controls{background:var(--panel);border-bottom:1px solid var(--line);padding:10px 18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  .lc .chip-group{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+  .lc .chip-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;}
+  .lc .chip{padding:3px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:12px;background:var(--panel);color:var(--ink);
+    user-select:none;transition:all .15s;font-family:inherit;letter-spacing:0;white-space:nowrap;}
+  .lc .chip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .lc .cat-controls input[type=search]{width:200px;margin-left:auto;padding:5px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink);
+    font-family:inherit;font-size:13px;}
+  .lc .cat-controls input[type=search]:focus{border-color:var(--accent);box-shadow:none;}
+  .lc .reset-btn{padding:5px 12px;cursor:pointer;border:1px solid var(--line);background:#fafaf7;border-radius:4px;font-size:12px;color:var(--ink);font-family:inherit;}
+  .lc .stats{padding:8px 18px;background:var(--panel);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap;}
+  .lc .stats strong{color:var(--ink);}
+  .lc .cat-table-wrap{overflow-x:auto;}
+  .lc table{width:100%;min-width:900px;border-collapse:collapse;}
+  .lc th,.lc td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);}
+  .lc th{background:#f4f2ec;font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;cursor:pointer;user-select:none;white-space:nowrap;color:var(--ink);}
+  .lc th:hover{background:#ebe8df;}
+  .lc th.no-sort{cursor:default;}
+  .lc th.sorted{color:var(--accent);}
+  .lc th.sorted.asc::after{content:" \25B2";font-size:9px;}
+  .lc th.sorted.desc::after{content:" \25BC";font-size:9px;}
+  .lc td.num,.lc th.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .lc td.ctr,.lc th.ctr{text-align:center;}
+  .lc tbody tr:hover{background:#faf7ee;}
+  .lc tbody tr.has-note{cursor:pointer;}
+  .lc tbody tr.has-note td:first-child{border-left:3px solid var(--amber);}
+  .lc td.empty{padding:40px;text-align:center;color:var(--muted);}
+  .lc .tier{display:inline-block;min-width:22px;padding:2px 7px;border-radius:3px;font-weight:700;font-size:11px;text-align:center;color:#fff;}
+  .tS{background:#d4af37;color:#3a2d00;} .tA{background:#4a7c4a;} .tB{background:#5b8def;} .tC{background:#c9a36b;} .tD{background:#a86a4a;} .tE{background:#8a4a3a;} .tF{background:#9b3838;}
+  .lc .bbb{font-size:11px;padding:2px 6px;border-radius:3px;background:#f0ede5;color:var(--muted);}
+  .lc .bBottle{background:#d9efd9;color:#1f5c1f;} .lc .bBar{background:#fff2cc;color:#6b5208;} .lc .bBust{background:#f9d4d4;color:#7c1e1e;}
+  .note-badge{font-size:10px;padding:1px 5px;border-radius:3px;background:#c8860a;color:#fff;margin-left:4px;vertical-align:middle;font-weight:400;}
+  .lc .name-cell{font-weight:500;line-height:1.3;}
+  .lc .song{color:var(--muted);font-size:11px;font-style:italic;}
+  .lc .thumb{width:32px;height:48px;object-fit:contain;border-radius:2px;cursor:zoom-in;}
+  .lc .no-img{display:inline-block;width:32px;height:48px;background:#eee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 48'%3E%3Cg fill='%23ccc'%3E%3Crect x='11' y='1' width='10' height='5' rx='1'/%3E%3Crect x='10' y='6' width='12' height='7'/%3E%3Cpath d='M10 13C3 18 3 24 3 27v16c0 3 4 4 13 4s13-1 13-4V27c0-3 0-9-6-14z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;border-radius:2px;}
+  .lc .info-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:6px;padding:0;border:1px solid var(--accent);
+    border-radius:50%;background:var(--panel);color:var(--accent);font:700 10px/1 Georgia,serif;cursor:pointer;vertical-align:middle;text-transform:none;}
+  .lc .info-btn:hover{background:var(--accent);color:#fff;}
+
+  /* Note pop-up: the journal's catalog-row Tasting Card modal */
+  #noteModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;}
+  #noteModal.open{display:flex;}
+  #noteBox{background:#fff;color:#1a1a1a;border-radius:10px;max-width:680px;width:90vw;max-height:90vh;overflow-y:auto;padding:24px;position:relative;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.4;}
+  #noteBox.map{max-width:1100px;width:94vw;height:90vh;padding:0;overflow:hidden;}
+  #noteBox.map #noteContent{height:100%;}
+  #noteBox.map iframe{width:100%;height:100%;border:0;display:block;}
+  #noteClose{position:absolute;top:12px;right:16px;font-size:22px;cursor:pointer;background:none;border:none;color:#6b6b6b;z-index:2;}
+  #noteBox.map #noteClose{background:rgba(255,255,255,.85);border-radius:50%;width:34px;height:34px;line-height:1;}
+  #noteBox h2{font-size:18px;margin-bottom:6px;font-weight:700;padding-right:24px;}
+  .nm-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;}
+  .nm-head img{width:60px;height:90px;object-fit:contain;border-radius:4px;flex-shrink:0;cursor:zoom-in;}
+  .nm-tags{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  #noteBox .tier{display:inline-block;min-width:22px;padding:2px 7px;border-radius:3px;font-weight:700;font-size:11px;text-align:center;color:#fff;}
+  .nm-meta{font-size:13px;color:#6b6b6b;}
+  .nm-sub{font-size:12px;color:#6b6b6b;margin-top:4px;font-style:italic;}
+  .nm-text{font-size:14px;line-height:1.7;white-space:pre-wrap;}
+  .nm-map{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:6px 14px;border:1px solid #6b3e1f;border-radius:20px;color:#6b3e1f;
+    text-decoration:none;font-size:13px;}
+  .nm-map:hover{background:#6b3e1f;color:#fff;}
+  .nm-foot{margin-top:12px;padding-top:10px;border-top:1px solid #e5e3dd;font-size:12px;color:#6b6b6b;font-style:italic;}
 
   /* Dialog (EU-required prompt, Personal Notes) */
   .dlg{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:24px;}
@@ -190,7 +238,7 @@
   .zoom img{max-width:88vw;max-height:88vh;object-fit:contain;}
 
   @media(max-width:700px){
-    .cat-controls input[type=search]{width:100%;margin-left:0;}
+    .lc .cat-controls input[type=search]{width:100%;margin-left:0;}
     header.top{padding:14px 18px;} main{padding:26px 16px 70px;} .grid2,.grid3,.eu-cols{grid-template-columns:1fr;}
     .eu-stats{grid-template-columns:1fr;} .who{display:none;} section.panel{padding:20px 16px;}
   }
@@ -341,30 +389,42 @@
   </div>
 
   <!-- ===================== MY CATALOG ===================== -->
-  <div class="view wide" id="view-catalog" role="tabpanel" aria-labelledby="tab-catalog" hidden>
+  <div class="view lc" id="view-catalog" role="tabpanel" aria-labelledby="tab-catalog" hidden>
     <h1>My Catalog</h1>
     <p class="lede">Your personal xRBEU-style catalog: every expression you&rsquo;ve saved in My Tastings, ranked and tiered in your own Equivalency Units.</p>
     <div class="divider"></div>
     <div id="mcCallout"></div>
-    <section class="panel mc">
+    <div class="cat-box">
       <div class="cat-controls">
         <span class="chip-label">Tier</span>
         <div class="chip-group" id="mcTierChips"></div>
-        <span class="chip-label">BBB</span>
+        <span class="chip-label" style="margin-left:8px">BBB</span>
         <div class="chip-group" id="mcBbbChips"></div>
+        <span class="chip-label" style="margin-left:8px">Notes only</span>
+        <label style="cursor:pointer;font-size:13px;display:flex;align-items:center;gap:4px;">
+          <input type="checkbox" id="mcNotesOnly" style="width:auto;"> with a note
+        </label>
         <input type="search" id="mcSearch" placeholder="Search my catalog&hellip;" aria-label="Search my catalog">
-        <button type="button" class="mini" id="mcReset">Reset</button>
+        <button type="button" class="reset-btn" id="mcReset">Reset</button>
       </div>
-      <div class="cat-stats" id="mcStats"></div>
+      <div class="stats" id="mcStats"></div>
       <div class="cat-table-wrap">
-        <table class="cat-t">
+        <table>
           <thead><tr id="mcHead"></tr></thead>
           <tbody id="mcBody"><tr><td class="empty">Loading your catalog&hellip;</td></tr></tbody>
         </table>
       </div>
-    </section>
+    </div>
   </div>
 </main>
+
+<!-- My Catalog note pop-up (same structure as the journal's catalog-row Tasting Card) -->
+<div id="noteModal" role="dialog" aria-modal="true" aria-label="Tasting note">
+  <div id="noteBox">
+    <button type="button" id="noteClose" aria-label="Close">&#x2715;</button>
+    <div id="noteContent"></div>
+  </div>
+</div>
 
 <!-- Shared dialog: the EU-required prompt and Personal Notes pop-ups -->
 <div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgTitle" hidden>
@@ -412,6 +472,7 @@
       el('view-'+t.getAttribute('data-view')).hidden = !on;
     });
     app.classList.toggle('wide', name==='catalog');
+    document.body.classList.toggle('light', name==='catalog');
     if(history.replaceState) history.replaceState(null,'','#'+name);
   }
   tabs.forEach(function(t){ t.addEventListener('click', function(){ showView(t.getAttribute('data-view')); }); });
@@ -801,6 +862,7 @@
   document.addEventListener('keydown', function(ev){
     if(ev.key!=='Escape') return;
     if(!el('zoom').hidden){ el('zoom').hidden=true; return; }
+    if(noteModal.classList.contains('open')){ closeNote(); return; }
     if(!dlg.hidden) closeDialog();
   });
   // "Go to My EUs" closes the dialog and switches screens (the form keeps what was typed).
@@ -928,14 +990,13 @@
 
   // ------------------------------------------------------- my catalog
   // Same columns as the journal's Catalog table, scored in the taster's own EU.
-  var mc={ tiers:{}, bbbs:{}, search:'', sortKey:'rank', sortDir:'asc' };
+  var mc={ tiers:{}, bbbs:{}, search:'', notesOnly:false, sortKey:'rank', sortDir:'asc' };
   var TIER_ORDER=['S','A','B','C','D','E','F'], BBBS=['Bottle','Bar','Bust'];
   var MC_COLS=[
     {k:'rank',l:'#',cls:'ctr'}, {k:'img',l:'',cls:'ctr',nosort:true}, {k:'tier',l:'Tier',cls:'ctr'},
     {k:'name',l:'Whiskey',cls:''}, {k:'rating',l:'Rating',cls:'num'}, {k:'price',l:'Price',cls:'num'},
     {k:'eu',l:'EU',cls:'num'}, {k:'fair',l:'Fair $',cls:'num'}, {k:'proof',l:'Proof',cls:'num'},
-    {k:'ppp',l:'$/Proof',cls:'num'}, {k:'bbb',l:'BBB',cls:'ctr'},
-    {k:'map',l:'Tasting Map',cls:'ctr',nosort:true}, {k:'note',l:'Notes',cls:'ctr',nosort:true}
+    {k:'ppp',l:'$/Proof',cls:'num'}, {k:'bbb',l:'BBB',cls:'ctr'}
   ];
 
   // The xRBEU Catalog row for a tasting: exact name first, then the closest wording.
@@ -975,13 +1036,17 @@
   function sizedImg(src, w){ return src.indexOf('cdn/shop/')>=0 ? src+(src.indexOf('?')<0?'?':'&')+'width='+w : src; }
 
   function renderMcChips(){
-    el('mcTierChips').innerHTML=TIER_ORDER.map(function(t){ return '<span class="chip tog'+(mc.tiers[t]?' on':'')+'" data-tier="'+t+'">'+t+'</span>'; }).join('');
-    el('mcBbbChips').innerHTML=BBBS.map(function(b){ return '<span class="chip tog'+(mc.bbbs[b]?' on':'')+'" data-bbb="'+b+'">'+b+'</span>'; }).join('');
+    el('mcTierChips').innerHTML=TIER_ORDER.map(function(t){ return '<span class="chip'+(mc.tiers[t]?' on':'')+'" data-tier="'+t+'">'+t+'</span>'; }).join('');
+    el('mcBbbChips').innerHTML=BBBS.map(function(b){ return '<span class="chip'+(mc.bbbs[b]?' on':'')+'" data-bbb="'+b+'">'+b+'</span>'; }).join('');
   }
   el('mcTierChips').addEventListener('click', function(ev){ var t=ev.target.getAttribute('data-tier'); if(!t) return; mc.tiers[t]=!mc.tiers[t]; renderMyCatalog(); });
   el('mcBbbChips').addEventListener('click', function(ev){ var b=ev.target.getAttribute('data-bbb'); if(!b) return; mc.bbbs[b]=!mc.bbbs[b]; renderMyCatalog(); });
   el('mcSearch').addEventListener('input', function(){ mc.search=this.value; renderMyCatalog(); });
-  el('mcReset').addEventListener('click', function(){ mc.tiers={}; mc.bbbs={}; mc.search=''; mc.sortKey='rank'; mc.sortDir='asc'; el('mcSearch').value=''; renderMyCatalog(); });
+  el('mcNotesOnly').addEventListener('change', function(){ mc.notesOnly=this.checked; renderMyCatalog(); });
+  el('mcReset').addEventListener('click', function(){
+    mc.tiers={}; mc.bbbs={}; mc.search=''; mc.notesOnly=false; mc.sortKey='rank'; mc.sortDir='asc';
+    el('mcSearch').value=''; el('mcNotesOnly').checked=false; renderMyCatalog();
+  });
   el('mcHead').addEventListener('click', function(ev){
     if(ev.target.closest('.info-btn')){ showView('eu'); window.scrollTo({top:0,behavior:'smooth'}); return; }
     var th=ev.target.closest('th[data-k]'); if(!th) return;
@@ -999,6 +1064,7 @@
     var rows=all.filter(function(x){
       if(tiers.length && tiers.indexOf(x.tier)<0) return false;
       if(bbbs.length && bbbs.indexOf(x.bbb)<0) return false;
+      if(mc.notesOnly && !x.hasMap && !x.note) return false;
       if(q && x.name.toLowerCase().indexOf(q)<0 && (x.event||'').toLowerCase().indexOf(q)<0) return false;
       return true;
     });
@@ -1031,11 +1097,12 @@
     var dash='&mdash;';
     body.innerHTML=rows.map(function(x, i){
       var sub=[x.event]; if(x.category) sub.push(x.category);
-      return '<tr>'+
+      var hasNote=x.hasMap || !!x.note;
+      return '<tr'+(hasNote ? ' class="has-note" data-i="'+i+'" title="Click to view your '+(x.note?'tasting note':'Tasting Map')+'"' : '')+'>'+
         '<td class="ctr">'+x.rank+'</td>'+
         '<td class="ctr">'+(x.img ? '<img class="thumb" src="'+esc(sizedImg(x.img,80))+'" data-zoom="'+esc(sizedImg(x.img,600))+'" loading="lazy" alt="">' : '<span class="no-img"></span>')+'</td>'+
-        '<td class="ctr">'+(x.tier ? '<span class="tier-badge tier-'+x.tier+'">'+x.tier+'</span>' : dash)+'</td>'+
-        '<td><div class="name-cell">'+esc(x.name)+'</div><div class="sub-line">'+esc(sub.join(' · '))+'</div></td>'+
+        '<td class="ctr">'+(x.tier ? '<span class="tier t'+x.tier+'">'+x.tier+'</span>' : dash)+'</td>'+
+        '<td><div class="name-cell">'+esc(x.name)+(hasNote ? '<span class="note-badge">Note</span>' : '')+'</div><div class="song">'+esc(sub.join(' · '))+'</div></td>'+
         '<td class="num">'+(x.rating!=null ? x.rating : dash)+'</td>'+
         '<td class="num">'+(x.price!=null ? money(x.price) : dash)+'</td>'+
         '<td class="num">'+(x.eu!=null ? '<strong>'+x.eu.toFixed(2)+'</strong>' : dash)+'</td>'+
@@ -1043,20 +1110,60 @@
         '<td class="num">'+(x.proof!=null ? Math.round(x.proof*10)/10 : dash)+'</td>'+
         '<td class="num">'+(x.ppp!=null ? money(x.ppp) : dash)+'</td>'+
         '<td class="ctr">'+(x.bbb ? '<span class="bbb b'+esc(x.bbb)+'">'+esc(x.bbb)+'</span>' : dash)+'</td>'+
-        '<td class="ctr">'+(x.hasMap ? '<a class="mini" href="my-tasting-map.html?id='+encodeURIComponent(x.src.id)+'" target="_blank" rel="noopener" title="Open your Tasting Map on the Buhloh.buzz flavor wheel">Map</a>' : dash)+'</td>'+
-        '<td class="ctr">'+(x.note ? '<button type="button" class="mini" data-note="'+i+'" title="Read your Personal Notes">Notes</button>' : dash)+'</td>'+
       '</tr>';
     }).join('');
     body._rows=rows;
   }
 
+  // ---------------------------------------------- note pop-up (row click)
+  // Personal Notes only -> the Tasting Card; Nose/Palate/Finish only -> the Tasting Map;
+  // both -> the Tasting Card with a link that opens the map in a new tab.
+  var noteModal=el('noteModal'), noteBox=el('noteBox'), noteReturn=null;
+  function mapUrl(x){ return 'my-tasting-map.html?id='+encodeURIComponent(x.src.id); }
+  function openNoteFor(x){
+    noteReturn=document.activeElement;
+    if(!x.note){
+      noteBox.className='map';
+      el('noteContent').innerHTML='<iframe src="'+mapUrl(x)+'&embed=1" title="Tasting Map for '+esc(x.name)+'"></iframe>';
+    } else {
+      noteBox.className='';
+      var meta=[];
+      if(x.rating!=null) meta.push('Rating '+x.rating);
+      if(x.price!=null) meta.push(money(x.price));
+      if(x.eu!=null) meta.push(esc(EU.abbrev)+' '+x.eu.toFixed(2));
+      var sub=[esc(x.event)]; if(x.category) sub.push(esc(x.category));
+      el('noteContent').innerHTML=
+        '<div class="nm-head">'+
+          (x.img ? '<img src="'+esc(sizedImg(x.img,200))+'" data-zoom="'+esc(sizedImg(x.img,600))+'" alt="">' : '')+
+          '<div><h2>'+esc(x.name)+'</h2>'+
+            '<div class="nm-tags">'+(x.tier ? '<span class="tier t'+x.tier+'">'+x.tier+'</span>' : '')+'<span class="nm-meta">'+meta.join(' · ')+'</span></div>'+
+            '<div class="nm-sub">&#x1F5D3; '+sub.join(' · ')+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<p class="nm-text">'+esc(x.note)+'</p>'+
+        (x.hasMap ? '<a class="nm-map" href="'+mapUrl(x)+'" target="_blank" rel="noopener" title="Open your Tasting Map on the Buhloh.buzz flavor wheel in a new tab">View Tasting Map &#x2197;</a>' : '')+
+        (x.bbb ? '<div class="nm-foot">Bottle / Bar / Bust: '+esc(x.bbb)+'</div>' : '');
+    }
+    noteModal.classList.add('open');
+    el('noteClose').focus();
+  }
+  function closeNote(){
+    noteModal.classList.remove('open'); el('noteContent').innerHTML='';
+    if(noteReturn && noteReturn.focus) noteReturn.focus();
+    noteReturn=null;
+  }
+  el('noteClose').addEventListener('click', closeNote);
+  noteModal.addEventListener('click', function(ev){
+    var img=ev.target.closest('img[data-zoom]');
+    if(img){ el('zoomImg').src=img.getAttribute('data-zoom'); el('zoom').hidden=false; return; }
+    if(ev.target===noteModal) closeNote();
+  });
+
   el('mcBody').addEventListener('click', function(ev){
     var img=ev.target.closest('img[data-zoom]');
     if(img){ el('zoomImg').src=img.getAttribute('data-zoom'); el('zoom').hidden=false; return; }
-    var b=ev.target.closest('button[data-note]'); if(!b) return;
-    var x=el('mcBody')._rows[+b.getAttribute('data-note')];
-    openDialog({ kicker:'PERSONAL NOTES', title:x.name, body:'<p class="quote">'+esc(x.note)+'</p>'+
-      '<p class="sub-line">'+esc(x.event)+(x.rating!=null?' · Rated '+x.rating:'')+'</p>' });
+    var tr=ev.target.closest('tr.has-note'); if(!tr) return;
+    openNoteFor(el('mcBody')._rows[+tr.getAttribute('data-i')]);
   });
   el('zoom').addEventListener('click', function(){ el('zoom').hidden=true; });
 

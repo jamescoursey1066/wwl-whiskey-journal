@@ -914,7 +914,9 @@ function leavesIn(text) {
   const configured = window.SUPABASE_ANON_KEY && window.SUPABASE_ANON_KEY.indexOf('PASTE_') !== 0;
   if (!configured || !window.supabase) { toLogin(); return; }
   const sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-  const id = new URLSearchParams(location.search).get('id');
+  const params = new URLSearchParams(location.search), id = params.get('id');
+  // Shown inside My Catalog's note pop-up: the pop-up has its own close button.
+  if (params.has('embed')) document.querySelector('.back').style.display = 'none';
 
   function render(r) {
     document.title = r.expression + ' — My Tasting Map';
