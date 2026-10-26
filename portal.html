@@ -64,6 +64,7 @@
   button.save:disabled{opacity:.6;cursor:default;}
   button.ghost{font-family:'Cinzel',Georgia,serif;font-size:11px;letter-spacing:.14em;color:var(--gold-lt);background:none;border:1px solid var(--line);border-radius:22px;padding:9px 20px;cursor:pointer;}
   button.ghost:hover{border-color:var(--gold);}
+  button.ghost.del{color:#E39B99;}
   .form-msg{margin-top:16px;padding:12px 14px;font-size:15.5px;border:1px solid;display:none;}
   .form-msg.show{display:block;}
   .form-msg.error{color:#F3C6C4;border-color:var(--err);background:rgba(217,83,79,.12);}
@@ -331,12 +332,12 @@
   <!-- ===================== MY TASTINGS ===================== -->
   <div class="view" id="view-tastings" role="tabpanel" aria-labelledby="tab-tastings" hidden>
     <h1>My Tastings</h1>
-    <p class="lede">Create your own ratings for each expression featured in the WWL Sanctioned Tasting Events. Every tasting you save lands in My Catalog. Impress your friends.</p>
+    <p class="lede">Create your own ratings for each expression featured in the WWL Sanctioned Tasting Events, or any whiskey you pour. Every tasting you save lands in My Catalog. Impress your friends.</p>
     <div class="divider"></div>
 
     <section class="panel">
-      <h2 id="formTitle">Add a Tasting</h2>
-      <p class="hint">Pick a sanctioned event and expression (or choose &ldquo;Other expression&rdquo; for a whiskey from outside the events), then record your evaluation. Saving again for the same expression updates your entry.</p>
+      <h2 id="formTitle">Add/Edit Tasting</h2>
+      <p class="hint">Pick an event to see its expressions, or choose &ldquo;No Event (Independent Tasting)&rdquo; to add a whiskey from outside the events. Leave the event blank to choose from everything already in My Catalog. Picking an expression you&rsquo;ve saved loads your tasting so you can edit it.</p>
       <form id="entryForm" novalidate>
         <div class="grid2">
           <div class="field">
@@ -346,12 +347,9 @@
           <div class="field">
             <label for="fExpr">Expression</label>
             <select id="fExpr"><option value="">Select an expression&hellip;</option></select>
-          </div>
-          <div class="field full" id="fCustomWrap" hidden>
-            <label for="fCustom">Expression Name</label>
-            <input type="text" id="fCustom" list="fCustomList" autocomplete="off" maxlength="120" placeholder="e.g. Rare Breed Barrel Proof">
+            <input type="text" id="fCustom" list="fCustomList" autocomplete="off" maxlength="120" placeholder="Add a new expression, e.g. Rare Breed Barrel Proof" aria-describedby="fCustomSub" hidden>
             <datalist id="fCustomList"></datalist>
-            <div class="sub">Not part of a Sanctioned Tasting Event, so it&rsquo;s filed under Independent Tastings. Type to pick from the xRBEU Catalog, or enter any name.</div>
+            <div class="sub" id="fCustomSub" hidden>Type the new expression&rsquo;s name. Suggestions come from the xRBEU Catalog and your own Independent Tastings.</div>
           </div>
           <div class="specs" id="fSpecs"></div>
           <div class="field full"><label for="fNose">Nose</label><textarea id="fNose"></textarea></div>
@@ -374,18 +372,13 @@
         </div>
         <div class="form-actions">
           <button type="submit" class="save" id="saveBtn">Save Tasting</button>
-          <button type="button" class="ghost" id="cancelBtn" style="display:none;">Cancel edit</button>
+          <button type="button" class="ghost" id="clearBtn">Clear form</button>
+          <button type="button" class="ghost del" id="deleteBtn" style="display:none;">Delete Tasting</button>
         </div>
         <div class="form-msg" id="formMsg" role="alert" aria-live="polite"></div>
       </form>
     </section>
 
-    <section class="panel">
-      <h2>Tasting Log</h2>
-      <p class="hint">Everything you&rsquo;ve logged, grouped by event. Edit or delete a tasting here.</p>
-      <div id="euCallout"></div>
-      <div id="tastingLog"><div class="empty">Loading your tastings&hellip;</div></div>
-    </section>
   </div>
 
   <!-- ===================== MY CATALOG ===================== -->
@@ -754,7 +747,7 @@
   var fEvent=el('fEvent'), fExpr=el('fExpr'), fSpecs=el('fSpecs');
   var fNose=el('fNose'), fPalate=el('fPalate'), fFinish=el('fFinish'), fRating=el('fRating'), fPrice=el('fPrice'), fPriceSub=el('fPriceSub');
   var fBBB=el('fBBB'), fFirst=el('fFirst'), fFinal=el('fFinal'), fNote=el('fNote');
-  var saveBtn=el('saveBtn'), cancelBtn=el('cancelBtn'), formMsg=el('formMsg'), formTitle=el('formTitle');
+  var saveBtn=el('saveBtn'), formMsg=el('formMsg');
   var editingId=null;
   var PRICE_NOTE='Used to score this tasting in your EU.';
 
@@ -771,30 +764,53 @@
   }
 
   // Expressions from outside the Sanctioned Tasting Events are filed under one fixed event name.
-  var OTHER='__other__', OTHER_EVENT='Independent Tastings';
-  var fCustomWrap=el('fCustomWrap'), fCustom=el('fCustom'), fCustomList=el('fCustomList');
-  function isOther(){ return fExpr.value===OTHER; }
+  // Event choices: blank = pick from everything already in My Catalog; an event = that event's
+  // expressions; NO_EVENT = type a new Independent Tasting expression.
+  var NO_EVENT='__none__', OTHER_EVENT='Independent Tastings';
+  var fCustom=el('fCustom'), fCustomList=el('fCustomList'), fCustomSub=el('fCustomSub'), deleteBtn=el('deleteBtn');
+  function mode(){ return fEvent.value===NO_EVENT ? 'none' : fEvent.value ? 'event' : 'saved'; }
+  function rowById(id){ for(var i=0;i<ROWS.length;i++){ if(String(ROWS[i].id)===String(id)) return ROWS[i]; } return null; }
+  function savedRow(evName, exprName){
+    var n=norm(exprName);
+    for(var i=0;i<ROWS.length;i++){ if(ROWS[i].event_name===evName && norm(ROWS[i].expression)===n) return ROWS[i]; }
+    return null;
+  }
 
   EVENTS.forEach(function(ev){ var o=document.createElement('option'); o.value=ev.name; o.textContent=ev.name; fEvent.appendChild(o); });
+  (function(){ var o=document.createElement('option'); o.value=NO_EVENT; o.textContent='No Event (Independent Tasting)'; fEvent.appendChild(o); })();
 
+  function opt(value, text){ var o=document.createElement('option'); o.value=value; o.textContent=text; fExpr.appendChild(o); }
   function fillExprList(){
-    var keep=isOther();
-    fExpr.innerHTML='<option value="">Select an expression…</option>';
-    fSpecs.textContent='';
-    var ev=findEvent(fEvent.value);
-    if(ev){ ev.expressions.forEach(function(x){ var o=document.createElement('option'); o.value=x.name; o.textContent=x.name; fExpr.appendChild(o); }); }
-    var oo=document.createElement('option'); oo.value=OTHER; oo.textContent='Other expression (not in a Sanctioned Tasting Event)…'; fExpr.appendChild(oo);
-    if(keep) fExpr.value=OTHER;
+    var m=mode(), keep=fExpr.value;
+    fExpr.hidden = m==='none'; fCustom.hidden = m!=='none'; fCustomSub.hidden = m!=='none';
+    fExpr.innerHTML='';
+    if(m==='saved'){
+      var rows=ROWS.slice().sort(function(a,b){ return a.expression.localeCompare(b.expression) || a.event_name.localeCompare(b.event_name); });
+      opt('', rows.length ? 'Select one of your saved expressions…' : 'No saved expressions yet. Choose an event first.');
+      rows.forEach(function(r){ opt(r.id, r.expression+'  ·  '+r.event_name); });
+    } else if(m==='event'){
+      var ev=findEvent(fEvent.value), names=ev ? ev.expressions.map(function(x){ return x.name; }) : [];
+      // Keep tastings saved under this event even if the event's lineup has since changed.
+      ROWS.forEach(function(r){ if(r.event_name===fEvent.value && names.indexOf(r.expression)<0) names.push(r.expression); });
+      opt('', 'Select an expression…');
+      names.forEach(function(n){ opt(n, n+(savedRow(fEvent.value, n) ? '  ✓' : '')); });
+    }
+    fExpr.value=keep; if(fExpr.value!==keep) fExpr.value='';
   }
-  fillExprList();
-  fEvent.addEventListener('change', fillExprList);
 
-  // Suggest official catalog names as the taster types; fill the MSRP once a name is settled.
+  // Suggest official catalog names (plus the taster's own Independent Tastings) as they type.
   fCustom.addEventListener('input', function(){
-    fCustomList.innerHTML='';
-    searchCatalog(fCustom.value).forEach(function(r){ var o=document.createElement('option'); o.value=r.name; fCustomList.appendChild(o); });
+    fCustomList.innerHTML=''; var seen={};
+    ROWS.filter(function(r){ return r.event_name===OTHER_EVENT; }).concat(searchCatalog(fCustom.value).map(function(c){ return { expression:c.name }; }))
+      .forEach(function(r){ if(seen[r.expression]) return; seen[r.expression]=1; var o=document.createElement('option'); o.value=r.expression; fCustomList.appendChild(o); });
   });
-  fCustom.addEventListener('change', function(){ suggestPrice(OTHER_EVENT, fCustom.value.trim()); });
+  fCustom.addEventListener('change', function(){
+    var name=fCustom.value.trim(), r=name ? savedRow(OTHER_EVENT, name) : null;
+    if(r){ loadRow(r); return; }
+    // A new name: start fresh if the fields hold another saved tasting; otherwise keep what's typed.
+    if(editingId){ setEditing(null); clearFields(); }
+    showSpecs(null, null); suggestPrice(OTHER_EVENT, name);
+  });
 
   function suggestPrice(evName, exprName){
     fPriceSub.textContent=PRICE_NOTE;
@@ -804,46 +820,59 @@
     }
   }
 
+  function showSpecs(evName, exprName, loaded){
+    var x=findExpr(findEvent(evName), exprName), bits=[];
+    if(loaded) bits.push('Editing your saved tasting'+(mode()==='saved' ? ' from '+evName : ''));
+    if(x){ if(x.category)bits.push(x.category); if(x.mashbill)bits.push(x.mashbill); if(x.age)bits.push(x.age); if(x.proof)bits.push(x.proof+' proof'); }
+    else if(evName && evName!==OTHER_EVENT && findEvent(evName) && exprName) bits.push('Tasting details announced closer to the event.');
+    fSpecs.textContent=bits.join('  ·  ');
+  }
+
+  function setEditing(id){
+    editingId=id;
+    deleteBtn.style.display = id ? 'inline-block' : 'none';
+    saveBtn.textContent = id ? 'Save Changes' : 'Save Tasting';
+  }
+  function clearFields(){
+    fNose.value=''; fPalate.value=''; fFinish.value=''; fRating.value=''; fPrice.value=''; fPriceSub.textContent=PRICE_NOTE;
+    fBBB.value=''; fFirst.value=''; fFinal.value=''; fNote.value='';
+  }
+  // Put a saved tasting's content into the form.
+  function loadRow(row){
+    setEditing(row.id);
+    fNose.value=row.nose||''; fPalate.value=row.palate||''; fFinish.value=row.finish||'';
+    fRating.value=row.rating!=null?row.rating:''; fPrice.value=row.price!=null?Number(row.price).toFixed(2):''; fPriceSub.textContent=PRICE_NOTE;
+    fBBB.value=row.bbb||''; fNote.value=row.personal_note||'';
+    fFirst.value=row.first_round_rank!=null?String(row.first_round_rank):''; fFinal.value=row.final_round_rank!=null?String(row.final_round_rank):'';
+    showSpecs(row.event_name, row.expression, true);
+    suggestPrice(row.event_name, row.expression);
+  }
+
+  fEvent.addEventListener('change', function(){
+    if(editingId){ setEditing(null); clearFields(); }
+    fExpr.value=''; fCustom.value=''; fSpecs.textContent='';
+    fillExprList();
+    if(mode()==='none') fCustom.focus();
+  });
+
   fExpr.addEventListener('change', function(){
-    fCustomWrap.hidden=!isOther();
-    if(isOther()){ fSpecs.textContent=''; suggestPrice(OTHER_EVENT, fCustom.value.trim()); if(!fCustom.value) fCustom.focus(); return; }
-    var ev=findEvent(fEvent.value), x=findExpr(ev,fExpr.value);
-    if(x){
-      var bits=[]; if(x.category)bits.push(x.category); if(x.mashbill)bits.push(x.mashbill); if(x.age)bits.push(x.age); if(x.proof)bits.push(x.proof+' proof');
-      fSpecs.textContent = bits.length? bits.join('  ·  ') : 'Tasting details announced closer to the event.';
-    } else { fSpecs.textContent=''; }
-    // Suggest the catalog MSRP as the bottle price when the field is empty.
+    var m=mode();
+    if(!fExpr.value){ if(editingId){ setEditing(null); clearFields(); } fSpecs.textContent=''; return; }
+    if(m==='saved'){ var r=rowById(fExpr.value); if(r) loadRow(r); return; }
+    var saved=savedRow(fEvent.value, fExpr.value);
+    if(saved){ loadRow(saved); return; }
+    if(editingId){ setEditing(null); clearFields(); }
+    showSpecs(fEvent.value, fExpr.value, false);
     suggestPrice(fEvent.value, fExpr.value);
   });
 
   function resetForm(){
-    editingId=null; formTitle.textContent='Add a Tasting'; cancelBtn.style.display='none';
-    fEvent.value=''; fExpr.value=''; fillExprList(); fCustom.value=''; fCustomWrap.hidden=true;
-    fNose.value=''; fPalate.value=''; fFinish.value=''; fRating.value=''; fPrice.value=''; fPriceSub.textContent=PRICE_NOTE;
-    fBBB.value=''; fFirst.value=''; fFinal.value=''; fNote.value='';
-    fEvent.disabled=false; fExpr.disabled=false;
+    setEditing(null); fEvent.value=''; fExpr.value=''; fCustom.value=''; fSpecs.textContent='';
+    clearFields(); fillExprList();
   }
-  cancelBtn.addEventListener('click', function(){ resetForm(); clearMsg(); });
-
-  function loadIntoForm(row){
-    editingId=row.id; formTitle.textContent='Edit Tasting'; cancelBtn.style.display='inline-block';
-    fPrice.value=row.price!=null?Number(row.price).toFixed(2):'';
-    if(row.event_name===OTHER_EVENT){
-      fEvent.value=''; fExpr.value=''; fillExprList();
-      fCustom.value=row.expression; fExpr.value=OTHER; fExpr.dispatchEvent(new Event('change'));
-    } else {
-    // event + expression may not be in EVENTS anymore, but they are stored on the row.
-    if(!findEvent(row.event_name)){ var o=document.createElement('option'); o.value=row.event_name; o.textContent=row.event_name; fEvent.appendChild(o); }
-    fEvent.value=row.event_name; fEvent.dispatchEvent(new Event('change'));
-    if(!findExpr(findEvent(row.event_name), row.expression)){ var o2=document.createElement('option'); o2.value=row.expression; o2.textContent=row.expression; fExpr.appendChild(o2); }
-    fExpr.value=row.expression; fExpr.dispatchEvent(new Event('change'));
-    }
-    fNose.value=row.nose||''; fPalate.value=row.palate||''; fFinish.value=row.finish||'';
-    fRating.value=row.rating!=null?row.rating:''; fBBB.value=row.bbb||'';
-    fFirst.value=row.first_round_rank!=null?String(row.first_round_rank):''; fFinal.value=row.final_round_rank!=null?String(row.final_round_rank):'';
-    fNote.value=row.personal_note||'';
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
+  el('clearBtn').addEventListener('click', function(){ resetForm(); clearMsg(); });
+  deleteBtn.addEventListener('click', function(){ var r=rowById(editingId); if(r) deleteEntry(r); });
+  fillExprList();
 
   function numOrNull(v){ v=(''+v).trim(); if(v==='')return null; var n=parseInt(v,10); return isNaN(n)?null:n; }
   function strOrNull(v){ v=(v||'').trim(); return v===''?null:v; }
@@ -883,11 +912,18 @@
   el('entryForm').addEventListener('submit', function(e){
     e.preventDefault(); clearMsg();
     if(!EU){ promptForEu(); return; }
-    var evName=fEvent.value, exprName=fExpr.value;
-    if(isOther()){
+    var m=mode(), evName, exprName, base=null;
+    if(m==='saved'){
+      base=rowById(fExpr.value);
+      if(!base){ setMsg('Choose one of your saved expressions, or pick an event to add a new tasting.','error'); fExpr.focus(); return; }
+      evName=base.event_name; exprName=base.expression;
+    } else if(m==='none'){
       evName=OTHER_EVENT; exprName=fCustom.value.trim();
-      if(!exprName){ setMsg('Please enter the expression name.','error'); fCustom.focus(); return; }
-    } else if(!evName || !exprName){ setMsg('Please choose an event and an expression, or pick “Other expression”.','error'); return; }
+      if(!exprName){ setMsg('Please add the expression name.','error'); fCustom.focus(); return; }
+    } else {
+      evName=fEvent.value; exprName=fExpr.value;
+      if(!exprName){ setMsg('Please choose an expression from '+evName+'.','error'); fExpr.focus(); return; }
+    }
     var ev=findEvent(evName), x=findExpr(ev,exprName);
     var rating=numOrNull(fRating.value);
     if(rating!=null && (rating<1||rating>100)){ setMsg('Rating must be between 1 and 100.','error'); return; }
@@ -897,96 +933,26 @@
     var row={
       user_id: USER.id,
       event_name: evName,
-      event_date: ev && ev.date ? ev.date : null,
+      event_date: ev && ev.date ? ev.date : (base ? base.event_date : null),
       expression: exprName,
-      category: x && x.category ? x.category : null,
+      category: x && x.category ? x.category : (base ? base.category : null),
       nose: strOrNull(fNose.value), palate: strOrNull(fPalate.value), finish: strOrNull(fFinish.value),
       rating: rating, price: price, bbb: strOrNull(fBBB.value),
       first_round_rank: numOrNull(fFirst.value), final_round_rank: numOrNull(fFinal.value),
       personal_note: strOrNull(fNote.value)
     };
     saveBtn.disabled=true; var lbl=saveBtn.textContent; saveBtn.textContent='Saving…';
-    // Edits update by id, so a renamed Other expression replaces its row instead of colliding.
+    // Edits update by id; new tastings upsert on (user, event, expression).
     var q = editingId ? sb.from('tasting_history').update(row).eq('id',editingId)
                       : sb.from('tasting_history').upsert(row,{onConflict:'user_id,event_name,expression'});
     q.select().then(function(res){
       saveBtn.disabled=false; saveBtn.textContent=lbl;
       if(res.error){ setMsg(friendlyDbError(res.error,'Could not save your tasting.'),'error'); return; }
-      resetForm(); setMsg('Saved. Your Tasting Log below and My Catalog are updated. Cheers!','ok');
+      var was=editingId; resetForm();
+      setMsg('Saved. '+exprName+(was ? ' is updated in' : ' is added to')+' My Catalog, including its '+EU.abbrev+' score. Cheers!','ok');
       loadCatalog();
     }).catch(function(){ saveBtn.disabled=false; saveBtn.textContent=lbl; setMsg('Something went wrong saving. Please try again.','error'); });
   });
-
-  function renderCallout(rows){
-    var c=el('euCallout');
-    if(!EU && rows.length){ c.innerHTML='<div class="callout">Make your EU on the <a href="#eu">My Equivalency Units</a> screen to see a value score on every tasting that has a rating and price.</div>'; }
-    else c.innerHTML='';
-  }
-
-  function renderTastings(rows){
-    renderCallout(rows);
-    var box=el('tastingLog'); box.innerHTML='';
-    if(!rows.length){ box.innerHTML='<div class="empty">No tastings logged yet. Add your first one above.</div>'; return; }
-    var groups={}; var order=[];
-    rows.forEach(function(r){ var k=r.event_name+'||'+(r.event_date||''); if(!groups[k]){groups[k]=[];order.push(k);} groups[k].push(r); });
-    order.forEach(function(k){
-      var list=groups[k]; var first=list[0];
-      var g=document.createElement('div'); g.className='ev-group';
-      var head=document.createElement('div'); head.className='ev-head';
-      var nm=document.createElement('span'); nm.className='ev-name'; nm.textContent=first.event_name;
-      var dt=document.createElement('span'); dt.className='ev-date';
-      if(first.event_date){ var d=new Date(first.event_date+'T00:00:00'); dt.textContent=isNaN(d)?first.event_date:d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}); }
-      head.appendChild(nm); head.appendChild(dt); g.appendChild(head);
-
-      list.sort(function(a,b){ return (a.final_round_rank||9)-(b.final_round_rank||9); });
-      list.forEach(function(r){
-        var e=document.createElement('div'); e.className='entry';
-        var top=document.createElement('div'); top.className='entry-top';
-        var left=document.createElement('div');
-        var en=document.createElement('div'); en.className='entry-name'; en.textContent=r.expression; left.appendChild(en);
-        if(r.category){ var ec=document.createElement('div'); ec.className='entry-cat'; ec.textContent=r.category; left.appendChild(ec); }
-        var acts=document.createElement('div'); acts.className='entry-actions';
-        var edit=document.createElement('button'); edit.className='mini'; edit.textContent='Edit'; edit.addEventListener('click',function(){ loadIntoForm(r); });
-        var del=document.createElement('button'); del.className='mini del'; del.textContent='Delete'; del.addEventListener('click',function(){ deleteEntry(r); });
-        acts.appendChild(edit); acts.appendChild(del);
-        top.appendChild(left); top.appendChild(acts); e.appendChild(top);
-
-        var chips=document.createElement('div'); chips.className='chips';
-        function chip(label,val,cls){ if(val==null||val==='')return null; var c=document.createElement('span'); c.className='chip'+(cls?' '+cls:''); c.innerHTML='<b>'+esc(label)+'</b> '+esc(val); chips.appendChild(c); return c; }
-        // Tastings saved without a price fall back to the expression's MSRP.
-        var price=r.price!=null && Number(r.price)>0 ? Number(r.price) : null, msrp=null;
-        if(price==null){ msrp=msrpFor(r.event_name, r.expression); if(msrp) price=msrp.price; }
-        chip('Rating', r.rating!=null?r.rating:'');
-        var pc=chip('Price', price!=null?money(price):'');
-        if(pc && msrp) pc.title=(msrp.src==='catalog'?'MSRP from the xRBEU Catalog.':'Typical retail price.')+' Edit this tasting to enter what you paid.';
-        if(EU){
-          if(r.rating!=null && price!=null){
-            var v=scoreOf(EU, Number(r.rating), price), t=tierOf(v);
-            var c=chip(EU.abbrev, v.toFixed(2), 'eu');
-            c.insertAdjacentHTML('beforeend',' <span class="tier-badge tier-'+t+'">'+t+'</span>');
-            c.title='Fair price at your rating of '+r.rating+': '+money(fairOf(EU,Number(r.rating)));
-          } else {
-            var c2=chip(EU.abbrev, '—', 'eu');
-            c2.title='Add a '+(r.rating==null?'rating':'')+(r.rating==null&&price==null?' and ':'')+(price==null?'bottle price':'')+' to score this tasting in your EU.';
-          }
-        }
-        chip('First', r.first_round_rank!=null?r.first_round_rank:'');
-        chip('Final', r.final_round_rank!=null?r.final_round_rank:'');
-        chip('BBB', r.bbb||'');
-        if(chips.children.length) e.appendChild(chips);
-
-        if(r.nose||r.palate||r.finish){
-          var npf=document.createElement('div'); npf.className='npf';
-          function line(lab,val){ if(!val)return; var d=document.createElement('div'); d.innerHTML='<span class="lab">'+lab+':</span> '+esc(val); npf.appendChild(d); }
-          line('Nose',r.nose); line('Palate',r.palate); line('Finish',r.finish);
-          e.appendChild(npf);
-        }
-        if(r.personal_note){ var n=document.createElement('div'); n.className='note-line'; n.textContent='“'+r.personal_note+'”'; e.appendChild(n); }
-        g.appendChild(e);
-      });
-      box.appendChild(g);
-    });
-  }
 
   // ------------------------------------------------------- my catalog
   // Same columns as the journal's Catalog table, scored in the taster's own EU.
@@ -1167,13 +1133,13 @@
   });
   el('zoom').addEventListener('click', function(){ el('zoom').hidden=true; });
 
-  function renderAll(){ renderTastings(ROWS); renderMyCatalog(); }
+  function renderAll(){ fillExprList(); renderMyCatalog(); }
 
   function loadCatalog(){
     sb.from('tasting_history').select('*').order('event_date',{ascending:true}).then(function(res){
-      if(res.error){ el('tastingLog').innerHTML='<div class="empty">Could not load your tastings: '+esc(res.error.message)+'</div>'; return; }
+      if(res.error){ el('mcBody').innerHTML='<tr><td class="empty">Could not load your tastings: '+esc(res.error.message)+'</td></tr>'; return; }
       ROWS=res.data||[]; renderAll();
-    }).catch(function(){ el('tastingLog').innerHTML='<div class="empty">Could not load your tastings. Please refresh.</div>'; });
+    }).catch(function(){ el('mcBody').innerHTML='<tr><td class="empty">Could not load your tastings. Please refresh.</td></tr>'; });
   }
 
   function loadEu(){
@@ -1190,6 +1156,7 @@
     sb.from('tasting_history').delete().eq('id',r.id).then(function(res){
       if(res.error){ setMsg('Could not delete: '+res.error.message,'error'); return; }
       if(editingId===r.id) resetForm();
+      setMsg('Deleted your tasting for '+r.expression+'. It\u2019s gone from My Catalog too.','ok');
       loadCatalog();
     });
   }
