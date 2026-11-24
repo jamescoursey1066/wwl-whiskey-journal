@@ -675,7 +675,7 @@ function initEventChips(){
 }
 function setEvent(e){state.eventFilter=e;renderNotes();}
 function setProducer(p){state.producerFilter=p;renderNotes();}
-function resetNoteFilters(){state.eventFilter="All";state.producerFilter="All";initEventChips();renderNotes();}
+function resetNoteFilters(){state.eventFilter="All";state.producerFilter="All";state.search="";document.getElementById('global-search').value="";initEventChips();renderCatalog();renderNotes();}
 
 function renderNotes(){
   const q=state.search.trim().toLowerCase();
