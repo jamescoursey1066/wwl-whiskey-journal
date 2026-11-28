@@ -215,15 +215,18 @@
   /* Highlight states for tasting map -------------------------- */
   .wedge { transition: filter 180ms cubic-bezier(.4,0,.2,1), opacity 180ms; cursor: default; }
   /* Dim everything by default; tagged elements get amplified */
-  svg.wheel .wedge:not(.is-tagged) { opacity: 0.18; filter: saturate(0.35); }
-  svg.wheel .l1-text:not(.is-tagged),
-  svg.wheel .l2-text:not(.is-tagged),
-  svg.wheel .l3-text:not(.is-tagged) { opacity: 0.32; }
-  svg.wheel .wedge.is-tagged.l3 { filter: saturate(1.25) brightness(0.95); }
-  svg.wheel .wedge.is-tagged.l1 { filter: saturate(1.05) brightness(1.0); }
-  svg.wheel .l3-text.is-tagged { fill: var(--ink); font-weight: 700; }
-  svg.wheel .l2-text.is-tagged { fill: var(--brown-deep); }
-  svg.wheel .l1-text.is-tagged { fill: #FAF6EC; }
+  svg.wheel.has-tasting .wedge:not(.is-tagged):not(.is-group) { opacity: 0.18; filter: saturate(0.35); }
+  svg.wheel.has-tasting .wedge.l3.is-group:not(.is-tagged) { opacity: 0.55; filter: saturate(0.8); }
+  svg.wheel.has-tasting .l1-text:not(.is-tagged),
+  svg.wheel.has-tasting .l2-text:not(.is-tagged),
+  svg.wheel.has-tasting .l3-text:not(.is-tagged):not(.is-group) { opacity: 0.32; }
+  svg.wheel.has-tasting .l3-text.is-group:not(.is-tagged) { opacity: 0.75; }
+  svg.wheel.has-tasting .src-band { opacity: 0.35; }
+  svg.wheel.has-tasting .wedge.is-tagged.l3 { filter: saturate(1.25) brightness(0.95); }
+  svg.wheel.has-tasting .wedge.is-tagged.l1 { filter: saturate(1.05) brightness(1.0); }
+  svg.wheel.has-tasting .l3-text.is-tagged { fill: var(--ink); font-weight: 700; }
+  svg.wheel.has-tasting .l2-text.is-tagged { fill: var(--brown-deep); }
+  svg.wheel.has-tasting .l1-text.is-tagged { fill: #FAF6EC; }
 
   /* Tasting notes panel --------------------------------------- */
   .notes {
@@ -341,6 +344,27 @@
     body { background: var(--paper); }
     .wheel-frame { box-shadow: none; }
   }
+
+  /* rev. 11·27·2026 additions ---------------------------------- */
+  .l1-text.l1-radial { letter-spacing: 0.14em; }
+  .src-band { transition: opacity 180ms; }
+  svg.wheel.has-hover .wedge:not(.is-hot) { opacity: 0.32; }
+  svg.wheel.has-hover .l1-text:not(.is-hot),
+  svg.wheel.has-hover .l2-text:not(.is-hot),
+  svg.wheel.has-hover .l3-text:not(.is-hot) { opacity: 0.32; }
+  .wedge.is-hot { filter: brightness(1.06); }
+  .note-tags li.group { background: transparent; border: 0.5px dashed var(--brown); font-style: italic; }
+  .note-tags li.group::after { content: " \2022 group"; text-transform: none; letter-spacing: 0.02em; color: var(--ink-mute); font-family: var(--serif); font-size: 12px; }
+  .source-key { margin: 26px auto 0; max-width: 1200px; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px 24px; }
+  .source-key-title { grid-column: 1 / -1; margin: 0 0 4px; font-family: var(--display); text-transform: uppercase; letter-spacing: 0.18em; font-size: 13px; color: var(--brown); text-align: center; }
+  .source-row { display: grid; grid-template-columns: 22px auto 1fr; column-gap: 8px; align-items: baseline; font-family: var(--serif); color: var(--ink-soft); font-size: 15px; }
+  .source-row b { font-family: var(--display); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); font-size: 13px; }
+  .source-row .count { color: var(--ink-mute); font-size: 13px; }
+  .source-chip { width: 22px; height: 8px; border-radius: 2px; display: inline-block; align-self: center; }
+  .source-note { grid-column: 2 / -1; color: var(--ink-mute); font-size: 14px; font-style: italic; }
+  .group-key { margin-top: 14px; font-family: var(--serif); font-style: italic; color: var(--ink-mute); font-size: 14px; }
+  .group-key i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--ink-soft); vertical-align: -1px; margin: 0 6px 0 0; }
+  .legend-row b { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -373,7 +397,7 @@
         <hr class="note-rule" />
         <p class="note-body">Clean oak forward, followed by sweet hay and lemon. Molasses at the end.</p>
         <ul class="note-tags">
-          <li>Oak</li><li>Clean</li><li>Hay</li><li>Lemon</li><li>Molasses</li>
+          <li class="group">Oak</li><li>Hay</li><li>Lemon</li><li>Molasses</li>
         </ul>
       </article>
       <article class="note-card">
@@ -384,7 +408,7 @@
         <hr class="note-rule" />
         <p class="note-body">Sweet grasses and a German herbal tincture (Unterberg?). Honey, wildflower, and ginger.</p>
         <ul class="note-tags">
-          <li>Grass</li><li>Herbal</li><li>Honey</li><li>Honeysuckle</li><li>Ginger</li><li>Carnation</li><li>Geranium</li><li>Medicinal</li>
+          <li>Grass</li><li>Herbal</li><li>Honey</li><li>Wildflower</li><li>Ginger</li><li>Medicinal</li>
         </ul>
       </article>
       <article class="note-card">
@@ -395,7 +419,7 @@
         <hr class="note-rule" />
         <p class="note-body">Light and sweet. Gingerbread and bright oak. Wafer cookies and candy-coated Jordan almonds.</p>
         <ul class="note-tags">
-          <li>Ginger</li><li>Oak</li><li>Biscuity</li><li>Almond</li>
+          <li class="group">Oak</li><li>Ginger</li><li>Biscuit/Graham</li><li>Almond</li>
         </ul>
       </article>
     </section>
@@ -409,55 +433,71 @@
 
 <script>
 //============================================================
-// DATA
+// DATA — Buhloh.buzz Whiskey Flavor Wheel, rev. 11·27·2026
+// l1 = family · l2 = group · l3 = leaf · src = where the flavor comes from
 //============================================================
 const RAW = [
-  {l1:"Floral",l2:"Blossom",l3:"Rose"},{l1:"Floral",l2:"Blossom",l3:"Lilac"},{l1:"Floral",l2:"Blossom",l3:"Violet"},{l1:"Floral",l2:"Blossom",l3:"Lavender"},{l1:"Floral",l2:"Blossom",l3:"Carnation"},{l1:"Floral",l2:"Blossom",l3:"Geranium"},{l1:"Floral",l2:"Blossom",l3:"Clover"},
-  {l1:"Floral",l2:"Aromatic",l3:"Hop"},{l1:"Floral",l2:"Aromatic",l3:"Perfume"},{l1:"Floral",l2:"Aromatic",l3:"Honeysuckle"},{l1:"Floral",l2:"Aromatic",l3:"Bubble Gum"},
-  {l1:"Fruity",l2:"Stone",l3:"Cherry"},{l1:"Fruity",l2:"Stone",l3:"Apricot"},{l1:"Fruity",l2:"Stone",l3:"Plum"},{l1:"Fruity",l2:"Stone",l3:"Peach"},
-  {l1:"Fruity",l2:"Seed",l3:"Apple"},{l1:"Fruity",l2:"Seed",l3:"Pear"},{l1:"Fruity",l2:"Seed",l3:"Quince"},{l1:"Fruity",l2:"Seed",l3:"Berry"},{l1:"Fruity",l2:"Seed",l3:"Black Currant"},{l1:"Fruity",l2:"Seed",l3:"Fig"},{l1:"Fruity",l2:"Seed",l3:"Date"},
-  {l1:"Fruity",l2:"Citrus",l3:"Lemon"},{l1:"Fruity",l2:"Citrus",l3:"Orange"},{l1:"Fruity",l2:"Citrus",l3:"Grapefruit"},
-  {l1:"Fruity",l2:"Tropical",l3:"Kiwi"},{l1:"Fruity",l2:"Tropical",l3:"Pineapple"},{l1:"Fruity",l2:"Tropical",l3:"Coconut"},
-  {l1:"Fruity",l2:"Dried",l3:"Raisin"},{l1:"Fruity",l2:"Dried",l3:"Prune"},
-  {l1:"Cereal",l2:"Grain",l3:"Oat"},{l1:"Cereal",l2:"Grain",l3:"Wheat"},{l1:"Cereal",l2:"Grain",l3:"Barley"},{l1:"Cereal",l2:"Grain",l3:"Rye"},
-  {l1:"Cereal",l2:"Sweet",l3:"Corn"},{l1:"Cereal",l2:"Sweet",l3:"Malt"},{l1:"Cereal",l2:"Sweet",l3:"Bready"},{l1:"Cereal",l2:"Sweet",l3:"Biscuity"},{l1:"Cereal",l2:"Sweet",l3:"Pastry"},
-  {l1:"Veggie",l2:"Green",l3:"Hay"},{l1:"Veggie",l2:"Green",l3:"Grass"},{l1:"Veggie",l2:"Green",l3:"Herbal"},
-  {l1:"Veggie",l2:"Starchy",l3:"Pea"},{l1:"Veggie",l2:"Starchy",l3:"Potato"},
-  {l1:"Veggie",l2:"Earthy",l3:"Soil"},{l1:"Veggie",l2:"Earthy",l3:"Peat"},{l1:"Veggie",l2:"Earthy",l3:"Mushroom"},{l1:"Veggie",l2:"Earthy",l3:"Yeast"},
-  {l1:"Wood",l2:"Hardwood",l3:"Oak"},{l1:"Wood",l2:"Hardwood",l3:"Chestnut"},{l1:"Wood",l2:"Hardwood",l3:"Sandalwood"},{l1:"Wood",l2:"Hardwood",l3:"Sawdust"},
-  {l1:"Wood",l2:"Conifer",l3:"Pine"},{l1:"Wood",l2:"Conifer",l3:"Cedar"},
-  {l1:"Wood",l2:"Burnt",l3:"Smokey"},{l1:"Wood",l2:"Burnt",l3:"Camp Fire"},{l1:"Wood",l2:"Burnt",l3:"Charcoal"},{l1:"Wood",l2:"Burnt",l3:"Match Sticks"},
-  {l1:"Spice",l2:"Rich",l3:"Leather"},{l1:"Spice",l2:"Rich",l3:"Coffee"},{l1:"Spice",l2:"Rich",l3:"Tea"},{l1:"Spice",l2:"Rich",l3:"Tobacco"},
-  {l1:"Spice",l2:"Bright",l3:"Licorice"},{l1:"Spice",l2:"Bright",l3:"Mint"},{l1:"Spice",l2:"Bright",l3:"Clove"},{l1:"Spice",l2:"Bright",l3:"Black Pepper"},{l1:"Spice",l2:"Bright",l3:"Hot Pepper"},{l1:"Spice",l2:"Bright",l3:"Cinnamon"},{l1:"Spice",l2:"Bright",l3:"Nutmeg"},{l1:"Spice",l2:"Bright",l3:"Coriander"},{l1:"Spice",l2:"Bright",l3:"Ginger"},
-  {l1:"Sweet",l2:"Alcohol",l3:"Wine"},{l1:"Sweet",l2:"Alcohol",l3:"Sherry"},{l1:"Sweet",l2:"Alcohol",l3:"Port"},{l1:"Sweet",l2:"Alcohol",l3:"Brandy"},{l1:"Sweet",l2:"Alcohol",l3:"Rum"},
-  {l1:"Sweet",l2:"Soda",l3:"Cream Soda"},{l1:"Sweet",l2:"Soda",l3:"Cola"},
-  {l1:"Sweet",l2:"Syrupy",l3:"Maple Syrup"},{l1:"Sweet",l2:"Syrupy",l3:"Vanilla"},{l1:"Sweet",l2:"Syrupy",l3:"Caramel"},{l1:"Sweet",l2:"Syrupy",l3:"Molasses"},{l1:"Sweet",l2:"Syrupy",l3:"Brown Sugar"},
-  {l1:"Sweet",l2:"Candy",l3:"Chocolate"},{l1:"Sweet",l2:"Candy",l3:"Butterscotch"},{l1:"Sweet",l2:"Candy",l3:"Honey"},{l1:"Sweet",l2:"Candy",l3:"Marshmallow"},{l1:"Sweet",l2:"Candy",l3:"Toffee"},
-  {l1:"Savory",l2:"Meaty",l3:"Fishy"},{l1:"Savory",l2:"Meaty",l3:"Fatty"},{l1:"Savory",l2:"Meaty",l3:"Roast Meat"},{l1:"Savory",l2:"Meaty",l3:"Bacon"},
-  {l1:"Savory",l2:"Nuts",l3:"Almond"},{l1:"Savory",l2:"Nuts",l3:"Peanut"},{l1:"Savory",l2:"Nuts",l3:"Hazelnut"},{l1:"Savory",l2:"Nuts",l3:"Pecan"},{l1:"Savory",l2:"Nuts",l3:"Walnut"},
-  {l1:"Mouthfeel",l2:"Soft",l3:"Waxy"},{l1:"Mouthfeel",l2:"Soft",l3:"Creamy"},{l1:"Mouthfeel",l2:"Soft",l3:"Oily"},{l1:"Mouthfeel",l2:"Soft",l3:"Soapy"},{l1:"Mouthfeel",l2:"Soft",l3:"Musty"},
-  {l1:"Mouthfeel",l2:"Hard",l3:"Clean"},{l1:"Mouthfeel",l2:"Hard",l3:"Medicinal"},{l1:"Mouthfeel",l2:"Hard",l3:"Astringent"},{l1:"Mouthfeel",l2:"Hard",l3:"Overproof"},
-  {l1:"Off",l2:"Organic",l3:"Pickle"},{l1:"Off",l2:"Organic",l3:"Vinegar"},{l1:"Off",l2:"Organic",l3:"Onion"},{l1:"Off",l2:"Organic",l3:"Garlic"},{l1:"Off",l2:"Organic",l3:"Cauliflower"},{l1:"Off",l2:"Organic",l3:"Rotten Egg"},{l1:"Off",l2:"Organic",l3:"Sulfur"},{l1:"Off",l2:"Organic",l3:"Rubber"},
-  {l1:"Off",l2:"Inorganic",l3:"Solvent"},{l1:"Off",l2:"Inorganic",l3:"Fuel"},{l1:"Off",l2:"Inorganic",l3:"Iodine"},{l1:"Off",l2:"Inorganic",l3:"Burnt"},{l1:"Off",l2:"Inorganic",l3:"Metallic"}
+  {l1:"Floral",l2:"Flower",l3:"Rose",src:"Ferment"},{l1:"Floral",l2:"Flower",l3:"Violet",src:"Ferment"},{l1:"Floral",l2:"Flower",l3:"Wildflower",src:"Ferment"},
+  {l1:"Floral",l2:"Perfumed",l3:"Blossom",src:"Ferment"},{l1:"Floral",l2:"Perfumed",l3:"Perfume",src:"Ferment"},
+  {l1:"Fruity",l2:"Stone",l3:"Cherry",src:"Ferment"},{l1:"Fruity",l2:"Stone",l3:"Apricot",src:"Ferment"},{l1:"Fruity",l2:"Stone",l3:"Plum",src:"Ferment"},{l1:"Fruity",l2:"Stone",l3:"Peach",src:"Ferment"},
+  {l1:"Fruity",l2:"Orchard",l3:"Apple",src:"Ferment"},{l1:"Fruity",l2:"Orchard",l3:"Pear",src:"Ferment"},
+  {l1:"Fruity",l2:"Berry",l3:"Red Berry",src:"Ferment"},{l1:"Fruity",l2:"Berry",l3:"Dark Berry",src:"Ferment"},
+  {l1:"Fruity",l2:"Citrus",l3:"Lemon",src:"Ferment"},{l1:"Fruity",l2:"Citrus",l3:"Orange",src:"Ferment"},{l1:"Fruity",l2:"Citrus",l3:"Grapefruit",src:"Ferment"},
+  {l1:"Fruity",l2:"Tropical",l3:"Banana",src:"Ferment"},{l1:"Fruity",l2:"Tropical",l3:"Pineapple",src:"Ferment"},{l1:"Fruity",l2:"Tropical",l3:"Bubble Gum",src:"Ferment"},
+  {l1:"Fruity",l2:"Dried",l3:"Raisin",src:"Wood"},{l1:"Fruity",l2:"Dried",l3:"Prune",src:"Wood"},{l1:"Fruity",l2:"Dried",l3:"Fig",src:"Wood"},{l1:"Fruity",l2:"Dried",l3:"Date",src:"Wood"},
+  {l1:"Cereal",l2:"Grain",l3:"Corn",src:"Grain"},{l1:"Cereal",l2:"Grain",l3:"Rye",src:"Grain"},{l1:"Cereal",l2:"Grain",l3:"Wheat",src:"Grain"},{l1:"Cereal",l2:"Grain",l3:"Malt",src:"Grain"},
+  {l1:"Cereal",l2:"Baked",l3:"Bread",src:"Grain"},{l1:"Cereal",l2:"Baked",l3:"Biscuit/Graham",src:"Grain"},{l1:"Cereal",l2:"Baked",l3:"Pastry",src:"Grain"},
+  {l1:"Cereal",l2:"Mash",l3:"Yeast",src:"Ferment"},{l1:"Cereal",l2:"Mash",l3:"Green Bean",src:"Ferment"},
+  {l1:"Earthy",l2:"Green",l3:"Hay",src:"Grain"},{l1:"Earthy",l2:"Green",l3:"Grass",src:"Grain"},{l1:"Earthy",l2:"Green",l3:"Herbal",src:"Grain"},
+  {l1:"Earthy",l2:"Ground",l3:"Mineral",src:"Ferment"},{l1:"Earthy",l2:"Ground",l3:"Mushroom",src:"Ferment"},{l1:"Earthy",l2:"Ground",l3:"Funk",src:"Ferment"},
+  {l1:"Wood",l2:"Oak",l3:"Green Oak",src:"Wood"},{l1:"Wood",l2:"Oak",l3:"Toasted Oak",src:"Wood"},{l1:"Wood",l2:"Oak",l3:"Charred Oak",src:"Wood"},
+  {l1:"Wood",l2:"Lactone",l3:"Coconut",src:"Wood"},{l1:"Wood",l2:"Lactone",l3:"Dill",src:"Wood"},
+  {l1:"Wood",l2:"Aromatic",l3:"Cedar",src:"Wood"},{l1:"Wood",l2:"Aromatic",l3:"Pine/Resin",src:"Wood"},
+  {l1:"Wood",l2:"Smoke",l3:"Wood Smoke",src:"Wood"},{l1:"Wood",l2:"Smoke",l3:"Peat Smoke",src:"Grain"},{l1:"Wood",l2:"Smoke",l3:"Medicinal",src:"Grain"},
+  {l1:"Spice",l2:"Baking",l3:"Cinnamon",src:"Wood"},{l1:"Spice",l2:"Baking",l3:"Clove",src:"Wood"},{l1:"Spice",l2:"Baking",l3:"Nutmeg",src:"Wood"},{l1:"Spice",l2:"Baking",l3:"Allspice",src:"Wood"},{l1:"Spice",l2:"Baking",l3:"Ginger",src:"Wood"},
+  {l1:"Spice",l2:"Pungent",l3:"Black Pepper",src:"Grain"},{l1:"Spice",l2:"Pungent",l3:"Hot Pepper",src:"Grain"},
+  {l1:"Spice",l2:"Cooling",l3:"Mint",src:"Wood"},{l1:"Spice",l2:"Cooling",l3:"Anise/Licorice",src:"Wood"},
+  {l1:"Spice",l2:"Rich",l3:"Leather",src:"Wood"},{l1:"Spice",l2:"Rich",l3:"Tobacco",src:"Wood"},{l1:"Spice",l2:"Rich",l3:"Coffee",src:"Wood"},{l1:"Spice",l2:"Rich",l3:"Tea",src:"Wood"},
+  {l1:"Sweet",l2:"Syrupy",l3:"Vanilla",src:"Wood"},{l1:"Sweet",l2:"Syrupy",l3:"Caramel",src:"Wood"},{l1:"Sweet",l2:"Syrupy",l3:"Brown Sugar",src:"Wood"},{l1:"Sweet",l2:"Syrupy",l3:"Molasses",src:"Wood"},{l1:"Sweet",l2:"Syrupy",l3:"Maple Syrup",src:"Wood"},
+  {l1:"Sweet",l2:"Candy",l3:"Toffee",src:"Wood"},{l1:"Sweet",l2:"Candy",l3:"Butterscotch",src:"Wood"},{l1:"Sweet",l2:"Candy",l3:"Burnt Sugar",src:"Wood"},{l1:"Sweet",l2:"Candy",l3:"Honey",src:"Wood"},{l1:"Sweet",l2:"Candy",l3:"Marshmallow",src:"Wood"},{l1:"Sweet",l2:"Candy",l3:"Icing",src:"Wood"},{l1:"Sweet",l2:"Candy",l3:"Chocolate",src:"Wood"},{l1:"Sweet",l2:"Candy",l3:"Cocoa",src:"Wood"},
+  {l1:"Sweet",l2:"Dairy",l3:"Butter",src:"Ferment"},{l1:"Sweet",l2:"Dairy",l3:"Cream/Custard",src:"Wood"},
+  {l1:"Sweet",l2:"Soda",l3:"Cream Soda",src:"Wood"},{l1:"Sweet",l2:"Soda",l3:"Cola",src:"Wood"},
+  {l1:"Sweet",l2:"Finishing",l3:"Red Wine",src:"Finishing"},{l1:"Sweet",l2:"Finishing",l3:"Fortified Wine",src:"Finishing"},{l1:"Sweet",l2:"Finishing",l3:"Brandy",src:"Finishing"},{l1:"Sweet",l2:"Finishing",l3:"Rum",src:"Finishing"},
+  {l1:"Savory",l2:"Nuts",l3:"Almond",src:"Wood"},{l1:"Savory",l2:"Nuts",l3:"Peanut",src:"Wood"},{l1:"Savory",l2:"Nuts",l3:"Hazelnut",src:"Wood"},{l1:"Savory",l2:"Nuts",l3:"Pecan",src:"Wood"},{l1:"Savory",l2:"Nuts",l3:"Walnut",src:"Wood"},
+  {l1:"Savory",l2:"Meaty",l3:"Roast Meat",src:"Ferment"},{l1:"Savory",l2:"Meaty",l3:"Smoked Meat",src:"Wood"},
+  {l1:"Structure",l2:"Texture",l3:"Thin",src:"Proof"},{l1:"Structure",l2:"Texture",l3:"Creamy",src:"Proof"},{l1:"Structure",l2:"Texture",l3:"Oily",src:"Proof"},{l1:"Structure",l2:"Texture",l3:"Waxy",src:"Proof"},{l1:"Structure",l2:"Texture",l3:"Astringent",src:"Wood"},
+  {l1:"Structure",l2:"Taste",l3:"Tart",src:"Proof"},{l1:"Structure",l2:"Taste",l3:"Bitter",src:"Proof"},{l1:"Structure",l2:"Taste",l3:"Salty",src:"Proof"},
+  {l1:"Structure",l2:"Heat",l3:"Ethanol",src:"Proof"},{l1:"Structure",l2:"Heat",l3:"Warming",src:"Proof"},
+  {l1:"Off",l2:"Sulfury",l3:"Sulfur",src:"Ferment"},{l1:"Off",l2:"Sulfury",l3:"Rubber",src:"Ferment"},
+  {l1:"Off",l2:"Chemical",l3:"Solvent",src:"Ferment"},{l1:"Off",l2:"Chemical",l3:"Metallic",src:"Ferment"},{l1:"Off",l2:"Chemical",l3:"Soapy",src:"Ferment"}
 ];
 
-// Order = the order families appear, going clockwise from 1 o'clock
-const FAMILY_ORDER = ["Floral","Fruity","Cereal","Veggie","Wood","Spice","Sweet","Savory","Mouthfeel","Off"];
+// Order = the order families appear, going clockwise from 12 o'clock
+const FAMILY_ORDER = ["Floral","Fruity","Cereal","Earthy","Wood","Spice","Sweet","Savory","Structure","Off"];
 
-// Graduated palette per family — base hue, with L1=base, L2=mid, L3=light.
-// Hand-tuned earthy whiskey-friendly tones, kept distinct neighbour-to-neighbour.
+// Graduated palette per family — L1=base, L2=mid, L3=light.
 const PALETTE = {
-  Floral:    { l1: "#A8456E", l2: "#C77897", l3: "#E8C2D1" },
-  Fruity:    { l1: "#B85A2B", l2: "#D9874E", l3: "#F1C9A6" },
-  Cereal:    { l1: "#C29632", l2: "#D9B45E", l3: "#EFD9A0" },
-  Veggie:    { l1: "#7A8A3A", l2: "#A1AC68", l3: "#D2D6A8" },
-  Wood:      { l1: "#5C3A1E", l2: "#8A684A", l3: "#C2A98E" },
-  Spice:     { l1: "#9C3A2C", l2: "#BD6B5C", l3: "#E2B4A8" },
-  Sweet:     { l1: "#B8722A", l2: "#D29D5A", l3: "#EED2A7" },
-  Savory:    { l1: "#7A2E25", l2: "#9F5C53", l3: "#D2A89F" },
-  Mouthfeel: { l1: "#506876", l2: "#7E94A0", l3: "#BFCCD3" },
-  Off:       { l1: "#5F4B66", l2: "#897790", l3: "#C4B7CB" }
+  "Floral":        { l1: "#A8456E", l2: "#C77897", l3: "#E8C2D1" },
+  "Fruity":        { l1: "#B85A2B", l2: "#D9874E", l3: "#F1C9A6" },
+  "Cereal":        { l1: "#C29632", l2: "#D9B45E", l3: "#EFD9A0" },
+  "Earthy": { l1: "#7A8A3A", l2: "#A1AC68", l3: "#D2D6A8" },
+  "Wood":          { l1: "#5C3A1E", l2: "#8A684A", l3: "#C2A98E" },
+  "Spice":         { l1: "#9C3A2C", l2: "#BD6B5C", l3: "#E2B4A8" },
+  "Sweet":         { l1: "#B8722A", l2: "#D29D5A", l3: "#EED2A7" },
+  "Savory":        { l1: "#7A2E25", l2: "#9F5C53", l3: "#D2A89F" },
+  "Structure":     { l1: "#506876", l2: "#7E94A0", l3: "#BFCCD3" },
+  "Off":           { l1: "#5F4B66", l2: "#897790", l3: "#C4B7CB" }
 };
+
+// Source key — the thin band at the base of the leaf ring.
+const SOURCES = [
+  { key: "Grain",   color: "#C9A227", note: "Mash bill: corn, rye, wheat, malt, peated malt" },
+  { key: "Ferment", color: "#7B4F8C", note: "Yeast, fermentation and the still" },
+  { key: "Wood",    color: "#4A2C14", note: "The barrel: toast, char and oak extractives" },
+  { key: "Finishing", color: "#8A2432", note: "Prior contents and finishing casks" },
+  { key: "Proof",   color: "#2F6A86", note: "Strength, texture and taste" }
+];
+const SOURCE_COLOR = Object.fromEntries(SOURCES.map(s => [s.key, s.color]));
 
 //============================================================
 // GROUP DATA
@@ -468,12 +508,9 @@ function buildTree() {
     if (!fam.has(r.l1)) fam.set(r.l1, { name: r.l1, subs: new Map() });
     const f = fam.get(r.l1);
     if (!f.subs.has(r.l2)) f.subs.set(r.l2, { name: r.l2, leaves: [] });
-    f.subs.get(r.l2).leaves.push(r.l3);
+    f.subs.get(r.l2).leaves.push({ name: r.l3, src: r.src });
   }
-  return FAMILY_ORDER.map(name => {
-    const f = fam.get(name);
-    return { name, subs: [...f.subs.values()] };
-  });
+  return FAMILY_ORDER.map(name => ({ name, subs: [...fam.get(name).subs.values()] }));
 }
 const TREE = buildTree();
 
@@ -481,22 +518,18 @@ const TREE = buildTree();
 // GEOMETRY
 //============================================================
 const CX = 800, CY = 800;
-const R_INNER_HOLE = 140;   // center disc edge (smaller now)
-const R_L1_OUT     = 360;   // L1 ring outer
-const R_L2_OUT     = 540;   // L2 ring outer
-const R_L3_OUT     = 780;   // L3 ring outer
+const R_INNER_HOLE = 140;
+const R_L1_OUT     = 360;
+const R_L2_OUT     = 540;
+const R_L3_OUT     = 780;
+const BAND         = 11;     // source band width at the base of the leaf ring
+const START_CLOCK  = 0;
 
-// Floral starts at clock-angle 0° (12 o'clock); families fan clockwise from there
-const START_CLOCK = 0;
-
-// clock-angle (0 = 12, increasing CW) → math-angle for SVG rotate(deg) about center
 function clockToRotateDeg(clockAngle) { return clockAngle - 90; }
 function polar(r, clockAngle) {
   const a = (clockAngle - 90) * Math.PI / 180;
   return [CX + r * Math.cos(a), CY + r * Math.sin(a)];
 }
-
-// Annular sector path between two clock-angles (a1 < a2)
 function annularSector(rIn, rOut, a1, a2) {
   const [x1, y1] = polar(rOut, a1);
   const [x2, y2] = polar(rOut, a2);
@@ -508,9 +541,6 @@ function annularSector(rIn, rOut, a1, a2) {
        + `L ${x3.toFixed(2)} ${y3.toFixed(2)} `
        + `A ${rIn} ${rIn} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
 }
-
-// Arc path (for textPath). dir=1 left-to-right, dir=-1 right-to-left.
-// Stays at single radius. Used for tangential text.
 function arcPath(r, a1, a2, dir = 1) {
   if (dir === -1) [a1, a2] = [a2, a1];
   const [x1, y1] = polar(r, a1);
@@ -521,25 +551,23 @@ function arcPath(r, a1, a2, dir = 1) {
 }
 
 //============================================================
-// LAYOUT — assign clockwise arc spans
+// LAYOUT — every leaf gets the same arc
 //============================================================
-const TOTAL_LEAVES = RAW.length; // 118
+const TOTAL_LEAVES = RAW.length;
 let cursor = START_CLOCK;
-const layout = []; // array of family layouts
+const layout = [];
 for (const fam of TREE) {
   const leafCount = fam.subs.reduce((s, sub) => s + sub.leaves.length, 0);
   const famArc = (leafCount / TOTAL_LEAVES) * 360;
-  const famStart = cursor;
-  const famEnd   = cursor + famArc;
+  const famStart = cursor, famEnd = cursor + famArc;
   const subs = [];
   let subCursor = famStart;
   for (const sub of fam.subs) {
     const subArc = (sub.leaves.length / leafCount) * famArc;
-    const subStart = subCursor;
-    const subEnd   = subCursor + subArc;
-    const leafArc  = subArc / sub.leaves.length;
-    const leaves = sub.leaves.map((name, i) => ({
-      name,
+    const subStart = subCursor, subEnd = subCursor + subArc;
+    const leafArc = subArc / sub.leaves.length;
+    const leaves = sub.leaves.map((lf, i) => ({
+      name: lf.name, src: lf.src,
       start: subStart + i * leafArc,
       end:   subStart + (i + 1) * leafArc
     }));
@@ -555,15 +583,12 @@ for (const fam of TREE) {
 //============================================================
 const SVG = document.getElementById('wheel');
 const NS = "http://www.w3.org/2000/svg";
-
 function el(tag, attrs = {}, parent = SVG) {
   const e = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
   parent.appendChild(e);
   return e;
 }
-
-// Shared <defs> for arc paths
 const defs = el('defs');
 let pathCounter = 0;
 function defArc(r, a1, a2, dir = 1) {
@@ -572,59 +597,45 @@ function defArc(r, a1, a2, dir = 1) {
   return id;
 }
 
-// Background: cream disc with subtle outer ring
 el('circle', { cx: CX, cy: CY, r: R_L3_OUT + 8, fill: '#FAF6EC' });
 el('circle', { cx: CX, cy: CY, r: R_L3_OUT + 6, fill: 'none', stroke: '#CC9900', 'stroke-width': 1.2 });
 el('circle', { cx: CX, cy: CY, r: R_L3_OUT + 14, fill: 'none', stroke: '#CC9900', 'stroke-width': 0.6, opacity: 0.5 });
 
-// Build wedges, ring by ring, outer first so labels overlay correctly.
-// Actually paint inner→outer so concentric look is consistent.
-
-const familyGroups = [];
 for (const fam of layout) {
   const pal = PALETTE[fam.name];
-  const fGroup = el('g', { 'data-family': fam.name });
-  familyGroups.push(fGroup);
-
-  // L1 wedge — full family arc, innermost ring
+  const g = el('g', { 'data-family': fam.name });
   el('path', {
-    class: 'wedge l1',
-    'data-family': fam.name,
+    class: 'wedge l1', 'data-family': fam.name,
     d: annularSector(R_INNER_HOLE, R_L1_OUT, fam.start, fam.end),
-    fill: pal.l1,
-    stroke: '#FAF6EC',
-    'stroke-width': 1.5,
-    'stroke-linejoin': 'round'
-  }, fGroup);
-
-  // L2 wedges
+    fill: pal.l1, stroke: '#FAF6EC', 'stroke-width': 1.5, 'stroke-linejoin': 'round'
+  }, g);
   for (const sub of fam.subs) {
     el('path', {
-      class: 'wedge l2',
-      'data-family': fam.name,
+      class: 'wedge l2', 'data-family': fam.name, 'data-l2': sub.name,
       d: annularSector(R_L1_OUT, R_L2_OUT, sub.start, sub.end),
-      fill: pal.l2,
-      stroke: '#FAF6EC',
-      'stroke-width': 1.2,
-      'stroke-linejoin': 'round'
-    }, fGroup);
-
-    // L3 wedges
+      fill: pal.l2, stroke: '#FAF6EC', 'stroke-width': 1.2, 'stroke-linejoin': 'round'
+    }, g);
     for (const leaf of sub.leaves) {
       el('path', {
-        class: 'wedge l3',
-        'data-family': fam.name,
+        class: 'wedge l3', 'data-family': fam.name, 'data-l2': sub.name, 'data-l3': leaf.name,
         d: annularSector(R_L2_OUT, R_L3_OUT, leaf.start, leaf.end),
-        fill: pal.l3,
-        stroke: '#FAF6EC',
-        'stroke-width': 0.8,
-        'stroke-linejoin': 'round'
-      }, fGroup);
+        fill: pal.l3, stroke: '#FAF6EC', 'stroke-width': 0.8, 'stroke-linejoin': 'round'
+      }, g);
     }
   }
 }
 
-// Hairline gold rings between rings
+// Source band — one segment per leaf, merged visually where neighbours share a source
+const bandG = el('g', { class: 'src-band-group' });
+for (const fam of layout) for (const sub of fam.subs) for (const leaf of sub.leaves) {
+  const p = el('path', {
+    class: 'src-band', 'data-src': leaf.src,
+    d: annularSector(R_L2_OUT, R_L2_OUT + BAND, leaf.start, leaf.end),
+    fill: SOURCE_COLOR[leaf.src]
+  }, bandG);
+  el('title', {}, p).textContent = `${leaf.name} — source: ${leaf.src}`;
+}
+
 el('circle', { cx: CX, cy: CY, r: R_L1_OUT, fill: 'none', stroke: '#CC9900', 'stroke-width': 0.7, opacity: 0.55 });
 el('circle', { cx: CX, cy: CY, r: R_L2_OUT, fill: 'none', stroke: '#CC9900', 'stroke-width': 0.7, opacity: 0.55 });
 el('circle', { cx: CX, cy: CY, r: R_L3_OUT, fill: 'none', stroke: '#CC9900', 'stroke-width': 0.9 });
@@ -632,221 +643,179 @@ el('circle', { cx: CX, cy: CY, r: R_L3_OUT, fill: 'none', stroke: '#CC9900', 'st
 //============================================================
 // LABELS
 //============================================================
-
-// L1 labels — tangential, curved, centered in family arc.
-const R_L1_TEXT = (R_INNER_HOLE + R_L1_OUT) / 2;
 function arcLenAt(r, a1, a2) { return Math.abs(a2 - a1) * Math.PI / 180 * r; }
+function radialText(cls, family, text, mid, rPad, attrs = {}) {
+  const flip = mid > 180 && mid < 360;
+  const rotDeg = flip ? clockToRotateDeg(mid) + 180 : clockToRotateDeg(mid);
+  const t = el('text', Object.assign({
+    class: cls, 'data-family': family,
+    transform: `rotate(${rotDeg.toFixed(2)} ${CX} ${CY})`,
+    'text-anchor': flip ? 'end' : 'start',
+    'dominant-baseline': 'middle',
+    x: flip ? (CX - rPad) : (CX + rPad), y: CY
+  }, attrs));
+  t.textContent = text;
+  return t;
+}
+
+// L1 — curved along the ring where the family is wide enough, radial where it is narrow.
+const R_L1_TEXT = (R_INNER_HOLE + R_L1_OUT) / 2;
 for (const fam of layout) {
   const mid = (fam.start + fam.end) / 2;
-  const lower = mid > 90 && mid < 270;
-  const dir = lower ? -1 : 1;
-  const id = defArc(R_L1_TEXT, fam.start, fam.end, dir);
-  const t = el('text', { class: 'l1-text', 'data-family': fam.name });
-  const tp = document.createElementNS(NS, 'textPath');
-  tp.setAttribute('href', `#${id}`);
-  tp.setAttribute('startOffset', '50%');
-  tp.setAttribute('text-anchor', 'middle');
-  tp.setAttribute('dominant-baseline', 'middle');
-  const maxArc = arcLenAt(R_L1_TEXT, fam.start, fam.end) * 0.82;
-  // Mouthfeel gets hyphenated onto two stacked arcs so it fits.
-  if (fam.name === 'Mouthfeel') {
-    t.remove();
-    const lineGap = 18;
-    const idTop = defArc(R_L1_TEXT + lineGap, fam.start, fam.end, dir);
-    const idBot = defArc(R_L1_TEXT - lineGap, fam.start, fam.end, dir);
-    const top = el('text', { class: 'l1-text', 'data-family': fam.name });
-    const tt = document.createElementNS(NS, 'textPath');
-    tt.setAttribute('href', `#${idTop}`);
-    tt.setAttribute('startOffset', '50%');
-    tt.setAttribute('text-anchor', 'middle');
-    tt.setAttribute('dominant-baseline', 'middle');
-    tt.textContent = 'MOUTH-';
-    top.appendChild(tt);
-    const bot = el('text', { class: 'l1-text', 'data-family': fam.name });
-    const bb = document.createElementNS(NS, 'textPath');
-    bb.setAttribute('href', `#${idBot}`);
-    bb.setAttribute('startOffset', '50%');
-    bb.setAttribute('text-anchor', 'middle');
-    bb.setAttribute('dominant-baseline', 'middle');
-    bb.textContent = 'FEEL';
-    bot.appendChild(bb);
-    continue;
-  }
   const txt = fam.name.toUpperCase();
-  const naturalEst = txt.length * 22; // rough estimate at 28px display caps
-  if (naturalEst > maxArc) {
-    tp.setAttribute('textLength', maxArc.toFixed(1));
-    tp.setAttribute('lengthAdjust', 'spacingAndGlyphs');
-  }
-  tp.textContent = txt;
-  t.appendChild(tp);
-}
-
-// L2 labels — radial, anchored at midradius, like L3.
-const R_L2_INNER_PAD = R_L1_OUT + 14;
-for (const fam of layout) {
-  for (const sub of fam.subs) {
-    const mid = (sub.start + sub.end) / 2;
-    const flip = mid > 180 && mid < 360; // left half — flip
-    const rotDeg = flip ? clockToRotateDeg(mid) + 180 : clockToRotateDeg(mid);
-    const t = el('text', {
-      class: 'l2-text',
-      'data-family': fam.name,
-      transform: `rotate(${rotDeg.toFixed(2)} ${CX} ${CY})`,
-      'text-anchor': flip ? 'end' : 'start',
-      'dominant-baseline': 'middle',
-      x: flip ? (CX - R_L2_INNER_PAD) : (CX + R_L2_INNER_PAD),
-      y: CY
-    });
-    t.textContent = sub.name.toUpperCase();
+  const maxArc = arcLenAt(R_L1_TEXT, fam.start, fam.end) * 0.82;
+  const naturalEst = txt.length * 22;
+  if (naturalEst <= maxArc * 1.12) {
+    const lower = mid > 90 && mid < 270;
+    const id = defArc(R_L1_TEXT, fam.start, fam.end, lower ? -1 : 1);
+    const t = el('text', { class: 'l1-text', 'data-family': fam.name });
+    const tp = document.createElementNS(NS, 'textPath');
+    tp.setAttribute('href', `#${id}`);
+    tp.setAttribute('startOffset', '50%');
+    tp.setAttribute('text-anchor', 'middle');
+    tp.setAttribute('dominant-baseline', 'middle');
+    if (naturalEst > maxArc) { tp.setAttribute('textLength', maxArc.toFixed(1)); tp.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
+    tp.textContent = txt;
+    t.appendChild(tp);
+  } else {
+    const est = txt.length * 17.5;
+    const attrs = { 'font-size': 23 };
+    if (est > 196) { attrs.textLength = 196; attrs.lengthAdjust = 'spacingAndGlyphs'; }
+    radialText('l1-text l1-radial', fam.name, txt, mid, R_INNER_HOLE + 12, attrs);
   }
 }
 
-// L3 labels — radial, anchored at midradius. Flip in left half so they don't read upside-down.
-const R_L3_INNER_PAD = R_L2_OUT + 14;
-for (const fam of layout) {
-  for (const sub of fam.subs) {
-    for (const leaf of sub.leaves) {
-      const mid = (leaf.start + leaf.end) / 2;
-      const flip = mid > 180 && mid < 360; // left half (9–12 o'clock) — flip
-      const rotDeg = flip ? clockToRotateDeg(mid) + 180 : clockToRotateDeg(mid);
-      const t = el('text', {
-        class: 'l3-text',
-        'data-family': fam.name,
-        transform: `rotate(${rotDeg.toFixed(2)} ${CX} ${CY})`,
-        'text-anchor': flip ? 'end' : 'start',
-        'dominant-baseline': 'middle',
-        x: flip ? (CX - R_L3_INNER_PAD) : (CX + R_L3_INNER_PAD),
-        y: CY
-      });
-      t.textContent = leaf.name;
-    }
-  }
+// L2 — radial
+for (const fam of layout) for (const sub of fam.subs) {
+  radialText('l2-text', fam.name, sub.name.toUpperCase(), (sub.start + sub.end) / 2, R_L1_OUT + 14, { 'data-l2': sub.name });
+}
+
+// L3 — radial, just outside the source band
+for (const fam of layout) for (const sub of fam.subs) for (const leaf of sub.leaves) {
+  radialText('l3-text', fam.name, leaf.name, (leaf.start + leaf.end) / 2, R_L2_OUT + BAND + 9, { 'data-l2': sub.name, 'data-l3': leaf.name });
 }
 
 //============================================================
 // CENTER MEDALLION
 //============================================================
-// Inner disc — small, decorative only (no lettering)
 el('circle', { cx: CX, cy: CY, r: R_INNER_HOLE, fill: '#F4ECDA' });
 el('circle', { cx: CX, cy: CY, r: R_INNER_HOLE - 4, fill: 'none', stroke: '#CC9900', 'stroke-width': 1.2 });
 el('circle', { cx: CX, cy: CY, r: R_INNER_HOLE - 14, fill: 'none', stroke: '#996633', 'stroke-width': 0.5, opacity: 0.5 });
 el('circle', { cx: CX, cy: CY, r: 4, fill: '#CC9900' });
 
-// (legend removed for tasting map view)
+//============================================================
+// LEGEND (wheel page only)
+//============================================================
+const legendEl = document.getElementById('legend');
+if (legendEl) {
+  for (const fam of layout) {
+    const pal = PALETTE[fam.name];
+    const row = document.createElement('div');
+    row.className = 'legend-row';
+    row.innerHTML = `
+      <span class="swatch" style="background:${pal.l1}"></span>
+      <span class="swatch" style="background:${pal.l2}"></span>
+      <span class="swatch" style="background:${pal.l3}"></span>
+      &nbsp;<b>${fam.name}</b>&nbsp;<span class="count">${fam.leafCount}</span>`;
+    legendEl.appendChild(row);
+  }
+}
+const sourceEl = document.getElementById('source-key');
+if (sourceEl) {
+  const counts = {};
+  for (const r of RAW) counts[r.src] = (counts[r.src] || 0) + 1;
+  sourceEl.innerHTML = '<p class="source-key-title">Source band &mdash; where each flavor comes from</p>' +
+    SOURCES.map(s => `<div class="source-row"><span class="source-chip" style="background:${s.color}"></span><b>${s.key}</b><span class="count">${counts[s.key] || 0}</span><span class="source-note">${s.note}</span></div>`).join('');
+}
 
 //============================================================
-// TASTING-NOTE HIGHLIGHTS — Tamworth Eau de Musc
+// TASTING-NOTE HIGHLIGHTS
+// Keys are leaf names (L3) or, when a note only names a group, group names (L2).
 //============================================================
-// Map L3 leaf name -> array of phase codes ('N' nose, 'P' palate, 'F' finish)
+// TASTING-NOTE HIGHLIGHTS — Pursuit Double Oaked Rye
 const TASTING = {
-  // Nose
-  'Oak':        ['N','F'],
-  'Clean':      ['N'],
-  'Hay':        ['N'],
-  'Lemon':      ['N'],
-  'Molasses':   ['N'],
-  // Palate
-  'Grass':      ['P'],
-  'Herbal':     ['P'],
-  'Honey':      ['P'],
-  'Honeysuckle':['P'],
-  'Ginger':     ['P','F'],
-  'Carnation':  ['P'],
-  'Geranium':   ['P'],
-  'Medicinal':  ['P'],
-  // Finish
-  'Biscuity':   ['F'],
-  'Almond':     ['F']
+  'Oak':            ['N','F'],
+  'Hay':            ['N'],
+  'Lemon':          ['N'],
+  'Molasses':       ['N'],
+  'Grass':          ['P'],
+  'Herbal':         ['P'],
+  'Honey':          ['P'],
+  'Wildflower':     ['P'],
+  'Ginger':         ['P','F'],
+  'Medicinal':      ['P'],
+  'Biscuit/Graham': ['F'],
+  'Almond':         ['F']
 };
 const PHASE_COLOR = { N: '#5C3A1E', P: '#B85A2B', F: '#1A1410' };
 
-// Find each leaf's geometry and tag wedges + labels
-const wedgesByLeaf = new Map();
-SVG.querySelectorAll('.wedge.l3').forEach(w => {
-  // We need the leaf name; the previous renderer didn't stamp it. Re-walk the layout.
-});
-
-// Re-walk layout to tag everything by leaf/sub/family.
-// We have to re-find DOM nodes; index them by family/iteration order matching render.
-const l3Wedges = [...SVG.querySelectorAll('.wedge.l3')];
-const l3Texts  = [...SVG.querySelectorAll('.l3-text')];
-const l2Wedges = [...SVG.querySelectorAll('.wedge.l2')];
-const l2Texts  = [...SVG.querySelectorAll('.l2-text')];
-const l1Wedges = [...SVG.querySelectorAll('.wedge.l1')];
-const l1Texts  = [...SVG.querySelectorAll('.l1-text')];
-// Note: Mouthfeel split into 2 l1 text nodes; account for that.
-
-let l3i = 0, l2i = 0, l1ti = 0;
-for (const fam of layout) {
-  const famHasTag = fam.subs.some(sub => sub.leaves.some(leaf => TASTING[leaf.name]));
-  if (famHasTag) {
-    l1Wedges[layout.indexOf(fam)].classList.add('is-tagged');
-    if (fam.name === 'Mouthfeel') {
-      // two text nodes for Mouthfeel
-      l1Texts[l1ti++].classList.add('is-tagged');
-      l1Texts[l1ti++].classList.add('is-tagged');
+function addPips(r, mid, phases, square) {
+  const spread = 18, size = 8;
+  const offsets = phases.length === 1 ? [0] : phases.length === 2 ? [-spread/2, spread/2] : [-spread, 0, spread];
+  phases.forEach((p, idx) => {
+    const ang = mid + (offsets[idx] / r) * 180 / Math.PI;
+    const [px, py] = polar(r, ang);
+    if (square) {
+      el('rect', { x: (px - size).toFixed(2), y: (py - size).toFixed(2), width: size * 2, height: size * 2, rx: 3,
+        fill: PHASE_COLOR[p], stroke: '#FAF6EC', 'stroke-width': 1.5, class: 'phase-pip group-pip is-tagged' });
     } else {
-      l1Texts[l1ti++].classList.add('is-tagged');
+      el('circle', { cx: px.toFixed(2), cy: py.toFixed(2), r: size,
+        fill: PHASE_COLOR[p], stroke: '#FAF6EC', 'stroke-width': 1.5, class: 'phase-pip is-tagged' });
     }
-  } else {
-    if (fam.name === 'Mouthfeel') { l1ti += 2; } else { l1ti += 1; }
-  }
-  for (const sub of fam.subs) {
-    const subHasTag = sub.leaves.some(leaf => TASTING[leaf.name]);
-    if (subHasTag) {
-      l2Wedges[l2i].classList.add('is-tagged');
-      l2Texts[l2i].classList.add('is-tagged');
-    }
-    l2i++;
-    for (const leaf of sub.leaves) {
-      const phases = TASTING[leaf.name];
-      const w = l3Wedges[l3i];
-      const t = l3Texts[l3i];
-      if (phases) {
-        w.classList.add('is-tagged');
-        t.classList.add('is-tagged');
-        // Outline
-        w.setAttribute('stroke', '#1A1410');
-        w.setAttribute('stroke-width', '1.6');
-        // Phase pip(s) at outer edge
-        const mid = (leaf.start + leaf.end) / 2;
-        const baseR = R_L3_OUT + 16;
-        const pipR = 8;
-        const spread = 18;
-        const offsets = phases.length === 1 ? [0]
-                        : phases.length === 2 ? [-spread/2, spread/2]
-                        : [-spread, 0, spread];
-        // Convert offset (px along arc) to angle
-        phases.forEach((p, idx) => {
-          // Use angular offset computed from arc-length offset/baseR
-          const angOff = (offsets[idx] / baseR) * 180 / Math.PI;
-          const ang = mid + angOff;
-          const [px, py] = polar(baseR, ang);
-          el('circle', {
-            cx: px.toFixed(2), cy: py.toFixed(2), r: pipR,
-            fill: PHASE_COLOR[p],
-            stroke: '#FAF6EC',
-            'stroke-width': 1.5,
-            class: 'phase-pip is-tagged'
-          });
-          el('text', {
-            x: px.toFixed(2), y: py.toFixed(2),
-            'text-anchor': 'middle',
-            'dominant-baseline': 'central',
-            'font-family': 'Cinzel, serif',
-            'font-weight': 700,
-            'font-size': 11,
-            fill: '#FAF6EC',
-            class: 'phase-pip-label is-tagged',
-            'pointer-events': 'none'
-          }).textContent = p;
-        });
+    el('text', { x: px.toFixed(2), y: py.toFixed(2), 'text-anchor': 'middle', 'dominant-baseline': 'central',
+      'font-family': 'Cinzel, serif', 'font-weight': 700, 'font-size': 11, fill: '#FAF6EC',
+      class: 'phase-pip-label is-tagged', 'pointer-events': 'none' }).textContent = p;
+  });
+}
+const q  = (sel) => [...SVG.querySelectorAll(sel)];
+const qa = (name) => name.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+// tagWheel(T): light up the wheel for a TASTING-shaped object. Called below for this page's own
+// TASTING; pages that build TASTING later (e.g. a taster's personal map) can call it themselves.
+let hoverOn = false;
+function tagWheel(TASTING) {
+  if (!TASTING || !Object.keys(TASTING).length) return;
+  hoverOn = false;
+  SVG.classList.remove('has-hover');
+  SVG.querySelectorAll('.is-hot').forEach(n => n.classList.remove('is-hot'));
+  SVG.classList.add('has-tasting');
+  for (const fam of layout) {
+    let famTagged = false;
+    for (const sub of fam.subs) {
+      const subPh = TASTING[sub.name];
+      const leafTagged = sub.leaves.some(l => TASTING[l.name]);
+      if (!subPh && !leafTagged) continue;
+      famTagged = true;
+      q(`.wedge.l2[data-l2="${qa(sub.name)}"], .l2-text[data-l2="${qa(sub.name)}"]`).forEach(n => n.classList.add('is-tagged'));
+      if (subPh) {
+        q(`.wedge.l2[data-l2="${qa(sub.name)}"]`).forEach(w => { w.setAttribute('stroke', '#1A1410'); w.setAttribute('stroke-width', '1.6'); });
+        q(`.wedge.l3[data-l2="${qa(sub.name)}"], .l3-text[data-l2="${qa(sub.name)}"]`).forEach(n => n.classList.add('is-group'));
+        addPips(R_L2_OUT - 16, (sub.start + sub.end) / 2, subPh, true);
       }
-      l3i++;
+      for (const leaf of sub.leaves) {
+        const phases = TASTING[leaf.name];
+        if (!phases) continue;
+        q(`.wedge.l3[data-l3="${qa(leaf.name)}"], .l3-text[data-l3="${qa(leaf.name)}"]`).forEach(n => n.classList.add('is-tagged'));
+        q(`.wedge.l3[data-l3="${qa(leaf.name)}"]`).forEach(w => { w.setAttribute('stroke', '#1A1410'); w.setAttribute('stroke-width', '1.6'); });
+        addPips(R_L3_OUT + 16, (leaf.start + leaf.end) / 2, phases, false);
+      }
     }
+    if (famTagged) q(`.wedge.l1[data-family="${qa(fam.name)}"], .l1-text[data-family="${qa(fam.name)}"]`).forEach(n => n.classList.add('is-tagged'));
   }
 }
+
+// Wheel page: hover a family to isolate it (off once a tasting is plotted)
+function setHotFamily(name) {
+  SVG.querySelectorAll('.is-hot').forEach(n => n.classList.remove('is-hot'));
+  if (!name) { SVG.classList.remove('has-hover'); return; }
+  SVG.classList.add('has-hover');
+  q(`[data-family="${qa(name)}"]`).forEach(n => n.classList.add('is-hot'));
+}
+SVG.addEventListener('mouseover', (e) => { if (!hoverOn) return; const t = e.target.closest('[data-family]'); if (t) setHotFamily(t.getAttribute('data-family')); });
+SVG.addEventListener('mouseleave', () => { if (hoverOn) setHotFamily(null); });
+
+if (Object.keys(TASTING).length) tagWheel(TASTING); else hoverOn = true;
+
 </script>
 </body>
 </html>
